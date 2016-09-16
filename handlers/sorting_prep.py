@@ -1,0 +1,1941 @@
+# Date and time
+from datetime import datetime
+
+import webapp2
+from handlers import base
+from model.admin_account import postalRecordDB, PostalRecordDB_alert
+import sorting
+import json
+import urllib
+import urllib2
+import logging
+import re
+import time
+
+from itertools import groupby
+
+import itertools
+import operator
+
+from operator import itemgetter
+from collections import defaultdict
+
+from model.user_account import UserAccount
+
+# from google.appengine.api import urlfetch
+# from google.appengine.api import taskqueue
+
+# urlfetch.set_default_fetch_deadline(60)
+
+class SortingPrep(webapp2.RequestHandler):
+    def post(self):
+
+        # Obtain user inputs from Compare page
+        starting_postal = self.request.get("starting_postal")
+        starting_postal_cap = self.request.get("starting_postal_cap")
+        starting_postal_1 = self.request.get("starting_postal_1")
+        starting_postal_2 = self.request.get("starting_postal_2")
+        starting_postal_3 = self.request.get("starting_postal_3")
+        starting_postal_4 = self.request.get("starting_postal_4")
+        starting_postal_5 = self.request.get("starting_postal_5")
+        starting_postal_6 = self.request.get("starting_postal_6")
+
+        vehicle_quantity = self.request.get("vehicle_quantity")
+        vehicle_quantity_1 = self.request.get("vehicle_quantity_1")
+        vehicle_quantity_2 = self.request.get("vehicle_quantity_2")
+        vehicle_quantity_3 = self.request.get("vehicle_quantity_3")
+        vehicle_quantity_4 = self.request.get("vehicle_quantity_4")
+        vehicle_quantity_5 = self.request.get("vehicle_quantity_5")
+        vehicle_quantity_6 = self.request.get("vehicle_quantity_6")
+
+        postal_sequence = self.request.get("postal_sequence")
+        email = self.request.get("email")
+        has_return = self.request.get("has_return")
+
+        vehicle_capacity = self.request.get("truck_capacity")
+        truck_capacity_1 = self.request.get("truck_capacity_1")
+        truck_capacity_2 = self.request.get("truck_capacity_2")
+        truck_capacity_3 = self.request.get("truck_capacity_3")
+        truck_capacity_4 = self.request.get("truck_capacity_4")
+        truck_capacity_5 = self.request.get("truck_capacity_5")
+        truck_capacity_6 = self.request.get("truck_capacity_6")
+
+        # if the priority_capacity_comp is checked:
+        vehicle_type = self.request.get('vehicle_type')
+        vehicle_type_1 = self.request.get('vehicle_type_1')
+        vehicle_type_2 = self.request.get('vehicle_type_2')
+        vehicle_type_3 = self.request.get('vehicle_type_3')
+        vehicle_type_4 = self.request.get('vehicle_type_4')
+        vehicle_type_5 = self.request.get('vehicle_type_4')
+        vehicle_type_6 = self.request.get('vehicle_type_4')
+
+        optionsTruck = self.request.get("optionsTruck")
+        priority_capacity = self.request.get("priority_capacity")
+        priority_capacity_comp = self.request.get("priority_capacity_comp")
+
+        sort_company = self.request.get('sort_company')
+        num_comp_val = self.request.get('num_comp_val')
+
+        # - - - - - - - - -  REQUEST - - - - - - - - - - #
+
+        # Error list for invalid postal codes
+        no_record_postal = []
+
+        response = {}
+        errors = []
+
+        credits_account = UserAccount.check_credit_usage(email)
+        if credits_account == None:
+
+            print "Error in Credits Account"
+            errors.extend(["Error in Credits Access <br />"])
+
+        # Remove trailing whitespaces
+        postal_sequence = postal_sequence.strip()
+
+        # Split up the input by newlines
+        postal_sequence_split = str(postal_sequence).split("\n")
+
+        # For storage of a full valid sequence of postal codes
+        postal_sequence_list = []
+        postal_sequence_current = []
+
+        # For empty order id and capacity
+        forEmp_OrderID_Cap = ['0', '0']
+        forEmp_Capt = ['0']
+
+        # This is for Sorted Company
+        # forEmp_OrderID_Cap_company = ['0', '0', '0']
+
+        currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        compare_id = datetime.now().strftime('%Y%m%d%H%m%f')
+
+        # - - - - - Lat-long for Starting point HQ - - - - - #
+        if optionsTruck == "true":
+
+            # Remove "0" if  no record found
+            if starting_postal[0] == "0":
+                starting_postal = starting_postal.lstrip("0")
+            starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
+
+            if starting_postal_hq == None:
+
+                # Add "0" in front of five digit postal codes
+                if len(starting_postal) == 5:
+                    starting_postal = "0" + starting_postal
+                starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
+
+            if starting_postal_hq == None:
+                errors.extend([starting_postal, ' Invalid starting postal code'])
+
+        # if int(vehicle_quantity) >= 17:
+        #     errors.extend(['Number vehicle maximum 17 only'])
+
+        # Type of Truck
+        truck_type = ["truck_1", "truck_2"]
+
+        # For Route by Truck Capacity validation
+        if priority_capacity == "true":
+            starting_postal = starting_postal_cap
+
+            if vehicle_type == truck_type[0]:
+                # print ('Hello this is truck 1')
+                truck_cap = 10
+                # vehicle_capacity = vehicle_m3
+                if int(vehicle_capacity) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+            else:
+                # print ('Hello this is truck 2')
+                truck_cap = 999
+                if int(vehicle_capacity) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of Selected Truck !  <br />"])
+            if int(vehicle_capacity) > int(truck_cap):
+                errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+        # Route by Companies, Considering Route by Truck Capacity validation
+        if priority_capacity_comp == "true":
+            if vehicle_type_1 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_1) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+
+            elif vehicle_type_2 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_2) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+
+            elif vehicle_type_3 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_3) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+            elif vehicle_type_4 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_4) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+
+            elif vehicle_type_5 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_5) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+
+            elif vehicle_type_6 == truck_type[0]:
+                truck_cap = 10
+                if int(truck_capacity_6) <= 1:
+                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+            else:
+                # print ('Hello this is truck 2')
+                truck_cap = 999
+
+                if int(truck_capacity_1) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+                elif int(truck_capacity_2) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+                elif int(truck_capacity_3) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+                elif int(truck_capacity_4) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+                elif int(truck_capacity_5) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+                elif int(truck_capacity_6) <= 10:
+                    errors.extend(["Please check truck's minimum volume limit of truck Selected!  <br />"])
+
+            if int(truck_capacity_1) > int(truck_cap):
+                errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+            if int(truck_capacity_2) > int(truck_cap):
+                errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+            if int(num_comp_val) == 3:
+                if int(truck_capacity_3) > int(truck_cap):
+                    errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+            if int(num_comp_val) == 4:
+                if int(truck_capacity_4) > int(truck_cap):
+                    errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+            if int(num_comp_val) == 5:
+                if int(truck_capacity_5) > int(truck_cap):
+                    errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+            if int(num_comp_val) == 6:
+                if int(truck_capacity_6) > int(truck_cap):
+                    errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+
+        # Counter checking of Postal Code
+        num_post_code = 0
+
+        # Extract the postal pair and validate the postal code while ignoring first line of headers
+        # Note: Order ID is untouched as we do not know their format
+        for index in range(0, len(postal_sequence_split)):
+            num_post_code = num_post_code + 1
+
+            # Retrieve each postal pair
+            postal_pair = postal_sequence_split[index]
+
+            # Replace all tab spaces with normal spaces and remove trailing whitespace
+            postal_pair = postal_pair.replace("\t", " ")
+            postal_pair = postal_pair.strip()
+
+            # Split the order ID/postal code pair by normal spacing
+            postal_pair_split = postal_pair.split(" ")
+
+            if len(postal_pair_split) == 2:
+                postal_pair_split.extend(forEmp_Capt)
+
+            if len(postal_pair_split) != 3:
+                postal_pair_split.extend(forEmp_OrderID_Cap)
+
+            # If Postal Code reverse in textbox
+            postal_code = str(postal_pair_split[0])
+            order_id = str(postal_pair_split[1])
+            track_capacity = int(postal_pair_split[2])
+
+            # Remove "0" if still no record found
+            if postal_code[0] == "0":
+                postal_code = postal_code.lstrip("0")
+
+            postal_id = postalRecordDB.check_if_exists(postal_code)
+
+            if postal_id == None:
+
+                # Add "0" in front of five digit postal codes
+                if len(postal_code) == 5:
+                    postal_code = "0" + postal_code
+                postal_id = postalRecordDB.check_if_exists(postal_code)
+
+            counter_no = 0
+            if postal_id == None:
+                counter_no += 1
+
+                # Find the nearest postal code number in records
+                PostalRecordDB_alert.add_new_postal_records(compare_id, postal_code, email, currentDateTime, int(counter_no))
+                no_record_postal.append(postal_code)
+                errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
+
+            if priority_capacity == "true":
+
+                if track_capacity > int(truck_cap):
+                    print ('Warning! Exceeding Volume')
+                    errors.extend([postal_code, " Exceeding volume in load capacity <br />"])
+
+            # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
+            if not str.isdigit(postal_code) or int(postal_code) >= 830000:
+                errors.extend([postal_code, ' Invalid postal codes'])
+
+            if sort_company == "true":
+
+                if len(postal_pair_split) == 3:
+                    print "Please add Company in 4th column <br/ >"
+                    errors.extend(['Please add Company in 4th column  <br/ >'])
+                if len(errors) == 0:
+                    sorted_comp = postal_pair_split[3]
+                    postal_sequence_list.append([postal_code, str(order_id), int(track_capacity), sorted_comp])
+            else:
+                postal_sequence_list.append([postal_code, str(order_id), int(track_capacity)])
+            postal_sequence_current.append(postal_code)
+
+        if len(errors) == 0:
+            # - - - - - - HQ Starting point Lat Long - - - - - #
+
+            # If errors are found in the postal sequence, send response with error
+            # Else, call the sorting algorithm and and send response with the sorted postal codes
+            # if len(errors) == 0:
+            # API Sensor
+            api_user = "none"
+
+            if sort_company == "true":
+
+                """ each company will separated and this will indicate the color plotting in map like vehicle count """
+                """ Vehicle-color will same method of color as for Company separation """
+
+                # Create variable for each request
+                company_list_grp = []
+                postal_sequence_company = []
+
+                # for Company Sorting
+                propose_result_company = []
+                current_result_company = []
+                origin_result_company = []
+                propose_result_sequence = []
+                result_route_value = []
+                latlng_array_list = []
+
+                for company in range(len(postal_sequence_list)):
+                    companyList = postal_sequence_list[company]
+                    company_list_grp.append(companyList)
+
+                for key, group in itertools.groupby(company_list_grp, operator.itemgetter(3)):
+                    # group as per company
+                    postal_sequence_company.append(list(group))
+
+                # Start of validation
+                if int(len(postal_sequence_company)) != int(num_comp_val):
+                    errors.extend(['Please Check Number of company inputs'])
+
+                vehicle_quantity_list = []
+                vehicle_capacity_list = []
+                starting_postal_list = []
+
+                starting_postal_list.append(str(starting_postal_1))
+                vehicle_quantity_list.append(int(vehicle_quantity_1))
+
+                # Store all HQ postal code and Vehicle count accordingly to # of companies detected.
+                if int(num_comp_val) == 2:
+                    starting_postal_list.append(str(starting_postal_2))
+                    vehicle_quantity_list.append(int(vehicle_quantity_2))
+
+                if int(num_comp_val) == 3:
+                    starting_postal_list.extend([str(starting_postal_2), str(starting_postal_3)])
+                    vehicle_quantity_list.extend([int(vehicle_quantity_2), int(vehicle_quantity_3)])
+
+                if int(num_comp_val) == 4:
+                    starting_postal_list.extend([str(starting_postal_2), str(starting_postal_3), str(starting_postal_4)])
+                    vehicle_quantity_list.extend([int(vehicle_quantity_2), int(vehicle_quantity_3), int(vehicle_quantity_4)])
+
+                if int(num_comp_val) == 5:
+                    starting_postal_list.extend([str(starting_postal_2), str(starting_postal_3), str(starting_postal_4), str(starting_postal_5)])
+                    vehicle_quantity_list.extend([int(vehicle_quantity_2), int(vehicle_quantity_3), int(vehicle_quantity_4), int(vehicle_quantity_5)])
+
+                if int(num_comp_val) == 6:
+                    starting_postal_list.extend([str(starting_postal_2), str(starting_postal_3), str(starting_postal_4), str(starting_postal_5), str(starting_postal_6)])
+                    vehicle_quantity_list.extend([int(vehicle_quantity_2), int(vehicle_quantity_3), int(vehicle_quantity_4), int(vehicle_quantity_5), int(vehicle_quantity_6)])
+
+                # Data Distribute through parallel loop according to number of company request
+                if priority_capacity_comp == "true":
+
+                    # Store all HQ postal code and Vehicle count accordingly
+                    if int(num_comp_val) == 1:
+                        vehicle_capacity_list.append(int(truck_capacity_1))
+
+                    if int(num_comp_val) == 2:
+                        vehicle_capacity_list.extend([int(truck_capacity_1), int(truck_capacity_2)])
+
+                    if int(num_comp_val) == 3:
+                        vehicle_capacity_list.extend([int(truck_capacity_1), int(truck_capacity_2), int(truck_capacity_3)])
+
+                    if int(num_comp_val) == 4:
+                        vehicle_capacity_list.extend([int(truck_capacity_1), int(truck_capacity_2), int(truck_capacity_3), int(truck_capacity_4)])
+
+                    if int(num_comp_val) == 5:
+                        vehicle_capacity_list.extend([int(truck_capacity_1), int(truck_capacity_2), int(truck_capacity_3), int(truck_capacity_4), int(truck_capacity_5)])
+
+                    if int(num_comp_val) == 6:
+                        vehicle_capacity_list.extend([int(truck_capacity_1), int(truck_capacity_2), int(truck_capacity_3), int(truck_capacity_4), int(truck_capacity_5), int(truck_capacity_6)])
+
+                    # Calling function for sorting and chunking
+                    for starting_post, company_sequence, vehicle_count, vehicle_capacity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list, vehicle_capacity_list):
+
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                            starting_post,
+                            company_sequence,
+                            vehicle_count,
+                            email, has_return,
+                            vehicle_capacity,
+                            priority_capacity,
+                            priority_capacity_comp,
+                            vehicle_type,
+                            api_user, sort_company)
+
+                        propose_result_company.append(propose_result)
+                        current_result_company.append(current_result)
+                        origin_result_company.append(origin_destinations)
+                        propose_result_sequence.append(vehicle_postal_list_new_seq)
+
+                        # GeoCode Map
+                        latlng_array = map_visible(propose_result)
+                        latlng_array_list.append(latlng_array)
+                else:
+
+                    for starting_post, company_sequence, vehicle_count in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):
+
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                            starting_post,
+                            company_sequence,
+                            vehicle_count,
+                            email, has_return,
+                            vehicle_capacity,
+                            priority_capacity,
+                            priority_capacity_comp,
+                            vehicle_type,
+                            api_user, sort_company)
+
+                        propose_result_company.append(propose_result)
+                        current_result_company.append(current_result)
+                        origin_result_company.append(origin_destinations)
+                        propose_result_sequence.append(vehicle_postal_list_new_seq)
+
+                        # GeoCode Map
+                        latlng_array = map_visible(propose_result)
+                        latlng_array_list.append(latlng_array)
+
+                    print ('current_result_company'), current_result_company
+                    print ('origin_result_company'), origin_result_company
+
+                # Converting the postal code to total distance
+                for origin_destination, current_result_comp, propose_result_comp in itertools.izip(origin_result_company, current_result_company, propose_result_company):
+
+                    print ('propose_result_comp'), propose_result_comp
+                    current_route_value = result_distance_latlng(current_result_comp, origin_destination, num_post_code)
+                    propose_route_value = result_distance_latlng(propose_result_comp, origin_destination, num_post_code)
+
+                    # Converting the total percentage saving of distance
+                    difference_total = current_route_value - propose_route_value
+                    percentage_savings = (difference_total / current_route_value) * 100
+
+                    proposed_route_val = round(propose_route_value, 2)
+                    current_route_val = round(current_route_value, 2)
+                    savings_route_val = round(percentage_savings, 2)
+
+                    # Total_summary_saving
+                    result_route_value.append([str(current_route_val), str(proposed_route_val), str(savings_route_val)])
+
+                # For Google MAP
+                result_list_arr = []
+                for propose_result_company_1 in propose_result_company:
+                    for propose_result_company_2 in propose_result_company_1:
+                        result_list_arr.append(propose_result_company_2)
+
+                # Converting JSON
+                response['status'] = 'ok'
+                response['sort_company'] = 'true'
+                response['data_result'] = [
+                    {
+                        "required_fields": {
+                            "starting_postal": starting_postal_list,
+                            "propose_result": result_list_arr,
+                            "propose_results": propose_result_company,
+                            "postal_sequence": propose_result_sequence,
+                            "has_return": has_return
+                        },
+                        "geo_code_latlng": {
+                            "latlng_array": latlng_array_list
+                        },
+                        "vehicle_priority": {
+                            "vehicle_num": vehicle_quantity
+                        },
+                        "capacity_priority": {
+                            "priority_capacity": priority_capacity,
+                            "vehicle_type": vehicle_type,
+                            "vehicle_capacity": vehicle_capacity
+                        },
+                        "total_summary_saving": {
+                            "total_savings": result_route_value
+                        }
+                    }
+                ]
+
+            else:
+
+                # - - - - - - - - - This is for Non-company sorting - - - - - - #
+                """ Route By Truck """
+
+                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                    int(starting_postal),
+                    postal_sequence_list,
+                    int(vehicle_quantity),
+                    email, has_return,
+                    vehicle_capacity,
+                    priority_capacity,
+                    priority_capacity_comp,
+                    vehicle_type,
+                    api_user, sort_company)
+
+                print('propose_result'), propose_result
+                print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
+
+                # Converting the postal code to lat_long
+                propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)
+                current_route_value = result_distance_latlng(current_result, origin_destination, num_post_code)
+
+                # GeoCode Map
+                latlng_array = map_visible(propose_result)
+
+                # Converting the total percentage saving of distance
+                difference_total = current_route_value - propose_route_value
+                percentage_savings = (difference_total / current_route_value) * 100
+
+                # Vehicle Result base of the priority:
+                if priority_capacity == "true":
+                    vehicle_quantity = len(vehicle_postal_list_new_seq)
+
+                # Converting JSON
+                response['status'] = 'ok'
+                response['data_result'] = [
+                        {
+                            "required_fields": {
+                                "starting_postal": starting_postal,
+                                "propose_result": propose_result,
+                                "postal_sequence": vehicle_postal_list_new_seq,
+                                "has_return": has_return
+                                },
+                            "geo_code_latlng": {
+                                "latlng_array": latlng_array
+                            },
+                            "vehicle_priority": {
+                                "vehicle_num": vehicle_quantity
+                                },
+                            "capacity_priority": {
+                                "priority_capacity": priority_capacity,
+                                "vehicle_type": vehicle_type,
+                                "vehicle_capacity": vehicle_capacity
+                                },
+                            "total_summary_saving": {
+                                "propose_distance": propose_route_value,
+                                "current_distance": current_route_value,
+                                "total_savings": percentage_savings
+                                }
+                        }
+                    ]
+        else:
+            errors.extend(['Error in process'])
+
+        if len(errors) > 0:
+            response['status'] = 'error'
+            response['errors'] = errors
+
+        logging.info(response)
+        self.response.out.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.out.write(json.dumps(response, indent=3))
+
+    def formatResultForCallback_current(self, result_current):
+        # Final result string
+        result_str = ""
+
+        # Adding underscore for JavaScript to split later
+        for postal_code in result_current:
+
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+               result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "")
+
+        # Return formatted result string
+        return result_str
+
+
+# GeoCode Latlng MAP - single company
+def map_visible(propose_result):
+    latlng_array = []
+
+    for vehicle_postal in propose_result:
+        lat_long_Source = []
+
+        for current_post in vehicle_postal:
+            # Convert to Lat-Long the postal code
+            destinations = postalcode_latlong(current_post)
+
+            # For Geo-Code MAP
+            lat_long_value_map = str(destinations)
+            lat_long_value_map = lat_long_value_map.split(",")
+            lat_long_Source.append(lat_long_value_map)
+
+        # - - -  for lat & long value with vehicle number- - - #
+        latlng_array.append(lat_long_Source)
+
+    return latlng_array
+
+
+# GeoCode Latlng for Summary:
+def Latlng_value_list(propose_result, origin_destination):
+
+    # if numPostCode is > 200:
+    # Chunk the postal code by 2 and convert to laltlong
+    # Then append to list and sent to JS to convert it.
+
+    latlng_value = ""
+    for vehicle_postal in propose_result:
+        for current_post in vehicle_postal:
+
+            # Convert to Lat-Long the postal code
+            destinations = postalcode_latlong(current_post)
+
+            if not destinations:
+                latlng_value += str(destinations)
+            else:
+                latlng_value += "&loc=" + str(destinations)
+
+    result_value = origin_destination + latlng_value
+
+    return result_value
+
+
+# GeoCode Latlng
+def postalcode_latlong(postal):
+
+        # Validation for Task Q
+        compare_postal = postalRecordDB.check_if_exists(postal)
+
+        if compare_postal == None:
+
+            if postal[0] == "0":
+                current_post = postal.lstrip("0")
+                compare_postal = postalRecordDB.check_if_exists(current_post)
+            else:
+                print('load')
+                nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
+                compare_postal = nearest_postal_code.id()
+
+        latlong = postalRecordDB.get_by_id(compare_postal)
+
+        laglongSource = []
+
+        laglongSource.append(latlong.lat)
+        laglongSource.append(',')
+        laglongSource.append(latlong.long)
+        destinations = ''.join(laglongSource)
+
+        return destinations
+
+
+# Summary Distance
+def result_distance_latlng(propose_result, origin_destination, num_post_code):
+
+    if num_post_code <= 69:
+        print "Below 0-69 postal code"
+        result_str = ""
+
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        batch_1_val = latlong_summary_starting(result_str_split, origin_destination)
+        route_distance = float(batch_1_val) / 1000
+
+        return route_distance
+
+    elif 70 <= num_post_code <= 130:
+    # if num_post_code <= 130:
+        """ 70 <= num_post_code <= 130: """
+        print "Normal above 70-130 postal code"
+
+        result_str = ""
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 2)
+
+        # Assign per batch
+        batch_1 = result_str_chunk[0]
+        batch_2 = result_str_chunk[1]
+
+        # Get the last item of 1st Batch
+        last_item = batch_1[-1]
+
+        # Insert the 'lastItemB' in the index of next list
+        # To continue the route distance
+        batch_2.insert(0, last_item)
+
+        # - - - - - Get value of list object- - - - - - #
+        batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+        batch_2_val = latlong_summary(batch_2)
+
+        # taskqueue.add(url='/summary-result',
+        #               params=({'origin_destination': origin_destination,
+        #                        'result_str': result_str,
+        #                       }))
+
+        # # Sum up all batches
+        route_distance_add = batch_1_val + batch_2_val
+        route_distance = float(route_distance_add) / 1000
+
+        return route_distance
+
+    elif 136 <= num_post_code <= 255:
+
+        """136 <= num_post_code <= 255: """
+        print "This is his is normal 135 / 4"
+
+        result_str = ""
+
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 4)
+
+        batch_1 = result_str_chunk[0]
+        batch_2 = result_str_chunk[1]
+
+        # Get Last item and insert in the index
+        last_item_1 = batch_1[-1]
+        batch_2.insert(0, last_item_1)
+
+        batch_3 = result_str_chunk[2]
+        batch_4 = result_str_chunk[3]
+
+        # Get Last item and insert in the index
+        last_item_2 = batch_2[-1]
+        batch_3.insert(0, last_item_2)
+        last_item_3 = batch_3[-1]
+        batch_4.insert(0, last_item_3)
+
+        #  - - - - - Get value of list object- - - - - - #
+
+        batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+        batch_2_val = latlong_summary(batch_2)
+        batch_3_val = latlong_summary(batch_3)
+        batch_4_val = latlong_summary(batch_4)
+
+        # Sum up the two batch
+        route_distance_add = batch_1_val + batch_2_val + batch_3_val + batch_4_val
+        route_distance = float(route_distance_add) / 1000
+
+        return route_distance
+
+    elif 256 <= num_post_code <= 370:
+
+        print "This is his is normal 256 / 6"
+        result_str = ""
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 6)
+
+        # Separate each part of Chunk object
+        batch_1 = result_str_chunk[0]
+        batch_2 = result_str_chunk[1]
+
+        # Get Last item and insert in the index
+        last_item_1 = batch_1[-1]
+        batch_2.insert(0, last_item_1)
+
+        batch_3 = result_str_chunk[2]
+        batch_4 = result_str_chunk[3]
+
+        # Get Last item and insert in the index
+        last_item_2 = batch_2[-1]
+        batch_3.insert(0, last_item_2)
+        last_item_3 = batch_3[-1]
+        batch_4.insert(0, last_item_3)
+
+        batch_5 = result_str_chunk[4]
+        batch_6 = result_str_chunk[5]
+
+        # Get Last item and insert in the index
+        last_item_4 = batch_4[-1]
+        batch_5.insert(0, last_item_4)
+        last_item_5 = batch_5[-1]
+        batch_6.insert(0, last_item_5)
+
+        #  - - - - - Get value of list object- - - - - - #
+
+        batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+        batch_2_val = latlong_summary(batch_2)
+        batch_3_val = latlong_summary(batch_3)
+        batch_4_val = latlong_summary(batch_4)
+        batch_5_val = latlong_summary(batch_5)
+        batch_6_val = latlong_summary(batch_6)
+
+        # Sum up the two batch
+        route_distance_add_array = []
+        route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val, batch_6_val])
+
+        route_distance_add = sum(route_distance_add_array)
+        route_distance = float(route_distance_add) / 1000
+
+        return route_distance
+
+    elif 371 <= num_post_code <= 500:
+
+        """ 371 <= num_post_code <= 500: WIll update this side"""
+        print "This is his is normal 371 / 10 *10"
+
+        result_str = ""
+
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 10)
+
+        if len(result_str_chunk) == 11:
+
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            batch_11 = result_str_chunk[10]
+
+            last_item_10 = batch_10[-1]
+            batch_11.insert(0, last_item_10)
+
+            #  - - - - - Get value of list object- - - - - - #
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+            batch_11_val = latlong_summary(batch_11)
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                             batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val,
+                                             batch_11_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+            return route_distance
+
+        else:
+
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            #  - - - - - Get value of list object- - - - - - #
+            time.sleep(2)
+
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                             batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+            return route_distance
+
+    elif 501 <= num_post_code <= 751:
+
+        """ 501 <= num_post_code <= 750: """
+        print "This is his is normal 501 / 24"
+
+        result_str = ""
+
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 26)
+
+        if len(result_str_chunk) == 27:
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            batch_11 = result_str_chunk[10]
+            batch_12 = result_str_chunk[11]
+
+            last_item_10 = batch_10[-1]
+            batch_11.insert(0, last_item_10)
+            last_item_11 = batch_11[-1]
+            batch_12.insert(0, last_item_11)
+
+            batch_13 = result_str_chunk[12]
+            batch_14 = result_str_chunk[13]
+
+            last_item_12 = batch_12[-1]
+            batch_13.insert(0, last_item_12)
+            last_item_13 = batch_13[-1]
+            batch_14.insert(0, last_item_13)
+
+            batch_15 = result_str_chunk[14]
+            batch_16 = result_str_chunk[15]
+
+            last_item_14 = batch_14[-1]
+            batch_15.insert(0, last_item_14)
+            last_item_15 = batch_15[-1]
+            batch_16.insert(0, last_item_15)
+
+            batch_17 = result_str_chunk[16]
+            batch_18 = result_str_chunk[17]
+
+            last_item_16 = batch_16[-1]
+            batch_17.insert(0, last_item_16)
+            last_item_17 = batch_17[-1]
+            batch_18.insert(0, last_item_17)
+
+            batch_19 = result_str_chunk[18]
+            batch_20 = result_str_chunk[19]
+
+            last_item_18 = batch_18[-1]
+            batch_19.insert(0, last_item_18)
+            last_item_19 = batch_19[-1]
+            batch_20.insert(0, last_item_19)
+
+            batch_21 = result_str_chunk[20]
+            batch_22 = result_str_chunk[21]
+
+            last_item_20 = batch_20[-1]
+            batch_21.insert(0, last_item_20)
+            last_item_21 = batch_21[-1]
+            batch_22.insert(0, last_item_21)
+
+            batch_23 = result_str_chunk[22]
+            batch_24 = result_str_chunk[23]
+
+            last_item_22 = batch_22[-1]
+            batch_23.insert(0, last_item_22)
+            last_item_23 = batch_23[-1]
+            batch_24.insert(0, last_item_23)
+
+            batch_25 = result_str_chunk[24]
+            batch_26 = result_str_chunk[25]
+
+            last_item_24 = batch_24[-1]
+            batch_25.insert(0, last_item_24)
+            last_item_25 = batch_25[-1]
+            batch_26.insert(0, last_item_25)
+
+            batch_27 = result_str_chunk[26]
+
+            last_item_26 = batch_26[-1]
+            batch_27.insert(0, last_item_26)
+
+            #  - - - - - Get value of list object- - - - - - #
+
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+            batch_11_val = latlong_summary(batch_11)
+            batch_12_val = latlong_summary(batch_12)
+            batch_13_val = latlong_summary(batch_13)
+            batch_14_val = latlong_summary(batch_14)
+            batch_15_val = latlong_summary(batch_15)
+            batch_16_val = latlong_summary(batch_16)
+            batch_17_val = latlong_summary(batch_17)
+            batch_18_val = latlong_summary(batch_18)
+            batch_19_val = latlong_summary(batch_19)
+            batch_20_val = latlong_summary(batch_20)
+            batch_21_val = latlong_summary(batch_21)
+            batch_22_val = latlong_summary(batch_22)
+            batch_23_val = latlong_summary(batch_23)
+            batch_24_val = latlong_summary(batch_24)
+            batch_25_val = latlong_summary(batch_25)
+            batch_26_val = latlong_summary(batch_26)
+            batch_27_val = latlong_summary(batch_27)
+
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                             batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val,
+                                             batch_11_val, batch_12_val, batch_13_val, batch_14_val, batch_15_val,
+                                             batch_16_val, batch_17_val, batch_18_val, batch_19_val, batch_20_val,
+                                             batch_21_val, batch_22_val, batch_23_val, batch_24_val, batch_25_val,
+                                             batch_26_val, batch_27_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+
+            return route_distance
+        else:
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            batch_11 = result_str_chunk[10]
+            batch_12 = result_str_chunk[11]
+
+            last_item_10 = batch_10[-1]
+            batch_11.insert(0, last_item_10)
+            last_item_11 = batch_11[-1]
+            batch_12.insert(0, last_item_11)
+
+            batch_13 = result_str_chunk[12]
+            batch_14 = result_str_chunk[13]
+
+            last_item_12 = batch_12[-1]
+            batch_13.insert(0, last_item_12)
+            last_item_13 = batch_13[-1]
+            batch_14.insert(0, last_item_13)
+
+            batch_15 = result_str_chunk[14]
+            batch_16 = result_str_chunk[15]
+
+            last_item_14 = batch_14[-1]
+            batch_15.insert(0, last_item_14)
+            last_item_15 = batch_15[-1]
+            batch_16.insert(0, last_item_15)
+
+            batch_17 = result_str_chunk[16]
+            batch_18 = result_str_chunk[17]
+
+            last_item_16 = batch_16[-1]
+            batch_17.insert(0, last_item_16)
+            last_item_17 = batch_17[-1]
+            batch_18.insert(0, last_item_17)
+
+            batch_19 = result_str_chunk[18]
+            batch_20 = result_str_chunk[19]
+
+            last_item_18 = batch_18[-1]
+            batch_19.insert(0, last_item_18)
+            last_item_19 = batch_19[-1]
+            batch_20.insert(0, last_item_19)
+
+            batch_21 = result_str_chunk[20]
+            batch_22 = result_str_chunk[21]
+
+            last_item_20 = batch_20[-1]
+            batch_21.insert(0, last_item_20)
+            last_item_21 = batch_21[-1]
+            batch_22.insert(0, last_item_21)
+
+            batch_23 = result_str_chunk[22]
+            batch_24 = result_str_chunk[23]
+
+            last_item_22 = batch_22[-1]
+            batch_23.insert(0, last_item_22)
+            last_item_23 = batch_23[-1]
+            batch_24.insert(0, last_item_23)
+
+            batch_25 = result_str_chunk[24]
+            batch_26 = result_str_chunk[25]
+
+            last_item_24 = batch_24[-1]
+            batch_25.insert(0, last_item_24)
+            last_item_25 = batch_25[-1]
+            batch_26.insert(0, last_item_25)
+
+            #  - - - - - Get value of list object- - - - - - #
+
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+            batch_11_val = latlong_summary(batch_11)
+            batch_12_val = latlong_summary(batch_12)
+            batch_13_val = latlong_summary(batch_13)
+            batch_14_val = latlong_summary(batch_14)
+            batch_15_val = latlong_summary(batch_15)
+            batch_16_val = latlong_summary(batch_16)
+            batch_17_val = latlong_summary(batch_17)
+            batch_18_val = latlong_summary(batch_18)
+            batch_19_val = latlong_summary(batch_19)
+            batch_20_val = latlong_summary(batch_20)
+            batch_21_val = latlong_summary(batch_21)
+            batch_22_val = latlong_summary(batch_22)
+            batch_23_val = latlong_summary(batch_23)
+            batch_24_val = latlong_summary(batch_24)
+            batch_25_val = latlong_summary(batch_25)
+            batch_26_val = latlong_summary(batch_26)
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                             batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val,
+                                             batch_11_val, batch_12_val, batch_13_val, batch_14_val, batch_15_val,
+                                             batch_16_val, batch_17_val, batch_18_val, batch_19_val, batch_20_val,
+                                             batch_21_val, batch_22_val, batch_23_val, batch_24_val, batch_25_val,
+                                             batch_26_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+
+            return route_distance
+
+    elif 752 <= num_post_code <= 850:
+        """ 850 <= num_post_code <= 750: """
+        print "This is this is normal 850 / 34"
+
+        result_str = ""
+
+        for postal_code in propose_result:
+            if not result_str:
+                result_str += str(postal_code)
+            else:
+                result_str += "_" + str(postal_code)
+
+        # Remove square brackets and single quotes and back to list object
+        result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
+        result_str = result_str.strip()
+        result_str_split = result_str.split(",")
+
+        # Chunk it
+        result_str_chunk = sorting.chunkIt(result_str_split, 34)
+
+        if len(result_str_chunk) == 35:
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            batch_11 = result_str_chunk[10]
+            batch_12 = result_str_chunk[11]
+
+            last_item_10 = batch_10[-1]
+            batch_11.insert(0, last_item_10)
+            last_item_11 = batch_11[-1]
+            batch_12.insert(0, last_item_11)
+
+            batch_13 = result_str_chunk[12]
+            batch_14 = result_str_chunk[13]
+
+            last_item_12 = batch_12[-1]
+            batch_13.insert(0, last_item_12)
+            last_item_13 = batch_13[-1]
+            batch_14.insert(0, last_item_13)
+
+            batch_15 = result_str_chunk[14]
+            batch_16 = result_str_chunk[15]
+
+            last_item_14 = batch_14[-1]
+            batch_15.insert(0, last_item_14)
+            last_item_15 = batch_15[-1]
+            batch_16.insert(0, last_item_15)
+
+            batch_17 = result_str_chunk[16]
+            batch_18 = result_str_chunk[17]
+
+            last_item_16 = batch_16[-1]
+            batch_17.insert(0, last_item_16)
+            last_item_17 = batch_17[-1]
+            batch_18.insert(0, last_item_17)
+
+            batch_19 = result_str_chunk[18]
+            batch_20 = result_str_chunk[19]
+
+            last_item_18 = batch_18[-1]
+            batch_19.insert(0, last_item_18)
+            last_item_19 = batch_19[-1]
+            batch_20.insert(0, last_item_19)
+
+            batch_21 = result_str_chunk[20]
+            batch_22 = result_str_chunk[21]
+
+            last_item_20 = batch_20[-1]
+            batch_21.insert(0, last_item_20)
+            last_item_21 = batch_21[-1]
+            batch_22.insert(0, last_item_21)
+
+            batch_23 = result_str_chunk[22]
+            batch_24 = result_str_chunk[23]
+
+            last_item_22 = batch_22[-1]
+            batch_23.insert(0, last_item_22)
+            last_item_23 = batch_23[-1]
+            batch_24.insert(0, last_item_23)
+
+            batch_25 = result_str_chunk[24]
+            batch_26 = result_str_chunk[25]
+
+            last_item_24 = batch_24[-1]
+            batch_25.insert(0, last_item_24)
+            last_item_25 = batch_25[-1]
+            batch_26.insert(0, last_item_25)
+
+            batch_27 = result_str_chunk[26]
+            batch_28 = result_str_chunk[27]
+
+            last_item_26 = batch_26[-1]
+            batch_27.insert(0, last_item_26)
+            last_item_27 = batch_27[-1]
+            batch_28.insert(0, last_item_27)
+
+            batch_29 = result_str_chunk[28]
+            batch_30 = result_str_chunk[29]
+
+            last_item_28 = batch_28[-1]
+            batch_29.insert(0, last_item_28)
+            last_item_29 = batch_29[-1]
+            batch_30.insert(0, last_item_29)
+
+            batch_31 = result_str_chunk[30]
+            batch_32 = result_str_chunk[31]
+
+            last_item_30 = batch_30[-1]
+            batch_31.insert(0, last_item_30)
+            last_item_31 = batch_31[-1]
+            batch_32.insert(0, last_item_31)
+
+            batch_33 = result_str_chunk[32]
+            batch_34 = result_str_chunk[33]
+
+            last_item_32 = batch_32[-1]
+            batch_33.insert(0, last_item_32)
+            last_item_33 = batch_33[-1]
+            batch_34.insert(0, last_item_33)
+
+            batch_35 = result_str_chunk[34]
+
+            last_item_34 = batch_34[-1]
+            batch_35.insert(0, last_item_34)
+
+            #  - - - - - Get value of list object- - - - - - #
+
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+            batch_11_val = latlong_summary(batch_11)
+            batch_12_val = latlong_summary(batch_12)
+            batch_13_val = latlong_summary(batch_13)
+            batch_14_val = latlong_summary(batch_14)
+            batch_15_val = latlong_summary(batch_15)
+            batch_16_val = latlong_summary(batch_16)
+            batch_17_val = latlong_summary(batch_17)
+            batch_18_val = latlong_summary(batch_18)
+            batch_19_val = latlong_summary(batch_19)
+            batch_20_val = latlong_summary(batch_20)
+            batch_21_val = latlong_summary(batch_21)
+            batch_22_val = latlong_summary(batch_22)
+            batch_23_val = latlong_summary(batch_23)
+            batch_24_val = latlong_summary(batch_24)
+            batch_25_val = latlong_summary(batch_25)
+            batch_26_val = latlong_summary(batch_26)
+            batch_27_val = latlong_summary(batch_27)
+            batch_28_val = latlong_summary(batch_28)
+            batch_29_val = latlong_summary(batch_29)
+            batch_30_val = latlong_summary(batch_30)
+            batch_31_val = latlong_summary(batch_31)
+            batch_32_val = latlong_summary(batch_32)
+            batch_33_val = latlong_summary(batch_33)
+            batch_34_val = latlong_summary(batch_34)
+            batch_35_val = latlong_summary(batch_35)
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                            batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val,
+                                            batch_11_val, batch_12_val, batch_13_val, batch_14_val, batch_15_val,
+                                            batch_16_val, batch_17_val, batch_18_val, batch_19_val, batch_20_val,
+                                            batch_21_val, batch_22_val, batch_23_val, batch_24_val, batch_25_val,
+                                            batch_26_val, batch_27_val, batch_28_val, batch_29_val, batch_30_val,
+                                            batch_31_val, batch_32_val, batch_33_val, batch_34_val, batch_35_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+
+            return route_distance
+
+        else:
+
+            # Separate each part of Chunk object
+            batch_1 = result_str_chunk[0]
+            batch_2 = result_str_chunk[1]
+
+            # Get Last item and insert in the index
+            last_item_1 = batch_1[-1]
+            batch_2.insert(0, last_item_1)
+
+            batch_3 = result_str_chunk[2]
+            batch_4 = result_str_chunk[3]
+
+            # Get Last item and insert in the index
+            last_item_2 = batch_2[-1]
+            batch_3.insert(0, last_item_2)
+            last_item_3 = batch_3[-1]
+            batch_4.insert(0, last_item_3)
+
+            batch_5 = result_str_chunk[4]
+            batch_6 = result_str_chunk[5]
+
+            # Get Last item and insert in the index
+            last_item_4 = batch_4[-1]
+            batch_5.insert(0, last_item_4)
+            last_item_5 = batch_5[-1]
+            batch_6.insert(0, last_item_5)
+
+            batch_7 = result_str_chunk[6]
+            batch_8 = result_str_chunk[7]
+
+            last_item_6 = batch_6[-1]
+            batch_7.insert(0, last_item_6)
+            last_item_7 = batch_7[-1]
+            batch_8.insert(0, last_item_7)
+
+            batch_9 = result_str_chunk[8]
+            batch_10 = result_str_chunk[9]
+
+            last_item_8 = batch_8[-1]
+            batch_9.insert(0, last_item_8)
+            last_item_9 = batch_9[-1]
+            batch_10.insert(0, last_item_9)
+
+            batch_11 = result_str_chunk[10]
+            batch_12 = result_str_chunk[11]
+
+            last_item_10 = batch_10[-1]
+            batch_11.insert(0, last_item_10)
+            last_item_11 = batch_11[-1]
+            batch_12.insert(0, last_item_11)
+
+            batch_13 = result_str_chunk[12]
+            batch_14 = result_str_chunk[13]
+
+            last_item_12 = batch_12[-1]
+            batch_13.insert(0, last_item_12)
+            last_item_13 = batch_13[-1]
+            batch_14.insert(0, last_item_13)
+
+            batch_15 = result_str_chunk[14]
+            batch_16 = result_str_chunk[15]
+
+            last_item_14 = batch_14[-1]
+            batch_15.insert(0, last_item_14)
+            last_item_15 = batch_15[-1]
+            batch_16.insert(0, last_item_15)
+
+            batch_17 = result_str_chunk[16]
+            batch_18 = result_str_chunk[17]
+
+            last_item_16 = batch_16[-1]
+            batch_17.insert(0, last_item_16)
+            last_item_17 = batch_17[-1]
+            batch_18.insert(0, last_item_17)
+
+            batch_19 = result_str_chunk[18]
+            batch_20 = result_str_chunk[19]
+
+            last_item_18 = batch_18[-1]
+            batch_19.insert(0, last_item_18)
+            last_item_19 = batch_19[-1]
+            batch_20.insert(0, last_item_19)
+
+            batch_21 = result_str_chunk[20]
+            batch_22 = result_str_chunk[21]
+
+            last_item_20 = batch_20[-1]
+            batch_21.insert(0, last_item_20)
+            last_item_21 = batch_21[-1]
+            batch_22.insert(0, last_item_21)
+
+            batch_23 = result_str_chunk[22]
+            batch_24 = result_str_chunk[23]
+
+            last_item_22 = batch_22[-1]
+            batch_23.insert(0, last_item_22)
+            last_item_23 = batch_23[-1]
+            batch_24.insert(0, last_item_23)
+
+            batch_25 = result_str_chunk[24]
+            batch_26 = result_str_chunk[25]
+
+            last_item_24 = batch_24[-1]
+            batch_25.insert(0, last_item_24)
+            last_item_25 = batch_25[-1]
+            batch_26.insert(0, last_item_25)
+
+            batch_27 = result_str_chunk[26]
+            batch_28 = result_str_chunk[27]
+
+            last_item_26 = batch_26[-1]
+            batch_27.insert(0, last_item_26)
+            last_item_27 = batch_27[-1]
+            batch_28.insert(0, last_item_27)
+
+            batch_29 = result_str_chunk[28]
+            batch_30 = result_str_chunk[29]
+
+            last_item_28 = batch_28[-1]
+            batch_29.insert(0, last_item_28)
+            last_item_29 = batch_29[-1]
+            batch_30.insert(0, last_item_29)
+
+            batch_31 = result_str_chunk[30]
+            batch_32 = result_str_chunk[31]
+
+            last_item_30 = batch_30[-1]
+            batch_31.insert(0, last_item_30)
+            last_item_31 = batch_31[-1]
+            batch_32.insert(0, last_item_31)
+
+            batch_33 = result_str_chunk[32]
+            batch_34 = result_str_chunk[33]
+
+            last_item_32 = batch_32[-1]
+            batch_33.insert(0, last_item_32)
+            last_item_33 = batch_33[-1]
+            batch_34.insert(0, last_item_33)
+
+            #  - - - - - Get value of list object- - - - - - #
+
+            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
+            batch_2_val = latlong_summary(batch_2)
+            batch_3_val = latlong_summary(batch_3)
+            batch_4_val = latlong_summary(batch_4)
+            batch_5_val = latlong_summary(batch_5)
+            batch_6_val = latlong_summary(batch_6)
+            batch_7_val = latlong_summary(batch_7)
+            batch_8_val = latlong_summary(batch_8)
+            batch_9_val = latlong_summary(batch_9)
+            batch_10_val = latlong_summary(batch_10)
+            batch_11_val = latlong_summary(batch_11)
+            batch_12_val = latlong_summary(batch_12)
+            batch_13_val = latlong_summary(batch_13)
+            batch_14_val = latlong_summary(batch_14)
+            batch_15_val = latlong_summary(batch_15)
+            batch_16_val = latlong_summary(batch_16)
+            batch_17_val = latlong_summary(batch_17)
+            batch_18_val = latlong_summary(batch_18)
+            batch_19_val = latlong_summary(batch_19)
+            batch_20_val = latlong_summary(batch_20)
+            batch_21_val = latlong_summary(batch_21)
+            batch_22_val = latlong_summary(batch_22)
+            batch_23_val = latlong_summary(batch_23)
+            batch_24_val = latlong_summary(batch_24)
+            batch_25_val = latlong_summary(batch_25)
+            batch_26_val = latlong_summary(batch_26)
+            batch_27_val = latlong_summary(batch_27)
+            batch_28_val = latlong_summary(batch_28)
+            batch_29_val = latlong_summary(batch_29)
+            batch_30_val = latlong_summary(batch_30)
+            batch_31_val = latlong_summary(batch_31)
+            batch_32_val = latlong_summary(batch_32)
+            batch_33_val = latlong_summary(batch_33)
+            batch_34_val = latlong_summary(batch_34)
+
+            # Sum up the two batch
+            route_distance_add_array = []
+            route_distance_add_array.extend([batch_1_val, batch_2_val, batch_3_val, batch_4_val, batch_5_val,
+                                            batch_6_val, batch_7_val, batch_8_val, batch_9_val, batch_10_val,
+                                            batch_11_val, batch_12_val, batch_13_val, batch_14_val, batch_15_val,
+                                            batch_16_val, batch_17_val, batch_18_val, batch_19_val, batch_20_val,
+                                            batch_21_val, batch_22_val, batch_23_val, batch_24_val, batch_25_val,
+                                            batch_26_val, batch_27_val, batch_28_val, batch_29_val, batch_30_val,
+                                            batch_31_val, batch_32_val, batch_33_val, batch_34_val])
+
+            route_distance_add = sum(route_distance_add_array)
+            route_distance = float(route_distance_add) / 1000
+
+            return route_distance
+
+    else:
+        errors = []
+        errors.extend(['Exceeding volume in postal code'])
+
+        return errors
+
+
+def latlong_summary_exceeding(list):
+
+    url_disc = "http://dev.logistics.lol:5000/viaroute?"
+    proposed_latlong = ""
+
+    for current_post in list:
+        current_post = current_post.strip()
+
+        # Convert to Lat-Long the postal code
+        destinations = postalcode_latlong(current_post)
+
+        if not destinations:
+            proposed_latlong += str(destinations)
+        else:
+            proposed_latlong += "&loc=" + str(destinations)
+
+    proposed_result = proposed_latlong
+    time.sleep(1)
+
+    proposed_api = url_disc + proposed_result
+    dist_val = urllib2.urlopen(proposed_api)
+    wjson = dist_val.read()
+    distance2 = json.loads(wjson)
+
+    distance_val = distance2['route_summary']['total_distance']
+
+    return distance_val
+
+
+def latlong_summary(list):
+
+    url_disc = "http://dev.logistics.lol:5000/viaroute?"
+    proposed_latlong = ""
+
+    for current_post in list:
+        current_post = current_post.strip()
+
+        # Convert to Lat-Long the postal code
+        destinations = postalcode_latlong(current_post)
+
+        if not destinations:
+            proposed_latlong += str(destinations)
+        else:
+            proposed_latlong += "&loc=" + str(destinations)
+
+    proposed_result = proposed_latlong
+    proposed_api = url_disc + proposed_result
+    print('proposed_api-2'), proposed_api
+    dist_val = urllib2.urlopen(proposed_api, timeout=60)
+
+    wjson = dist_val.read()
+    distance2 = json.loads(wjson)
+
+    distance_val = distance2['route_summary']['total_distance']
+
+    return distance_val
+
+
+def latlong_summary_starting(list, origin_destination):
+
+    url_disc = "http://dev.logistics.lol:5000/viaroute?loc="
+    proposed_latlong = ""
+
+    for current_post in list:
+        current_post = current_post.strip()
+
+        # Convert to Lat-Long the postal code
+        destinations = postalcode_latlong(current_post)
+
+        if not destinations:
+            proposed_latlong += str(destinations)
+        else:
+            proposed_latlong += "&loc=" + str(destinations)
+
+    proposed_result = origin_destination + proposed_latlong
+    proposed_api = url_disc + proposed_result
+
+    print('proposed_api-1'), proposed_api
+    # result = urlfetch.fetch(url_disc, method='POST', deadline=30)
+
+    dist_val = urllib2.urlopen(proposed_api, timeout=60)
+
+    # - - - - - - -#
+
+    # resource = urlfetch.fetch("http://tinyurl.com/api-create.php", urlfetch.POST)
+
+    # # logging.info(resource.content)
+    # # self.response.out.write(resource.content)
+
+    # - - - - - - -#
+    wjson = dist_val.read()
+    distance2 = json.loads(wjson)
+    distance_val = distance2['route_summary']['total_distance']
+
+    return distance_val
+
+
+# - - - - - validation for company number - - - - - #
+# Function to iterate the number of companies and return to UI
+class SortingPrep_comp(webapp2.RequestHandler):
+    def post(self):
+
+        postal_sequence = self.request.get("postal_sequence")
+
+        # - - - - - - - - -  REQUEST - - - - - - - - - - #
+
+        # Error list for invalid postal codes
+        no_record_postal = []
+
+        response = {}
+        errors = []
+
+        # Remove trailing whitespaces
+        postal_sequence = postal_sequence.strip()
+
+        # Split up the input by newlines
+        postal_sequence_split = str(postal_sequence).split("\n")
+
+        # For storage of a full valid sequence of postal codes
+        postal_sequence_list = []
+        postal_sequence_current = []
+
+        # Counter checking of Postal Code
+        num_post_code = 0
+
+        # Extract the postal pair and validate the postal code while ignoring first line of headers
+        # Note: Order ID is untouched as we do not know their format
+        for index in range(0, len(postal_sequence_split)):
+            num_post_code = num_post_code + 1
+
+            # Retrieve each postal pair
+            postal_pair = postal_sequence_split[index]
+
+            # Replace all tab spaces with normal spaces and remove trailing whitespace
+            postal_pair = postal_pair.replace("\t", " ")
+            postal_pair = postal_pair.strip()
+
+            # Split the order ID/postal code pair by normal spacing
+            postal_pair_split = postal_pair.split(" ")
+
+            if len(postal_pair_split) == 3:
+                print 'Please add Company in 4th column'
+                errors.extend(['Please add Company in 4th column <br />'])
+
+            if len(errors) == 0:
+                postal_code = str(postal_pair_split[0])
+                order_id = str(postal_pair_split[1])
+                track_capacity = int(postal_pair_split[2])
+                sorted_comp = postal_pair_split[3]
+
+                postal_sequence_current.append(postal_code)
+                postal_sequence_list.append([postal_code, str(order_id), int(track_capacity), sorted_comp])
+
+        # - - - - - - HQ Starting point Lat Long - - - - - #
+        """ each company will separated and this will indicate the color plotting in map like vehicle count """
+        """ Vehicle-color will same method of color as for Company separation """
+
+        # Create variable for each request
+        company_list_grp = []
+        postal_sequence_company = []
+
+        # for Company Sorting
+        # starting_address_comp = ['461051', '730304']
+        # starting_address_arr_comp = []
+
+        for company in range(len(postal_sequence_list)):
+            companyList = postal_sequence_list[company]
+            company_list_grp.append(companyList)
+
+        for key, group in itertools.groupby(company_list_grp, operator.itemgetter(3)):
+            # group as per company
+            postal_sequence_company.append(list(group))
+
+        # count the company
+        num_comp_val = int(len(postal_sequence_company))
+
+        # Converting JSON
+        response['status'] = 'ok'
+        response['sort_company'] = 'true'
+        response['data_valid_company'] = [
+            {
+                "required_fields": {
+                    "propose_results": postal_sequence_company,
+                    "num_comp_val": num_comp_val,
+                }
+
+            }
+        ]
+        # else:
+        #     errors.extend(['Error in Postal Code'])
+
+        if len(errors) > 0:
+            response['status'] = 'error'
+            response['errors'] = errors
+
+        logging.info(response)
+        self.response.out.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.out.write(json.dumps(response, indent=3))
+
+
+app = webapp2.WSGIApplication(routes=[
+    (r'/sorting', SortingPrep),
+    (r'/sorting_comp', SortingPrep_comp)
+], config=base.sessionConfig, debug=True)

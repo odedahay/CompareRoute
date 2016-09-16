@@ -1,0 +1,186 @@
+{% extends "main.html" %}
+{% block title %}Compare Routing{% endblock %}
+{% include "commons/navbar.html" %}
+{% block content %}
+
+<style>
+    #progress{
+     width:300px;
+     height:20px;
+     border:1px solid rgba(0,0,0,0.5);
+    }
+    #bar{
+     width:0%;
+     height:20px;
+     background-color:green;
+     -webkit-transition:width 700ms ease;   
+    }
+
+</style>
+
+<div class="container theme-showcase" role="main" id="compare">
+    <div class="page-header">
+        <h2>CompareRoute</h2>
+        <p class="lead">Route Details:</p>
+        <hr />
+        <div class="text-right">
+            {% for back in web_routes %}
+                <span><a href="/compare-data" class="btn btn-info btn-sm">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back</a></span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+        {% for route_web in web_routes %}
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Created Date </th>
+                        <th>Starting Postal Code </th>
+                        <th>No. of Truck </th>
+                        <th>Truck Capacity </th>
+                        <th>Sorted Postal Code </th>
+                        <th>Return Truck to Starting Postal (HQ) </th>
+                        <th>Current Total Distance </th>
+                        <th>Proposed Total Distance </th>
+                    </tr>
+                    <tr>
+                        <td> {{ route_web.created_date.strftime('%Y-%m-%d %H:%m') }}</td>
+                        <td> {{ route_web.starting_point }}</td>
+                        <td> {{ route_web.no_vehicle }}</td>
+                        <td> {{ route_web.vehicle_capacity }}</td>
+                        <td> {{ route_web.postal_count }}</td>
+                        <td> {{ route_web.return_vehicle }}</td>
+                        <td> {{ route_web.current_total_dist }}</td>
+                        <td> {{ route_web.proposed_total_dist }}</td>
+                    </tr>
+                </table>
+        {% endfor %}
+
+        </div>
+    </div>
+    <br /><br />
+    <div class="page-tab">
+        <div class="row">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#proposeTab" aria-controls="proposeTab" role="tab" data-toggle="tab">Proposed Route Data</a>
+                </li>
+                <li role="presentation">
+                    <a href="#currentTab" aria-controls="currentTab" role="tab" data-toggle="tab">Original Route Data</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="proposeTab">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Proposed Routes</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped center">
+                                <thead>
+                                    <tr>
+                                        <!--<th>User Email </th>-->
+                                        <th class="background_color">Truck No. </th>
+                                        <th>Order IDs</th>
+                                        <th>Origin Postal Code</th>
+                                        <th>Destination Postal Code</th>
+                                        <!--<th>Latitude</th>-->
+                                        <!--<th>Longtitude</th>-->
+                                        <!--<th>Route between points</th>-->
+                                        <th>Distance (km)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        {% for propose in web_proposed %}
+                                        <tr>
+                                            <td class="background_color">{{ propose.vehicle_id }}</td>
+                                            <td>{{ propose.order_id }}</td>
+                                            <td>{{ propose.origin_code }}</td>
+                                            <td>{{ propose.postal_code }}</td>
+                                            <!--<td>{{ propose.longVal }}</td>-->
+                                            <!--<td>{{ propose.latVal }}</td>-->
+                                            <!--<td><a href="{{ propose.url_id }}" target="_blank">-->
+                                                <!--<span style="font-size:13px;">{{ propose.url_id }}</span></a></td>-->
+                                            <td>{{ propose.distance }}</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                </tbody>
+                            </table><!-- End of Table -->
+                        </div>
+                    </div><!-- End of Left Col -->
+                </div><!-- End of Propose Tab -->
+
+                <!-- Start for 2nd Tab // Original Routes-->
+                <div role="tabpanel" class="tab-pane" id="currentTab">
+                    <div class="row">
+                        <div class="col-md-12">
+                           <h3>Current Routes</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped center">
+                                <thead>
+                                    <tr>
+                                        <!--<th>User Email </th>-->
+                                        <th class="background_color">Truck No. </th>
+                                        <th>Order IDs</th>
+                                        <th>Origin Postal Code</th>
+                                        <th>Destination Postal Code</th>
+                                        <!--<th>Latitude</th>-->
+                                        <!--<th>Longtitude</th>-->
+                                        <!--<th>Route between points</th>-->
+                                        <th>Distance (km)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        {% for propose in web_current %}
+                                        <tr>
+                                            <td class="background_color">{{ propose.vehicle_id }}</td>
+                                            <td>{{ propose.order_id }}</td>
+                                            <td>{{ propose.origin_code }}</td>
+                                            <td>{{ propose.postal_code }}</td>
+                                            <!--<td>{{ propose.longVal }}</td>-->
+                                            <!--<td>{{ propose.latVal }}</td>-->
+                                            <!--<td><a href="{{ propose.url_id }}" target="_blank">-->
+                                                <!--<span style="font-size:13px;">{{ propose.url_id }}</span></a></td>-->
+                                            <td>{{ propose.distance }}</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                </tbody>
+                            </table><!-- End of Table -->
+                        </div>
+                    </div><!-- End of Left Col -->
+                </div><!-- End of Propose Tab -->
+            </div>
+        </div>
+    </div><!-- End Page Tab-->
+
+    <!--  Progress Bar -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div id="progressbar"></div>
+        </div>
+    </div>
+
+</div><!-- container theme-showcase -->
+<hr />
+
+<a href="#" class="scrollToTop">
+    <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>
+    <!--Scroll To Top-->
+</a>
+
+<script src="/js/jquery.progresstimer.js"></script>
+<script src="/js/excel_dl/jquery.btechco.excelexport.js"></script>
+<script src="/js/excel_dl/jquery.base64.js"></script>
+
+{% endblock %}

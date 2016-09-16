@@ -1,0 +1,70 @@
+{% extends "admin-base.html" %}
+{% block title %}Admin Page - Summary Route Result{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="page-header">
+        <h2>User Summary Details - edit</h2>
+    </div>
+    <div class="row">
+        <div class="col-xs-8">
+			 {% if update_error %}
+				<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
+				    <p style="text-align: center">{{update_error}}</p>
+				</div>
+            {% endif %}
+            <form method="POST" action="/admin-credits-edit">
+
+				<label>User ID</label>
+				<input class="form-control" type="text" style="pointer-events: none; border-color:#eee"  id="user_id" name="user_id" value="{{user_accounts.key.id()}}">
+				<br />
+
+                <label>Full Name</label>
+				<input class="form-control" type="text" id="full_name" name="full_name" value="{{user_accounts.name}}" required>
+				<br />
+
+				<label>User Email</label>
+                <input class="form-control" type="text" id="user_email" name="user_email" value="{{user_accounts.email}}" required>
+				<br />
+
+				<label>API Key</label><br />
+				<input class="form-control" type="text" id="api_Key" name="api_Key" value="{{user_accounts.api_key}}" required>
+
+				<br />
+                <label>API Credits</label><br />
+				<input class="form-control" type="number" id="api_credits" name="api_credits" value="{{user_accounts.api_credits}}" required>
+				<span id="cfm_new_password_status">&nbsp</span>
+				<br /><br />
+
+				<button type="submit" id="" class="btn btn-primary">Save</button>
+
+				<a href="/admin-credits" class="btn btn-info">
+					<i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
+			</form>
+        </div>
+        <div class="col-xs-4">
+
+            <!--<form class="form-inline">-->
+              <!--<div class="form-group">-->
+                <!--<label class="sr-only">API Key</label>-->
+                <!--<p class="form-control-static">email@example.com</p>-->
+              <!--</div>-->
+              <!--<div class="form-group">-->
+                <!--<label for="inputPassword2" class="sr-only">Password</label>-->
+                <!--<input type="text" class="form-control" id="inputPassword2" placeholder="">-->
+              <!--</div>-->
+              <!--<button type="button" class="btn btn-success" id="routeBtn" role="button" >Reset API</button>-->
+              <!--&lt;!&ndash;<button type="submit" class="btn btn-primary">Confirm identity</button>&ndash;&gt;-->
+            <!--</form>-->
+
+        </div>
+
+    </div>
+</div>
+
+<a href="#" class="scrollToTop">
+    <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>
+    <!--Scroll To Top-->
+</a>
+
+{% endblock %}

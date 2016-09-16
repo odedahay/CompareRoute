@@ -1,0 +1,99 @@
+{% extends "main.html" %}
+
+{% block title %}Compare Routing{% endblock %}
+
+
+
+{% block content %}
+		
+		<div class="jumbotron">
+			<div class="container">
+			</br>
+        		
+    			<table>
+    				<tr>
+    					<td><b>Company Email</b></td>
+{#    					<td><b>Web Service Key</b></td>#}
+    				</tr>
+    				
+    				<tr>
+    					<td><input type="text" name="email" value="{{email}}" size="30" disabled></td>
+{#						<td><input type="text" name="ws_key" value="{{ws_key}}" size="60" disabled></td>#}
+    				</tr>
+    			</table>
+				</br>
+				
+				<form method="POST" action="/profile">
+					<b>Old password</b></br>
+					<input type="password" name="old_password" required>
+					</br></br>
+					
+					<b>New password</b></br>
+					<input type="password" id="new_password" name="new_password" required>
+					<span id="new_password_status">&nbsp</span>
+					</br></br>
+							
+							
+					<b>Confirm new password</b></br>
+					<input type="password" id="cfm_new_password" name="cfm_new_password" required>
+					<span id="cfm_new_password_status">&nbsp</span>
+					</br></br>
+	    				
+    				<input type="hidden" name="email" value="{{ email }}">
+    				
+    				<button type="submit" id="change_password" class="btn btn-sm btn-primary" disabled>Change Password</button>
+					{% if change_password_error %}
+						<span id="change_password_error" style="color: red">{{change_password_error}}</span>
+					{% elif change_password_success %}
+						<span id="change_password_success" style="color: blue">{{change_password_success}}</span>
+					{% endif %}
+	    			
+    			</form>
+    			
+			</div><!-- container -->
+		</div><!-- jumbotron -->
+		
+		
+		<script>
+			// Timer variable
+			var timeoutId = 0;
+			
+			// Validate the new password to have a length of 6
+			$(function(){
+				$("#new_password").keyup(function(){
+					var new_password = $("#new_password").val()
+					
+					if(new_password.length < 6){
+						$("#new_password_status").html("<font color=\"red\">Password must be length of 6</font>");
+					}else{
+						$("#new_password_status").html("<font color=\"green\">Valid password</font>");
+						checkPasswordMatch();
+					}
+				})
+			});
+			
+			// Validate the confirm new password to ensure it matches the new password
+			$(function(){
+				$("#cfm_new_password").keyup(function(){
+					checkPasswordMatch();
+				})
+			});
+			
+			// If new password matches the confirm new password, activate the submit button
+			function checkPasswordMatch(){
+				var new_password = $("#new_password").val();
+				var cfm_new_password = $("#cfm_new_password").val();
+				
+				if(new_password != cfm_new_password){
+					$("#cfm_new_password_status").html("<font color=\"red\">Passwords mismatch</font>");
+					$("#change_password").prop("disabled", true);
+				}else{
+					$("#cfm_new_password_status").html("<font color=\"green\">Passwords match</font>");
+					$("#change_password").prop("disabled", false);
+				}
+			}
+			
+		</script>
+{% include "compare/compare_js.html" %}
+
+{% endblock %}

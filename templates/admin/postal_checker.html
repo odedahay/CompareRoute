@@ -1,0 +1,73 @@
+{% extends "admin-base.html" %}
+{% block title %}Admin Page - Postal Code{% endblock %}
+
+{% block content %}
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+	 #map-canvas
+		  {
+			/* width : 500px;  /* map width */
+			height: 500px;  /* map height */
+		  }
+
+</style>
+
+<div class="container theme-showcase" role="main">
+    <div class="page-header">
+        <h2>Postal Code - List</h2>
+    </div>
+    <div class="row">
+        <h3>Route's Details</h3>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div>
+                        <label>Postal Code </label>
+                        <input type="text" id="address" class="form-control" name="postal_code"
+                               value="{{ postalCheckers.postal_code }}"/>
+                        <br/>
+
+                        <p id="resultValue" style="padding:3px;color:red;"></p>
+                        <button onclick="UpdateMap()" class="btn btn-primary">Locate Postal Code</button>
+
+                        <a href="/admin-postalcode-add?compare_id={{postalCheckers.compare_id}}&postalcode={{postalCheckers.postal_code}}"
+                               id="addPostalBtn" class="btn btn-success" role="button">Add</a>
+
+                    </div>
+
+                </li>
+            </ul>
+
+        </div>
+        <div class="col-xs-8">
+            <div id='map-canvas'></div>
+            <a href="/admin-postalcode" class="btn btn-info" style="margin-top:15px;"><i class="fa fa-step-backward"
+                                                                                         aria-hidden="true"></i> Go Back</a>
+        </div>
+    </div>
+    <script type="text/javascript" src="/static/js/route/minimap.js"></script>
+
+{% endblock %}

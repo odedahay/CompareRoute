@@ -1,0 +1,67 @@
+{% extends "admin-base.html" %}
+{% block title %}Admin Page - Postal Code{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="page-header">
+        <div class="row">
+            <h2>Postal Code - List</h2>
+            <!--<p class="lead">Paste your Postal code and Order Ids data below to route it:</p>-->
+        </div>
+    </div>
+    <div class="row">
+        <h3>Postal Code Record</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            {% include "admin/admin-postalcode-2ndnav.html" %}
+        </div>
+        <div class="col-md-9">
+            <form class="" style="width:300px; margin-bottom:30px;" role="search" action="/admin-search">
+                <div class="form-group input-group">
+                    <input type="text" class="form-control" placeholder="Search Postal Code" value="{{ query }}" name="q">
+
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+
+            </form>
+
+            {% if query %}
+                <p>Postal Code : {{ query }}</p>
+            {% elif errormsg %}
+                <p style="color:red">{{ errormsg }}</p>
+            {% endif %}
+            <br />
+            <table class="table table-bordered">
+                <tr>
+                    <th>Postal Code</th>
+                    <th>Latitude</th>
+                    <th>Longtitude</th>
+                    <th>Modify</th>
+                </tr>
+                 {% for record in results %}
+                <tr>
+                    <td>{{ record.postal_code }}</td>
+                    <td>{{ record.lat }}</td>
+                    <td>{{ record.long }}</td>
+                    <td>
+                        <table class="table" style="margin-bottom:0px;">
+                            <tr>
+                                <td><a href="/admin-search-edit?postal_code={{record.postal_code}}" class="btn btn-primary btn-sm" role="button">Edit</a></td>
+                                <td><a href="/admin-search-del?postal_code={{record.postal_code}}" class="btn btn-primary btn-sm" role="button" id="move-button">Delete</a></td>
+                            </tr>
+                        </table>
+
+                    </td>
+
+                </tr>
+                 {% endfor %}
+            </table>
+        </div>
+    </div>
+</div><!-- container -->
+
+{% endblock %}

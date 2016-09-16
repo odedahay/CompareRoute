@@ -1,0 +1,81 @@
+{% extends "main.html" %}
+{% block title %}Compare Routing{% endblock %}
+{% include "commons/navbar.html" %}
+{% block content %}
+
+<style>
+    #progress{
+     width:300px;
+     height:20px;
+     border:1px solid rgba(0,0,0,0.5);
+    }
+    #bar{
+     width:0%;
+     height:20px;
+     background-color:green;
+     -webkit-transition:width 700ms ease;   
+    }
+
+</style>
+
+<div class="container theme-showcase" role="main" id="compare">
+    <div class="page-header">
+        <h2>CompareRoute</h2>
+        <p class="lead">Route Details:</p>
+        <hr />
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped center">
+                    <thead>
+                        <tr>
+                             <th>Created Date</th>
+                            <th>Starting Postal Code </th>
+                            <th>No. of Truck </th>
+                            <th>Sorted Postal Code</th>
+                            <th>Returning Vehicle</th>
+                            <th>Current Total Distance</th>
+                            <th>Proposed Total Distance</th>
+                            <th>Total Savings (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for route_web in user_routes_data %}
+                        <tr class='clickable-row' data-href='/compare-data-list?compare_id={{route_web.compare_id}}'>
+                            <td>{{ route_web.created_date.strftime('%Y-%m-%d %H:%m') }}</td>
+                            <td>{{ route_web.starting_point }}</td>
+                            <td>{{ route_web.no_vehicle }}</td>
+                            <td>{{ route_web.postal_count }}</td>
+                            <td>{{ route_web.return_vehicle }}</td>
+                            <td>{{ route_web.current_total_dist }}</td>
+                            <td>{{ route_web.proposed_total_dist }}</td>
+                            <td>{{ route_web.percentage_savings }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table><!-- End of Table -->
+            </div>
+        </div><!-- End of Left Col -->
+    </div>
+
+    <!--  Progress Bar -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div id="progressbar"></div>
+        </div>
+    </div>
+
+</div><!-- container theme-showcase -->
+<hr />
+
+<a href="#" class="scrollToTop">
+    <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>
+    <!--Scroll To Top-->
+</a>
+
+<script src="/js/jquery.progresstimer.js"></script>
+<script src="/js/excel_dl/jquery.btechco.excelexport.js"></script>
+<script src="/js/excel_dl/jquery.base64.js"></script>
+
+{% endblock %}

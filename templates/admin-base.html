@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/loader.css">
+
+    <!-- Google Maps JavaScript -->
+    <!--<script src="https://maps.googleapis.com/maps/api/js?client=gme-republicpolytechnic&v=3.23"></script> -->
+    <!-- src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjokRu-hJdiZClPsvtfbNgRSG8rpwsg14&callback=initMap"> -->
+   
+
+    <style>
+        body {
+            padding-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+{% include "commons/admin_navbar.html" %}
+{% include "commons/admin_reg_modal.html" %}
+
+{% block content %}
+
+{% endblock %}
+<hr />
+{% include "/commons/footer.html" %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+ <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script type="text/javascript" src="/static/js/route/theme.js"></script>
+<script type="text/javascript" src="/static/js/route/theme.js"></script>
+{% include "commons/admin_reg_modal_js.html" %}
+
+</body>
+</html>

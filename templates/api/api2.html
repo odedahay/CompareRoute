@@ -1,0 +1,260 @@
+{% extends "main.html" %}
+{% block title %}Account User{% endblock %}
+{% include "commons/navbar.html" %}
+{% block content %}
+
+<div class="container theme-showcase" role="main">
+        <div class="page-header">
+             <h2>CompareRoute API details</h2>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-xs-8">
+
+				<p>The CompareRoute API offers developers an easy way to utilize CompareRoute's service.</p>
+				<h3>API Access URL</h3>
+				<p>The base URL for the CompareRoute API is <br />
+                    http://compare-route-3.appspot.com/api/v1 </p>
+				<h3>Authentication</h3>
+				<p>The CompareRoute API use HTTP Basic Access Authentication as its authentication mechanism.
+					Use your e-mail address as the username and the API key as the password. You can generate or view your API key at the API Key box at the top of the page.</p>
+				 <p>Input JSON example:</p>
+ <pre style="text-align:left; font-size:11px;">
+{
+    "postalhq": "461051",         // HQ for starting point
+    "postal_result": [
+    ["469001", "Order01", "1"],
+    ["760450", "Order02", "2"],
+    ["596937", "Order03", "2"],
+    ["596740", "Order04", "2"],
+    ["098585", "Order05", "1"],
+    ["109680", "Order06", "1"]
+    ],
+    "vehicle_quantity": 1,       // option for setting number of vehicle
+    "has_return": "true",        // if the deliver truck will return to HQ
+    "priority_capacity":"false", // option for load capacity
+    "vehicle_type": "truck_1",
+    "vehicle_capacity": "10"
+}
+
+</pre>
+<p>JSON's example response</p>
+<pre style="text-align:left; font-size:12px;">Required fields: 'postalhq', 'postal_result', 'vehicle_quantity', '"priority_capacity":"false",'</pre>
+<pre style="text-align:left; font-size:12px;">Normal response example:
+    {"status": "ok",
+    "Results": [....]
+    }</pre>
+<pre style="text-align:left; font-size:12px;">
+Error response example:
+{"status": "error", "errors": ["field's missing"]}
+                </pre>
+<p> <span style="font-size:12px;">(note: below example is set to "vehicle_num: 1")</span></p>
+<pre style="text-align:left; font-size:11px;">
+{
+  "status": "ok",
+  "data_result": {
+    "total_summary_saving:": [
+      {
+        "total_savings": 9.074631141670247,
+        "propose _distance": 88.865,
+        "current_distance": 97.734
+      }
+    ],
+    "capacity_priority": {
+      "priority_capacity": "false",
+      "vehicle_capacity": "10",
+      "vehicle_type": "truck_1"
+    },
+    "vehicle_priority": {
+      "vehicle_num": 1
+    },
+    "has_return": "true",
+    "postal_sequence": [
+      [
+        "469001",
+        "Order01",
+        1
+      ],
+      [
+        "098585",
+        "Order05",
+        1
+      ],
+      [
+        "109680",
+        "Order06",
+        1
+      ],
+      [
+        "596740",
+        "Order04",
+        2
+      ],
+      [
+        "596937",
+        "Order03",
+        2
+      ],
+      [
+        "760450",
+        "Order02",
+        2
+      ],
+      [
+        "560405",
+        "Order07",
+        3
+      ]
+    ]
+  },
+  "starting_postal": "461051"
+</pre>
+<h3>CompareRoute web service sample codes</h3>
+<p>For other various program languages to make using the CompareRoute REST API easier to use.
+    We have list sample codes available for user clients:</p>
+
+<p><b>JavaScript's code</b></p>
+<pre style="text-align:left; font-size:11px;">
+var keyId = "generated_password";
+var userId='email@address.com';
+var data = JSON.stringify({
+  "postalhq": "461051",
+  "postal_result": [
+    [
+      "469001",
+      "Order01",
+      "1"
+    ],
+    [
+      "760450",
+      "Order02",
+      "2"
+    ],
+    [
+      "596937",
+      "Order03",
+      "2"
+    ],
+    [
+      "596740",
+      "Order04",
+      "2"
+    ],
+    [
+      "098585",
+      "Order05",
+      "1"
+    ],
+    [
+      "109680",
+      "Order06",
+      "1"
+    ]
+  ],
+  "vehicle_quantity": 1,
+  "has_return": "true",
+  "priority_capacity": "false",
+  "vehicle_type": "truck_1",
+  "vehicle_capacity": "10"
+});
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "http://localhost:8080/api/v1?userId="+userId+"&keyId="+keyId);
+xhr.setRequestHeader("content-type", "application/json");
+xhr.setRequestHeader("cache-control", "no-cache");
+
+xhr.send(data);
+</pre>
+<p><b>Python's Code</b></p>
+<pre style="text-align:left; font-size:11px;">
+import requests
+
+url = "http://localhost:8080/api/v1"
+
+querystring = {"userId":"email_address","keyId":"user-key"}
+payload = "\n{\n\"postalhq\": \"461051\", \n\"postal_result\": [\n\"469001\", \"Order01\", \"1\"],\n[\"760450\", \"Order02\", \"2\"],\n [\"596937\", \"Order03\", \"2\"],\n    [\"596740\", \"Order04\", \"2\"],\n    [\"098585\", \"Order05\", \"1\"],\n [\"109680\", \"Order06\", \"1\"]\n ],\n \"vehicle_quantity\": 1, \n \"has_return\": \"true\", \n \"priority_capacity\":\"false\",\n    \"vehicle_type\": \"truck_1\",\n    \"vehicle_capacity\": \"10\"\n}"
+headers = {
+    'content-type': "application/json",
+    'cache-control': "no-cache"
+    }
+
+response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
+print(response.text)
+
+</pre>
+<p><b>Curl's code</b></p>
+<pre style="text-align:left; font-size:11px;">
+curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '
+{
+    "postalhq": "461051",
+    "postal_result": [
+    ["469001", "Order01", "1"],
+    ["760450", "Order02", "2"],
+    ["596937", "Order03", "2"],
+    ["596740", "Order04", "2"],
+    ["098585", "Order05", "1"],
+    ["109680", "Order06", "1"]
+    ],
+    "vehicle_quantity": 1,
+    "has_return": "true",
+    "priority_capacity":"false",
+    "vehicle_type": "truck_1",
+    "vehicle_capacity": "10"
+}' "http://localhost:8080/api/v1?userId=email_address&keyId=user-key"
+</pre>
+			</div>
+            <div class="col-xs-4">
+                <div class="box-api">
+                    <h3>Your API Details</h3>
+                    <p>An API key is needed to use the CompareRoute REST API.</p>
+                    <p>You must be logged in to view your API details.</p>
+					<div class="table-responsive">
+
+
+                        <table style="table-layout:fixed; width:300px;">
+
+					  	<tr>
+							<td style="padding-bottom:20px;">Username:</td>
+                            <td style="padding-bottom:20px;">{{email}}</td>
+						</tr>
+						<tr>
+							<td tyle="padding-bottom:20px;">API Key: </td>
+
+							<td style="word-wrap:break-word; padding-bottom:20px;">
+                                <div  id="apikey" style="display:none;">{{api_key_for_user}}</div>
+							</td>
+						</tr>
+			  		</table>
+
+				</div>
+                    <div style="padding-left:100px;">
+                        <button onclick="myFunction()" id="btn" class="btn btn-info">Show Generated API Key</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- container -->
+</div>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<script>
+    function myFunction(){
+    	//document.getElementById("apikey").innerHTML = "{{api_key_for_user}}";
+    	document.getElementById("apikey").style.display = 'inline';
+    	document.getElementById('btn').style.visibility = 'hidden';
+	}
+</script>
+{% endblock %}
+

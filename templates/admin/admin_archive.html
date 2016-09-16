@@ -1,0 +1,36 @@
+{% extends "admin-base.html" %}
+{% block title %}Admin Page - Postal Code{% endblock %}
+
+{% block content %}
+
+<div class="container theme-showcase" role="main">
+    <div class="page-header">
+        <h2>Postal Code Archive</h2>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+           {% include "admin/admin-postalcode-2ndnav.html" %}
+      </div>
+      <div class="col-md-9">
+        <table class="table table-bordered">
+            <tr>
+                <th>Date Added</th>
+                <th>Postal Code by User</th>
+                <th>Postal Code</th>
+            </tr>
+             {% for result_h in postalHistory %}
+            <tr>
+                <td>{{ result_h.created_date }}</td>
+                <td>{{ result_h.user_email }}</td>
+                <td>{{ result_h.postal_code }}</td>
+
+            </tr>
+             {% endfor %}
+        </table>
+
+      </div>
+    </div>
+
+    </div><!-- container -->
+
+{% endblock %}

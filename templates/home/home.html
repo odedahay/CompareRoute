@@ -1,0 +1,203 @@
+{% extends "main.html" %}
+{% block title %}Compare Page{% endblock %}
+
+{% include "commons/navbar.html" %}
+{% block content %}
+
+<!-- Home -->
+<!-- Header -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- <img class="img-responsive" src="img/profile.png" alt=""> -->
+                    <div class="intro-text">
+                        <span class="name" style="font-size:82px;">CompareRoute</span>
+                        <br />
+                        <!-- <hr class="star-light"> -->
+                        <p class="skills" style="font-size:33px; font-weight:500">Fastest route, shortest routes</p><br />
+                        <p class="skills" style="font-size:24px;">Planning out routes manually can be tiresome and is reliant on the experience of senior personnel.</p>
+                        <p class="skills" style="font-size:24px;">Why not automate the process and avoid the pain of planning?</p>
+                        <br /><br />
+                        <a class="btn btn-success btn-lg page-scroll" href="#about">
+                            <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Find out more</a>
+                        </a> 
+                        <a class="btn btn-primary btn-lg" href="#" data-toggle="modal" data-target="#myModal" role="button">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i> Try it now!</a>
+                        </a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>About CompareRoute</h2>
+                    <hr class="star-primary">
+                     <br /> <br />
+                </div>
+            </div>
+             <div class="row">
+               
+                <div class="col-md-4">  
+                    <img class="img-rounded" src="/img/marketing/copy-paste.jpg" width="150" height="150">
+                    <h4 class="service-heading">Simple to use</h4>
+                    <p class="text-muted">Copy and paste your data in.<br />Let us do the work.</p>
+                </div>
+                <div class="col-md-4">
+                    <img class="img-circle" src="/img/marketing/speedometer.jpg" width="150" height="150">
+                    <h4 class="service-heading">Fast and automatic</h4>
+                    <p class="text-muted">We got the algorithm.<br />We give you the results.</p>
+                </div>
+                <div class="col-md-4">
+                    <img class="img-rounded" src="/img/marketing/command-prompt.png" width="150" height="150">
+                    <h4 class="service-heading">Development</h4>
+                    <p class="text-muted">Use it as tool to our API.<br />Contact us to work it out.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- About API -->
+    <section id="api">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>CompareRoute API details</h2>
+                    <hr class="star-primary">
+                     <br /> <br />
+                </div>
+            </div>
+             <div class="row">
+
+                <div class="col-md-8">
+                    <!--<img class="img-rounded" src="/img/marketing/copy-paste.jpg" width="150" height="150">-->
+
+                   <p>The CompareRoute API offers developers an easy way to utilize CompareRoute's service,
+                    you can integrate service into your development environment or into your application.</p>
+				<h3>API Access URL</h3>
+				<p>The base URL for the CompareRoute API is http://compare-route-3.appspot.com/api/v1 </p>
+				<h3>Authentication</h3>
+				<p>The CompareRoute API use HTTP Basic Access Authentication as its authentication mechanism.
+					Use your e-mail address as the username and the API key as the password. You can generate or view your API key at the API Key box at the top of the page.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="box-api">
+                    <h3>Your API Details</h3>
+                    <p>An API key is needed to use the CompareRoute REST API.</p>
+                    <p>You must be logged in to view your API details.</p>
+                    <a href="/login"> Log in</a> or
+                    <a href="#" data-toggle="modal" data-target="#myModal"> Sign Up</a>
+                </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="success" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Our Team</h2>
+                    <hr class="star-primary">
+                     <br />
+                     <br />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6" >
+                    <div class="team-member">
+                        <img src="/img/profile/Edmund.jpg" class="img-responsive img-circle" alt="" width="200" height="200">
+                        <h4>Edmund</h4>
+                        <p class="text-muted">Project Lead</p>
+                        <ul class="list-inline social-buttons">
+                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i> edmund_chan@rp.sg</a></li>
+                            <!-- <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="team-member">
+                        <img src="/img/profile/Ben_2.jpg" class="img-responsive img-circle" alt="" width="200" height="200">
+                        <h4>Ben</h4>
+                        <p class="text-muted">Intern</p>
+                         <ul class="list-inline social-buttons">
+                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+                        </ul>
+                        
+                    </div>
+                </div>
+            </div> 
+            <br />
+            <div class="row">
+            
+                <div class="col-sm-6">
+                    <div class="team-member">
+                        <img src="/img/profile/Nickman_2.jpg" class="img-responsive img-circle" alt="" width="200" height="200">
+                        <h4>Nick</h4>
+                        <p class="text-muted">Intern</p>
+                       <ul class="list-inline social-buttons">
+                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="col-sm-6">
+                    <div class="team-member">
+                        <img src="/img/profile/Kit_2.jpg" class="img-responsive img-circle" alt="" width="200" height="200">
+                        <h4>Kit</h4>
+                        <p class="text-muted">Intern</p>
+                       <ul class="list-inline social-buttons">
+                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+          
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <!-- <div class="row">
+                    <div class="footer-col col-md-4">
+                        <h3>Location</h3>
+                        <p>3481 Melrose Place<br>Beverly Hills, CA 90210</p>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <h3>Around the Web</h3>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-dribbble"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <h3>About Compare Route</h3>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+{% endblock %}
