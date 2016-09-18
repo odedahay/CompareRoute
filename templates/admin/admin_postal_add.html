@@ -22,13 +22,13 @@
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-              {% include "admin/admin-postalcode-2ndnav.html" %}
+              {% include "admin/admin-postal-2ndnav.html" %}
         </div>
 		 <div class="col-md-9">
-			<form method="POST" action="/admin-postalcode-add">
+			<form method="POST" action="/admin-postal-add">
 
 				<label>Postal Code </label>
-				<input class="form-control" type="text" id="postal_code" name="postal_code" value="{{postalcode}}" required>
+				<input class="form-control" type="text" id="postal_code" name="postal_code" value="{{postal_code}}" required>
 				<br /><br />
 
 				<label>Latitude</label>
@@ -41,9 +41,9 @@
 				<span id="cfm_new_password_status">&nbsp</span>
 				<br /><br />
 
-				<button type="submit" id="change_password" class="btn btn-primary">Submit</button>
+				<button type="submit" id="" class="btn btn-primary">Submit</button>
 
-				<a href="/admin-postalcode" class="btn btn-info">
+				<a href="/admin-postal" class="btn btn-info">
 					<i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
 			</form>
 		 </div>

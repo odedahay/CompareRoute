@@ -14,7 +14,7 @@ class UserAccount(ndb.Model):
     confirmation_code = ndb.StringProperty(required=True)
     confirmation_email = ndb.BooleanProperty(default=False)
     api_key = ndb.StringProperty()
-    api_credits = ndb.IntegerProperty(default=0)
+    api_credits = ndb.IntegerProperty(default=50)
 
     @classmethod
     def check_if_exists(cls, email):
@@ -24,7 +24,7 @@ class UserAccount(ndb.Model):
     @classmethod
     def check_credit_usage(cls, email):
         user = cls.check_if_exists(email)
-        # defaultCredits = 500
+        # defaultCredits = 100
 
         if user:
             use_credit = 1
@@ -48,7 +48,7 @@ class UserAccount(ndb.Model):
         user = cls.check_if_exists(email)
 
         # API and Wep App Usage Credit
-        defaultCredits = 500
+        defaultCredits = 100
 
         if not user:
             # do the stuff

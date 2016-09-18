@@ -1,3 +1,5 @@
+from handlers import base
+
 from framework.request_handler import CompareRouteHandler
 from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
 import urllib2
@@ -6,30 +8,192 @@ import hmac
 import base64
 import hashlib
 import json
+
+import urllib
+
 import logging
 from google.appengine import runtime
 from google.appengine.ext import ndb
 import csv
 
 
-class Postal_checkerHandler(CompareRouteHandler):
+class Postal_checkerHandler(base.BaseHandler):
     def get(self):
 
-        results = postalRecordDB.query().order(postalRecordDB.postal_code).fetch(10)
+        results = postalRecordDB.query().order(postalRecordDB.postal_code).fetch()
         postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
         postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
 
-        # If same postal code == show only 1
-        # Count how many time they use
-        # Fix the bugs if to delete
+        # Success Message
+        success = self.request.get("success")
+        msg = ""
+
+        if success:
+            msg += "Save"
+
 
         new_alert_values = {
             'results': results,
             'postalCheckers': postalCheckers,
-            'postalHistory': postalHistory
+            'postalHistory': postalHistory,
+            'update_postalcode_success': msg,
         }
 
         self.render('admin/admin_alert.html', **new_alert_values)
+
+class Postal_checkerHandler_chk(base.BaseHandler):
+    def get(self):
+
+        postal = self.request.get("postal")
+        # postalCheckers = postalRecordDB.query(postalRecordDB.postal_code == postal).get()
+
+        template_values = {
+            'postal': postal
+        }
+
+        self.render("admin/admin_postal_checker.html", **template_values)
+
+
+# class PostalAdded_checker(postalchecker.Postal_checker_Handler, base.BaseHandler):
+#
+#     def get(self):
+#
+#         compare_id = self.request.get("compare_id")
+#         postalCheckers = PostalRecordDB_alert.query(PostalRecordDB_alert.compare_id == compare_id).get()
+#
+#         template_values = {
+#             'postalCheckers': postalCheckers
+#         }
+#         self.render("admin/admin_postal_checker.html", **template_values)
+#
+#     def post(self):
+#
+#         # email = self.request.get("email")
+#         # ws_key = self.session.get("ws_key")
+#
+#         #compare_id = self.request.get("compare_id")
+#         postal_code = self.request.get("postal_code")
+#
+#         # update Postal Code records:
+#         update_postalcode, error_postalcode, status = self.check_postalcode(postal_code)
+#
+#         success = status[0]
+#         msg = status[1]
+#
+#         postal_error = error_postalcode[0]
+#
+#         longtitude = update_postalcode[1]
+#         latitude = update_postalcode[0]
+#
+#         postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch(1)
+#         postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
+#
+#         template_values1 = {
+#             'longtitude': longtitude,
+#             'latitude': latitude,
+#             'update_postalcode_error': msg,
+#             'update_postalcode_success': msg,
+#             'postal_error': postal_error,
+#             'postalCheckers': postalCheckers,
+#             'postalHistory': postalHistory
+#         }
+#
+#         if success == False:
+#             self.render('admin/admin_postal_checker.html', **template_values1)
+#         else:
+#             self.render('admin/admin_postal_checker.html', **template_values1)
+
+class Postal_checkerHandler_chk_edit(base.BaseHandler):
+    def get(self):
+
+        postal_code = self.request.get("postal")
+
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postal_code
+
+        dist_val = urllib.urlopen(url)
+        wjson = dist_val.read()
+        latlong = json.loads(wjson)
+
+        latVal = latlong['results'][0]['geometry']['location']['lat']
+        lngVal = latlong['results'][0]['geometry']['location']['lng']
+
+        #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
+        template_values = {
+            'postal_code': postal_code,
+            'latVal': latVal,
+            'lngVal': lngVal,
+        }
+        self.render("admin/admin_postal_add.html", **template_values)
+
+    def post(self):
+
+        # From user input:
+        postal_code = self.request.get("postal_code")
+        longtitude = self.request.get("longtitude_val")
+        latitude = self.request.get("latitude_val")
+
+        # Delete the Record in Alert Message:
+        postal_code_record = PostalRecordDB_alert.check_the_postal(postal_code)
+        entity_row = postal_code_record.key
+        entity_row.delete()
+
+        # Move the record in PostalRecordDB_history
+        compare_id = postal_code_record.compare_id
+        user_email = postal_code_record.user_email
+        created_date = postal_code_record.created_date
+
+        PostalRecordDB_history.add_new_postal_records(compare_id, postal_code, user_email, created_date)
+
+        # Update Postal Code records:
+        postal_code_update = postalRecordDB.add_new_records(postal_code, longtitude, latitude)
+
+        if postal_code_update:
+            msg = "Save"
+
+        self.redirect("/admin-postal?success=True")
+
+
+class checkerHandler_global(base.BaseHandler):
+    def get(self):
+
+        postalcode = self.request.get("postal")
+
+        template_values = {
+            'postalcode': postalcode,
+        }
+
+        self.render("admin/admin_postal_add_global.html", **template_values)
+
+
+class checkerHandler_move(base.BaseHandler):
+
+    def get(self):
+
+        postal_code = self.request.get("postal")
+
+    #     template_values = {
+    #         'postal_code': postal_code,
+    #     }
+    #
+    #     self.render("admin/admin_postal_move.html", **template_values)
+    #
+    # def post(self):
+    #
+    #     postal_code = self.request.get("postal")
+
+        # Delete the record in PostalRecordDB_alert
+        postal_code_record = PostalRecordDB_alert.check_the_postal(postal_code)
+        entity_row = postal_code_record.key
+        entity_row.delete()
+
+        # Move the record in PostalRecordDB_history
+        compare_id = postal_code_record.compare_id
+        user_email = postal_code_record.user_email
+        created_date = postal_code_record.created_date
+        PostalRecordDB_history.add_new_postal_records(compare_id, postal_code, user_email, created_date)
+
+        self.redirect("/admin-postal?success=True")
+
 
 class Postal_checker_add_Handler(CompareRouteHandler):
 

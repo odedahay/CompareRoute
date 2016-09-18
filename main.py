@@ -10,8 +10,8 @@ from handlers import sorting_task
 from handlers.postalchecker import Postal_checkerHandler
 
 from itertools import groupby
-import urllib
 import json
+
 # - - - lib
 from model.user_account import UserAccount
 # DB for Admin
@@ -153,203 +153,6 @@ class ResetPassword(resetpass.New_password_Handler, base.BaseHandler):
         else:
             self.render("/login/login.html", login_status="Please login!")
 
-class PostalUpdate(postalchecker.Postal_checker_add_Handler, base.BaseHandler):
-    def get(self):
-
-        # email = self.session.get("email")
-        # password = self.session.get("password")
-        #
-        # useracounts = UserAccount.query(UserAccount.password == password).fetch()
-
-        # if email:
-        #     ws_key = self.session.get("ws_key")
-        #     self.render("/account_user/profile.html", email=email, ws_key=ws_key, useracounts=useracounts)
-        # else:
-        #     self.render("/login/login.html", login_status="Please login!")
-
-        postalcode = self.request.get("postalcode")
-
-        url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postalcode
-
-        dist_val = urllib.urlopen(url)
-        wjson = dist_val.read()
-        latlong = json.loads(wjson)
-
-        latVal = latlong['results'][0]['geometry']['location']['lat']
-        lngVal = latlong['results'][0]['geometry']['location']['lng']
-        #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
-        template_values = {
-            'postalcode': postalcode,
-            'latVal': latVal,
-            'lngVal': lngVal,
-        }
-
-        self.render("admin/postal_add.html", **template_values)
-
-    def post(self):
-
-        # email = self.request.get("email")
-        # ws_key = self.session.get("ws_key")
-
-        # From user input:
-        postal_code = self.request.get("postal_code")
-        longtitude = self.request.get("longtitude_val")
-        latitude = self.request.get("latitude_val")
-
-        postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
-
-        # Delete the Record in Alert Message:
-        compare_id = PostalRecordDB_alert.get_compare_id(postal_code)
-
-        delete_data = PostalRecordDB_alert.delete_postal_records(compare_id)
-        delete_data.key.delete()
-
-        # update Postal Code records:
-        update_postalcode_error = self.update_postalcode_db(postal_code, longtitude, latitude)
-
-        success = update_postalcode_error[0]
-        msg = update_postalcode_error[1]
-
-        #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
-        template_values = {
-            'update_postalcode_error': msg,
-            'update_postalcode_success': msg,
-            'postalCheckers': postalCheckers
-        }
-
-        if success == False:
-            self.render('admin/postal_add.html', **template_values)
-        else:
-            self.render('admin/admin_alert.html', **template_values)
-
-class Postal_add_global(postalchecker.Postal_checker_add_Handler, base.BaseHandler):
-    def get(self):
-
-        postalcode = self.request.get("postalcode")
-
-        template_values = {
-            'postalcode': postalcode,
-        }
-
-        self.render("admin/postal_add_global.html", **template_values)
-
-    # def post(self):
-    #     # Need to validate this scripts, below:
-    #
-    #     # email = self.request.get("email")
-    #     # ws_key = self.session.get("ws_key")
-    #
-    #     # From user input:
-    #     postalcode = self.request.get("postal_code")
-    #     longtitude = self.request.get("longtitude_val")
-    #     latitude = self.request.get("latitude_val")
-    #
-    #     # print postal_code, longtitude, latitude
-    #
-    #     # update Postal Code records:
-    #     update_postalcode_error = self.update_postalcode_db(postalcode, longtitude, latitude)
-    #
-    #     results = postalRecordDB.query().order(postalRecordDB.postal_code).fetch(10)
-    #     postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
-    #     postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
-    #
-    #     success = update_postalcode_error[0]
-    #     msg = update_postalcode_error[1]
-    #
-    #     if success == False:
-    #         self.render('admin/postal_add.html', update_postalcode_error=msg)
-    #     else:
-    #         self.render('admin/uploader.html', update_postalcode_success=msg, results=results,
-    #                     postalCheckers=postalCheckers, postalHistory=postalHistory)
-
-class PostalAdded_move(postalchecker.Postal_move_Handler, base.BaseHandler):
-
-    def get(self):
-
-        compare_id = self.request.get("compare_id")
-        postalCheckers = PostalRecordDB_alert.query(PostalRecordDB_alert.compare_id==compare_id).fetch(1)
-
-        self.render("admin/postal_move.html", postalCheckers=postalCheckers)
-
-    def post(self):
-
-        # email = self.request.get("email")
-        # ws_key = self.session.get("ws_key")
-
-        compare_id = self.request.get("compare_id")
-        created_date = self.request.get("created_date")
-        user_email = self.request.get("user_email")
-        postal_code = self.request.get("postal_code")
-
-        # update Postal Code records:
-        update_postalcode = self.move_postalcode_db(compare_id, created_date, user_email, postal_code)
-
-        postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
-
-        success = update_postalcode[0]
-        msg = update_postalcode[1]
-
-        #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
-        template_values = {
-            'update_postalcode_error': msg,
-            'update_postalcode_success': msg,
-            'postalCheckers': postalCheckers,
-        }
-
-        if success == False:
-            self.render('admin/postal_move.html', **template_values)
-        else:
-            self.render('admin/admin_alert.html', **template_values)
-
-class PostalAdded_checker(postalchecker.Postal_checker_Handler, base.BaseHandler):
-
-    def get(self):
-
-        compare_id = self.request.get("compare_id")
-        postalCheckers = PostalRecordDB_alert.query(PostalRecordDB_alert.compare_id == compare_id).get()
-
-        template_values = {
-            'postalCheckers': postalCheckers
-        }
-        self.render("admin/postal_checker.html", **template_values)
-
-    def post(self):
-
-        # email = self.request.get("email")
-        # ws_key = self.session.get("ws_key")
-
-        #compare_id = self.request.get("compare_id")
-        postal_code = self.request.get("postal_code")
-
-        # update Postal Code records:
-        update_postalcode, error_postalcode, status = self.check_postalcode(postal_code)
-
-        success = status[0]
-        msg = status[1]
-
-        postal_error = error_postalcode[0]
-
-        longtitude = update_postalcode[1]
-        latitude = update_postalcode[0]
-
-        postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch(1)
-        postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
-
-        template_values1 = {
-            'longtitude': longtitude,
-            'latitude': latitude,
-            'update_postalcode_error': msg,
-            'update_postalcode_success': msg,
-            'postal_error': postal_error,
-            'postalCheckers': postalCheckers,
-            'postalHistory': postalHistory
-        }
-
-        if success == False:
-            self.render('admin/postal_checker.html', **template_values1)
-        else:
-            self.render('admin/postal_checker.html', **template_values1)
-
 
 class PostalAdded_arch(postalchecker.Postal_move_Handler, base.BaseHandler):
     def get(self):
@@ -447,7 +250,7 @@ class AdminHome_page1(base.BaseHandler):
             'api_routes_user_id': api_routes_user_id,
             'api_number_of_usage': api_number_of_usage,
         }
-        self.render("admin/admin1.html", **template_values)
+        self.render("admin/admin_user.html", **template_values)
 
 class AdminSummary(base.BaseHandler):
     def get(self):
@@ -505,7 +308,7 @@ class AdminSummary_api(base.BaseHandler):
 
 app = webapp2.WSGIApplication([
       ('/', MainPage),
-      ("/login", LoginPage),
+      ('/login', LoginPage),
       ('/reset', ResetPassword),
       ('/register', 'app.register.RegisterHandler'),
       ('/compare', 'app.compare.ComparePage'),
@@ -514,31 +317,30 @@ app = webapp2.WSGIApplication([
       ('/compare-api', APIHandler_reg),
       ('/compare-profile', ProfilePage),
       ("/api", APIHandler),
-      ("/recover", 'app.recover_psswrd.PasswordRecover'), # This is for setting for reset password:
+      ('/recover', 'app.recover_psswrd.PasswordRecover'),
       ('/logout', Logout),
       ('/admin-csv', 'app.csv_upload.MainHandler3'),
       ('/admin-csv-load', 'app.csv_upload.UploadHandler'),
-      ('/admin/gcsupload', 'app.csv_upload.UploadGCSData'),
+      # ('/admin/gcsupload', 'app.csv_upload.UploadGCSData'),
       ('/sorting-proposed', 'handlers.sorting_task.TaskRouteHandlerProposed'),
-      # ('/summary-result', 'handlers.sorting_task.summaryTotal_500'),
       ('/sorting-proposed-api', 'handlers.sorting_task_api.TaskRouteHandlerProposed_api'),
       ('/account/<user_id:[0-9]+>/confirm/confirmation_code:[a-z0-9]{32}>', 'app.register.ConfirmUser'),
       ('/admin', AdminHome_page),
-      ('/admin1', AdminHome_page1),
+      ('/admin-user', AdminHome_page1),
       ('/admin-summary', AdminSummary),
       ('/admin-summary-api', AdminSummary_api),
       ('/admin-credits', 'app.user_credits.summaryCredits'),
       ('/admin-credits-edit', 'app.user_credits.summaryCredits_edit'),
       ('/summary-details', sortingsum.SummaryBMapHandler),
       ('/admin-csv-taskq', 'app.csv_upload.TaskqHandler'),
-      ('/admin-postalcode', 'handlers.postalchecker.Postal_checkerHandler'),
-      ('/admin-postalcode-chk', PostalAdded_checker),
-      ('/admin-postalcode-add', PostalUpdate),
-      ('/admin-postalcode-add/global', Postal_add_global),
-      ('/admin-postalcode-gnew', 'handlers.postal_mod.Add_new_postal'),
-      ('/admin-postalcode-move', PostalAdded_move),
-      ('/admin-postalcode-arch', PostalAdded_arch),
-      ('/admin-postalcode-search', Postal_Search),
+      ('/admin-postal', 'handlers.postalchecker.Postal_checkerHandler'),
+      ('/admin-postal-chk', 'handlers.postalchecker.Postal_checkerHandler_chk'),
+      ('/admin-postal-add', 'handlers.postalchecker.Postal_checkerHandler_chk_edit'),# PostalUpdate
+      ('/admin-postal-add/global', 'handlers.postalchecker.checkerHandler_global'), # Postal_add_global
+      ('/admin-postal-move', 'handlers.postalchecker.checkerHandler_move'), #PostalAdded_move),
+      ('/admin-postal-gnew', 'handlers.postal_mod.Add_new_postal'),
+      ('/admin-postal-arch', PostalAdded_arch),
+      ('/admin-postal-search', Postal_Search),
       ('/admin-search', 'app.search_postal.SearchPostal'),
       ('/admin-search-del', 'app.search_postal.PostalDelete_Handler'),
       ('/admin-search-edit', 'app.search_postal.PostalEdit_Handler')

@@ -12,7 +12,7 @@ class summaryCredits(base.BaseHandler):
         msg = ""
 
         if success:
-            msg += "Save, please refresh your browser"
+            msg += "Save"
 
 
         template_values = {
@@ -45,7 +45,11 @@ class summaryCredits_edit(base.BaseHandler):
         success = True
         msg = ""
 
-        user_id = self.request.get("user_email")
+        user_id = self.request.get("user_id")
+        user_account = UserAccount.get_by_id(int(user_id))
+        user_id = user_account.email
+
+        # user_id = self.request.get("user_email")
         user_accounts = UserAccount.query(UserAccount.email == user_id).get()
 
         if user_accounts:

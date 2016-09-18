@@ -25,12 +25,12 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
         compare_id = self.request.get('compare_id')
         starting_address = self.request.get('starting_address')
-        # origin_destination = self.request.get('origin_destination')
         num_of_vehicle = self.request.get('num_of_vehicle')
         vehicle_capacity = self.request.get('vehicle_capacity')
         email = self.request.get('email')
         has_return = self.request.get('has_return')
         num_user_load = self.request.get('num_user_load')
+        #num_of_vehicles = self.request.get('num_of_vehicles')
 
         proposedPostlal = self.request.get('proposedPostlal')
         currentdPostlal = self.request.get('currentdPostlal')

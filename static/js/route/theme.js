@@ -486,6 +486,15 @@ $(".clickable-row").click(function() {
     window.document.location = $(this).data("href");
 });
 
+//Display error message for 3 seconds and then fades out
+$('.hideThis').delay(3000).fadeOut();
+
+
+// Make Credit button disabled
+$('#api_credits').on('keyup', function () {
+    $('#creditAccess_Btn').removeAttr('disabled')
+});
+
 
 // - - - - - Back to Top - - - - - -//
 //$(document).ready(function(){

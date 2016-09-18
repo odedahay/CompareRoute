@@ -8,15 +8,16 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
+
             {% if update_success %}
-				<div id="ajax-errors" class="alert alert-success" role="alert" style="width: 300px">
-				    <p style="text-align: center">{{update_success}}</p>
+				<div id="ajax-errors" class="alert alert-success hideThis" role="alert" style="width:400px;">
+				    <p style="text-align: center" >{{update_success}}</p>
 				</div>
             {% endif %}
             <table class="table table-bordered">
 
                 <tr>
-                    <th>Full Name</th>'
+                    <th>Full Name</th>
                     <th>User Email</th>
                     <th>API Key</th>
                     <th>API Credits:</th>

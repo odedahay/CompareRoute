@@ -142,7 +142,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 # print ('vehicle_postal_list_new_seq-ode'), vehicle_postal_list_new_seq
                 # Number of vehicle allocated
                 num_of_vehicles = len(vehicle_postal_list_new)
-
+                vehicle_quantity = num_of_vehicles
             else:
                 # For non-company result
                 print('With Capacicity-2')
@@ -179,6 +179,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
                 # Number of vehicle allocated
                 num_of_vehicles = len(vehicle_postal_list_new)
+                vehicle_quantity = num_of_vehicles
 
     else:
         # Chunk it through num - vehicle
@@ -191,6 +192,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Propose Route w/ OrderID & Load Capacity
         vehicle_postal_list_new_seq = chunkIt(postal_sequence_sorted, vehicle_quantity)
         # print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
+
+        vehicle_capacity = 0
 
     # Returning vehicle
     if has_return == "true":

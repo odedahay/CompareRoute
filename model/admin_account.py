@@ -217,6 +217,9 @@ class PostalRecordDB_alert(ndb.Model):
         if postal_id:
             compare_record = postal_id.compare_id
             return compare_record
+        else:
+            return None
+
 
     @classmethod
     def delete_postal_records(cls, compare_id):

@@ -535,7 +535,7 @@ $('#routeBtn').click(function () {
 
                     //GeoCode for LatLng
                     var latlng_array = response.data_result[0].geo_code_latlng.latlng_array;
-                    console.log('latlng_array', latlng_array);
+                    // console.log('latlng_array', latlng_array);
                     //Truck Options-1:
                     var vehicle_priority = response.data_result[0].vehicle_priority.vehicle_num;
 
@@ -550,7 +550,7 @@ $('#routeBtn').click(function () {
                     var total_savings = response.data_result[0].total_summary_saving.total_savings;
 
                     // Counter for PostalCode Sorted;
-                    var counter =1;
+                    var counter = 0;
                     var split = postal_sequence.split("\n")
 
                     for(var i=0;i < split.length;i++){
@@ -579,8 +579,8 @@ $('#routeBtn').click(function () {
                     $(".hidden_field_legend").show();
 
                     $("#sorted_sequence0").append("<h2 style='font-weight:normal'>Successful!</h2>");
-                    $("#sorted_sequence0").append("<ul class='list-group' style='list-style-type:none; font-size:16px;'><li>HQ Postal Code : "+starting+"</li><li>Number Postal Code Sorted : "+postalSorted+"</li><li>Vehicle(s) : "+vehicle_priority+"</li></ul>");
-                    $("#proposedTable").append("<tr><th colspan='2'>Postal Code</th> <th>Order ID</th><th>Truck Volume</th></tr>");
+                    $("#sorted_sequence0").append("<ul class='list-group' style='list-style-type:none; font-size:16px;'><li>Starting Postal Code : "+starting+"</li><li>No. of Postal Sequence Entered : "+postalSorted+"</li><li>No. of Truck Entered : "+vehicle_priority+"</li></ul>");
+                    $("#proposedTable").append("<tr><th colspan='2'>Sorted Postal Code</th> <th>Order ID (s)</th><th>Truck Vol.</th></tr>");
 
 
 

@@ -84,9 +84,9 @@ class SortingPrep(webapp2.RequestHandler):
         response = {}
         errors = []
 
+        # Check if the user if has valid credits
         credits_account = UserAccount.check_credit_usage(email)
         if credits_account == None:
-
             print "Error in Credits Account"
             errors.extend(["Error in Credits Access <br />"])
 
@@ -265,12 +265,13 @@ class SortingPrep(webapp2.RequestHandler):
 
             counter_no = 0
             if postal_id == None:
+
                 counter_no += 1
 
                 # Find the nearest postal code number in records
                 PostalRecordDB_alert.add_new_postal_records(compare_id, postal_code, email, currentDateTime, int(counter_no))
                 no_record_postal.append(postal_code)
-                errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
+                # errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
 
             if priority_capacity == "true":
 
@@ -500,8 +501,8 @@ class SortingPrep(webapp2.RequestHandler):
                     vehicle_type,
                     api_user, sort_company)
 
-                print('propose_result'), propose_result
-                print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
+                # print('propose_result'), propose_result
+                # print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
 
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)

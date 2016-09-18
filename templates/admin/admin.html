@@ -15,21 +15,21 @@
 
           <!-- Nav tabs -->
           <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#home" aria-controls="web" role="tab" data-toggle="tab">Web APP Users</a> </li>
-            <li role="presentation"><a href="#api" aria-controls="api" role="tab" data-toggle="tab">API Users</a></li>
+            <li role="presentation" class="active"><a href="#home" aria-controls="web" role="tab" data-toggle="tab">Web App Users</a> </li>
+            <li role="presentation"><a href="#api" aria-controls="api" role="tab" data-toggle="tab">API App Users</a></li>
           </ul>
 
           <!-- Tab panes -->
           <div class="tab-content">
               <div role="tabpanel" class="tab-pane active" id="home">
                 <div class="row">
-                   <h2></h2>
+                   <h3>Web App Users</h3>
                 </div>
                 <div class="row">
                     <div class="col-xs-3">
                         <ul class="list-group">
                             {% for key, val in web_id_counts_id %}
-                               <a href="/admin1?user_id={{key}}">
+                               <a href="/admin-user?user_id={{key}}">
                                    <li class="list-group-item">
                                        <i class="fa fa-user" aria-hidden="true"></i> {{ key }}<span class="badge">{{val}}</span>
                                    </li>
@@ -77,13 +77,13 @@
 
             <div role="tabpanel" class="tab-pane" id="api">
                 <div class="row">
-                   <h2>API's Details</h2>
+                   <h3>API App Users</h3>
                 </div>
                 <div class="row">
                     <div class="col-xs-3">
                         <ul class="list-group">
                             {% for key, val in api_id_counts_id %}
-                               <a href="/admin1?user_id={{key}}">
+                               <a href="/admin-user?user_id={{key}}">
                                    <li class="list-group-item"><i class="fa fa-user" aria-hidden="true"></i> {{ key }}
                                        <span class="badge">{{val}}</span>
                                    </li>

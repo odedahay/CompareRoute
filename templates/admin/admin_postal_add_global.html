@@ -12,11 +12,11 @@
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-              {% include "admin/admin-postalcode-2ndnav.html" %}
+              {% include "admin/admin-postal-2ndnav.html" %}
         </div>
 		<div class="col-md-9">
 
-			<form method="POST" action="/admin-postalcode-add">
+			<form method="POST" action="/admin-postal-add">
 
 				<label>Postal Code   <span class="label label-warning" style="font-size:13px; margin:0 0 20px 0; font-weight:normal">
 				Please provide Latitude & Longtitude in fields below:</span></label>
@@ -32,18 +32,20 @@
 				<input class="form-control" type="text" id="longtitude_val" name="longtitude_val" required>
 				<span id="cfm_new_password_status">&nbsp</span>
 				<br /><br />
+
 				{% if update_postalcode_error %}
-				<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
-				    <p style="text-align: center">{{update_postalcode_error}}</p>
-				</div>
+					<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
+						<p style="text-align: center">{{update_postalcode_error}}</p>
+					</div>
 
 				{% elif update_postalcode_success %}
-				<div id="ajax-errors" class="alert alert-success" role="alert"  style="width: 300px">
-				    <p style="text-align: center">{{update_postalcode_success}}</p>
-				</div>
+					<div id="ajax-errors" class="alert alert-success" role="alert"  style="width: 300px">
+						<p style="text-align: center">{{update_postalcode_success}}</p>
+					</div>
 				{% endif %}
+
 				<button type="submit" class="btn btn-primary">Add Postal Code</button>
-				<a href="/admin-postalcode" class="btn btn-info">
+				<a href="/admin-postal" class="btn btn-info">
 					<i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
 			</form>
 		</div>
