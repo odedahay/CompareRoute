@@ -7,7 +7,10 @@ from handlers import base
 from model.admin_account import ProposedRoute
 from model.admin_account import CurrentRoute
 from model.admin_account import RouteDistance
-from handlers.postalchecker import postalRecordDB
+# from handlers.postalchecker import postalRecordDB,
+
+from model.admin_account import postalRecordDB, PostalRecordDB_alert
+
 import urllib
 import json
 
@@ -37,7 +40,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
         origin_destination = sorting.startingpoint_latlong(starting_address)
 
-        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination)
+        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination, email)
         current_total_dist = self.task_current_Route(compare_id, starting_address, currentdPostlal, origin_destination)
 
         # Counting the number of postal code:
@@ -73,7 +76,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                                     float(proposed_total_dist), round(percentage_savings, 2),
                                     int(postal_count), return_vehicle, int(user_count))
 
-    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination):
+    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination, email):
 
         actual_vehicle_postal = proposedPostlal.split("_")
 
@@ -92,7 +95,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
             for current_post in vehicle_postal:
                 postal_rank = postal_rank + 1
 
-                destinations, latval, longval = self.postalcode_latlong(current_post)
+                destinations, latval, longval = self.postalcode_latlong(current_post, compare_id, email)
 
                 distance1 = "http://dev.logistics.lol:5000/viaroute?loc=" + origin_destination + "&loc=" + destinations
 
@@ -139,7 +142,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                 postal_rank = postal_rank + 1
 
                 # Convert to Lat-Long the postal code
-                destinations, latval, longval = self.postalcode_latlong(current_post)
+                destinations, latval, longval = self.postalcode_latlong_current(current_post)
 
                 distance1 = "http://dev.logistics.lol:5000/viaroute?loc=" + origin_destination1 + "&loc=" + destinations
 
@@ -167,7 +170,12 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
         return current_total_dist
 
-    def postalcode_latlong(self, current_post):
+    # To check weather the Postal Code is exits:
+    def postalcode_latlong(self, current_post, compare_id, email):
+
+        # Time recording only
+        currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        counter_no = 0
 
         # Validation for Task Q
         compare_postal = postalRecordDB.check_if_exists(current_post)
@@ -179,7 +187,10 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                 compare_postal = postalRecordDB.check_if_exists(current_post)
 
             else:
-                print('Ooops-load')
+                print('No Postal Code Record')
+                counter_no += 1
+                PostalRecordDB_alert.add_new_postal_records(compare_id, current_post, email, currentDateTime, int(counter_no))
+
                 nearestPostalCode = postalRecordDB.query().filter(postalRecordDB.postal_code >= current_post).get(keys_only=True)
                 compare_postal = nearestPostalCode.id()
 
@@ -195,6 +206,44 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         longval = latlong.long
 
         return destinations, latval, longval
+
+    def postalcode_latlong_current(self, current_post):
+
+        # Validation for Task Q
+        compare_postal = postalRecordDB.check_if_exists(current_post)
+
+        if compare_postal == None:
+
+            if current_post[0] == "0":
+                current_post = current_post.lstrip("0")
+                compare_postal = postalRecordDB.check_if_exists(current_post)
+
+            else:
+                print('No Postal Code Record')
+
+                nearestPostalCode = postalRecordDB.query().filter(postalRecordDB.postal_code >= current_post).get(keys_only=True)
+                compare_postal = nearestPostalCode.id()
+
+        latlong = postalRecordDB.get_by_id(compare_postal)
+
+        laglongSource = []
+        laglongSource.append(latlong.lat)
+        laglongSource.append(',')
+        laglongSource.append(latlong.long)
+        destinations = ''.join(laglongSource)
+
+        latval = latlong.lat
+        longval = latlong.long
+
+        return destinations, latval, longval
+
+
+
+
+
+
+
+
 
 # - - - - - - - - summary total - - - - - - - #
 # class summaryTotal_500(base.BaseHandler):

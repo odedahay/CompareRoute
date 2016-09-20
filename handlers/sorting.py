@@ -78,8 +78,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 else:
                     postal_sequence_sorted.append([postal_new, order_id, capacity_load])
 
-    print ('postal_sequence_sorted'), postal_sequence_sorted
-
     if priority_capacity == "true" or priority_capacity_comp == "true":
 
         # If the OrderID and Load Capacity are not complete
@@ -100,7 +98,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Else OrderID and Load Capacity are complete
         else:
 
-            print('With Capacicity-1')
+            print('RBCOMP Option')
 
             if sort_company == "true":
                 print "This is Company Sorting!"
@@ -129,7 +127,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                             result_postal_seq.append([postal, orderId, capacity, campany_id])
                             result_postal.append([postal, capacity])
 
-                print('int(vehicle_capacity)'), int(vehicle_capacity)
                 # Allocate the number of Trucks
                 vehicle_postal_list_new = list(chunk_to_sum(result_postal, int(vehicle_capacity)))
 
@@ -143,9 +140,11 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 # Number of vehicle allocated
                 num_of_vehicles = len(vehicle_postal_list_new)
                 vehicle_quantity = num_of_vehicles
+
             else:
-                # For non-company result
-                print('With Capacicity-2')
+
+                print('RBCAP Option')
+
                 result_postal = []
                 result_postal_seq = []
 
@@ -180,6 +179,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 # Number of vehicle allocated
                 num_of_vehicles = len(vehicle_postal_list_new)
                 vehicle_quantity = num_of_vehicles
+
+                # If the vehicle_quantity == num_of_truck
 
     else:
         # Chunk it through num - vehicle

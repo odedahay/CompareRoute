@@ -32,13 +32,17 @@ class SortingPrep(webapp2.RequestHandler):
 
         # Obtain user inputs from Compare page
         starting_postal = self.request.get("starting_postal")
-        starting_postal_cap = self.request.get("starting_postal_cap")
         starting_postal_1 = self.request.get("starting_postal_1")
         starting_postal_2 = self.request.get("starting_postal_2")
         starting_postal_3 = self.request.get("starting_postal_3")
         starting_postal_4 = self.request.get("starting_postal_4")
         starting_postal_5 = self.request.get("starting_postal_5")
         starting_postal_6 = self.request.get("starting_postal_6")
+
+        starting_postal_cap = self.request.get("starting_postal_cap")
+        type_of_truck = self.request.get("type_of_truck")
+        truck_capacity = self.request.get("truck_capacity")
+        num_of_truck = self.request.get("num_of_truck")
 
         vehicle_quantity = self.request.get("vehicle_quantity")
         vehicle_quantity_1 = self.request.get("vehicle_quantity_1")
@@ -79,7 +83,7 @@ class SortingPrep(webapp2.RequestHandler):
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
 
         # Error list for invalid postal codes
-        no_record_postal = []
+        # no_record_postal = []
 
         response = {}
         errors = []
@@ -104,26 +108,21 @@ class SortingPrep(webapp2.RequestHandler):
         forEmp_OrderID_Cap = ['0', '0']
         forEmp_Capt = ['0']
 
-        # This is for Sorted Company
-        # forEmp_OrderID_Cap_company = ['0', '0', '0']
 
-        currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         compare_id = datetime.now().strftime('%Y%m%d%H%m%f')
 
         # - - - - - Lat-long for Starting point HQ - - - - - #
         if optionsTruck == "true":
 
-            # Remove "0" if  no record found
-            if starting_postal[0] == "0":
-                starting_postal = starting_postal.lstrip("0")
+            # Add "0" in front of five digit postal codes
+            if len(starting_postal) == 5:
+                starting_postal = "0" + starting_postal
+
+            # # Remove "0" if  no record found
+            # if starting_postal[0] == "0":
+            #     starting_postal = starting_postal.lstrip("0")
+
             starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
-
-            if starting_postal_hq == None:
-
-                # Add "0" in front of five digit postal codes
-                if len(starting_postal) == 5:
-                    starting_postal = "0" + starting_postal
-                starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
 
             if starting_postal_hq == None:
                 errors.extend([starting_postal, ' Invalid starting postal code'])
@@ -136,21 +135,29 @@ class SortingPrep(webapp2.RequestHandler):
 
         # For Route by Truck Capacity validation
         if priority_capacity == "true":
+
+            print("starting_postal_cap"), starting_postal_cap
+            print("type_of_truck"), type_of_truck
+            print("truck_capacity"), truck_capacity
+            print("num_of_truck"), num_of_truck
+
             starting_postal = starting_postal_cap
 
-            if vehicle_type == truck_type[0]:
-                # print ('Hello this is truck 1')
-                truck_cap = 10
-                # vehicle_capacity = vehicle_m3
-                if int(vehicle_capacity) <= 1:
-                    errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
-            else:
-                # print ('Hello this is truck 2')
-                truck_cap = 999
-                if int(vehicle_capacity) <= 10:
-                    errors.extend(["Please check truck's minimum volume limit of Selected Truck !  <br />"])
-            if int(vehicle_capacity) > int(truck_cap):
-                errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
+            # if vehicle_type == truck_type[0]:
+            #     # print ('Hello this is truck 1')
+            #     truck_cap = 10
+            #
+            #     # vehicle_capacity = vehicle_m3
+            #     if int(vehicle_capacity) <= 1:
+            #         errors.extend(["Please check M3's minimum volume limit of truck Selected!  <br />"])
+            # else:
+            #     # print ('Hello this is truck 2')
+            #     truck_cap = 999
+            #     if int(vehicle_capacity) <= 10:
+            #         errors.extend(["Please check truck's minimum volume limit of Selected Truck !  <br />"])
+            #
+            # if int(vehicle_capacity) > int(truck_cap):
+            #     errors.extend(["Please check the maximum volume limit of truck selected!  <br />"])
 
         # Route by Companies, Considering Route by Truck Capacity validation
         if priority_capacity_comp == "true":
@@ -227,6 +234,7 @@ class SortingPrep(webapp2.RequestHandler):
         # Extract the postal pair and validate the postal code while ignoring first line of headers
         # Note: Order ID is untouched as we do not know their format
         for index in range(0, len(postal_sequence_split)):
+
             num_post_code = num_post_code + 1
 
             # Retrieve each postal pair
@@ -248,36 +256,24 @@ class SortingPrep(webapp2.RequestHandler):
             # If Postal Code reverse in textbox
             postal_code = str(postal_pair_split[0])
             order_id = str(postal_pair_split[1])
-            track_capacity = int(postal_pair_split[2])
+            truck_volume = int(postal_pair_split[2])
 
-            # Remove "0" if still no record found
-            if postal_code[0] == "0":
-                postal_code = postal_code.lstrip("0")
-
-            postal_id = postalRecordDB.check_if_exists(postal_code)
-
-            if postal_id == None:
-
-                # Add "0" in front of five digit postal codes
-                if len(postal_code) == 5:
-                    postal_code = "0" + postal_code
-                postal_id = postalRecordDB.check_if_exists(postal_code)
-
-            counter_no = 0
-            if postal_id == None:
-
-                counter_no += 1
-
-                # Find the nearest postal code number in records
-                PostalRecordDB_alert.add_new_postal_records(compare_id, postal_code, email, currentDateTime, int(counter_no))
-                no_record_postal.append(postal_code)
-                # errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
+            # Add "0" in front of five digit postal codes
+            if len(postal_code) == 5:
+                postal_code = "0" + postal_code
 
             if priority_capacity == "true":
 
-                if track_capacity > int(truck_cap):
+                # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
+                if truck_volume > int(truck_capacity):
                     print ('Warning! Exceeding Volume')
-                    errors.extend([postal_code, " Exceeding volume in load capacity <br />"])
+                    errors.extend([postal_code, " exceeding volume in Truck Capacity  <br />"])
+
+            # counter_no = 0
+            # if postal_id == None:
+                # counter_no += 1
+                # Find the nearest postal code number in records
+                # errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
 
             # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
             if not str.isdigit(postal_code) or int(postal_code) >= 830000:
@@ -290,9 +286,9 @@ class SortingPrep(webapp2.RequestHandler):
                     errors.extend(['Please add Company in 4th column  <br/ >'])
                 if len(errors) == 0:
                     sorted_comp = postal_pair_split[3]
-                    postal_sequence_list.append([postal_code, str(order_id), int(track_capacity), sorted_comp])
+                    postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), sorted_comp])
             else:
-                postal_sequence_list.append([postal_code, str(order_id), int(track_capacity)])
+                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume)])
             postal_sequence_current.append(postal_code)
 
         if len(errors) == 0:
@@ -300,7 +296,7 @@ class SortingPrep(webapp2.RequestHandler):
 
             # If errors are found in the postal sequence, send response with error
             # Else, call the sorting algorithm and and send response with the sorted postal codes
-            # if len(errors) == 0:
+
             # API Sensor
             api_user = "none"
 
@@ -504,6 +500,15 @@ class SortingPrep(webapp2.RequestHandler):
                 # print('propose_result'), propose_result
                 # print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
 
+                # Validate if the capacity truck is according to available "num_of_truck"
+                result_num_truck = len(vehicle_postal_list_new_seq)
+
+                if int(result_num_truck) > int(num_of_truck):
+                    errors.extend(["Number of truck is not reached. The generated truck result is ",  result_num_truck, " <br />"])
+
+                else:
+                    print ('Num Truck is Pass')
+
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)
                 current_route_value = result_distance_latlng(current_result, origin_destination, num_post_code)
@@ -631,11 +636,13 @@ def postalcode_latlong(postal):
 
         if compare_postal == None:
 
+            # Remove "0" if still no record found
             if postal[0] == "0":
                 current_post = postal.lstrip("0")
                 compare_postal = postalRecordDB.check_if_exists(current_post)
             else:
-                print('load')
+                print('NO POSTAL CODE RECORD')
+
                 nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
                 compare_postal = nearest_postal_code.id()
 
@@ -1735,34 +1742,6 @@ def result_distance_latlng(propose_result, origin_destination, num_post_code):
 
         return errors
 
-
-def latlong_summary_exceeding(list):
-
-    url_disc = "http://dev.logistics.lol:5000/viaroute?"
-    proposed_latlong = ""
-
-    for current_post in list:
-        current_post = current_post.strip()
-
-        # Convert to Lat-Long the postal code
-        destinations = postalcode_latlong(current_post)
-
-        if not destinations:
-            proposed_latlong += str(destinations)
-        else:
-            proposed_latlong += "&loc=" + str(destinations)
-
-    proposed_result = proposed_latlong
-    time.sleep(1)
-
-    proposed_api = url_disc + proposed_result
-    dist_val = urllib2.urlopen(proposed_api)
-    wjson = dist_val.read()
-    distance2 = json.loads(wjson)
-
-    distance_val = distance2['route_summary']['total_distance']
-
-    return distance_val
 
 
 def latlong_summary(list):

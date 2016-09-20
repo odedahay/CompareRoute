@@ -70,7 +70,7 @@ class PostalDelete_Handler(CompareRouteHandler):
         if success == False:
             self.render('admin/postal_delete.html', update_postalcode_erro=msg)
         else:
-            self.redirect("/admin-postalcode-search?title='%s' "%msg)
+            self.redirect("/admin-postal-search?title='%s' "%msg)
             # self.render('admin/postal_delete.html', update_postalcode_success=msg)
 
     def postalcode_db(self, postal_code):

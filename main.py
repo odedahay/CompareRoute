@@ -80,47 +80,6 @@ class Logout(base.BaseHandler):
         self.clearSession()
         self.redirect('/')
 
-class ProfilePage(profile.ProfileHandler, base.BaseHandler):
-    def get(self):
-
-        email = self.session.get("email")
-        user_account = UserAccount.check_if_exists(email)
-
-        if email:
-            ws_key = self.session.get("ws_key")
-            self.render("/account_user/profile.html", email=email, ws_key=ws_key, user_account=user_account)
-        else:
-            self.render("/login/login.html", register_error="Please login!")
-
-    def post(self):
-
-        email = self.session.get("email")
-        ws_key = self.session.get("ws_key")
-
-        user_account = UserAccount.check_if_exists(email)
-
-        # From user input:
-        old_password = self.request.get("old_password")
-        new_password = self.request.get("new_password")
-        cfm_new_password = self.request.get("cfm_new_password")
-
-        # Validate user credentials:
-        change_password_status = self.changePassword(email, old_password, new_password, cfm_new_password)
-
-        success = change_password_status[0]
-        msg = change_password_status[1]
-
-        #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - -
-        template_values = {
-            'ws_key': ws_key,
-            'email': email,
-            'user_account': user_account
-        }
-
-        if success == False:
-            self.render("/account_user/profile.html", change_password_error=msg, **template_values)
-        else:
-            self.render("/account_user/profile.html", change_password_success=msg, **template_values)
 
 class ResetPassword(resetpass.New_password_Handler, base.BaseHandler):
     def get(self):
@@ -315,7 +274,7 @@ app = webapp2.WSGIApplication([
       ('/compare-data', 'handlers.user_data.User_Data'),
       ('/compare-data-list', 'handlers.user_data.User_Data_list'),
       ('/compare-api', APIHandler_reg),
-      ('/compare-profile', ProfilePage),
+      ('/compare-profile', 'handlers.profile.ProfilePage'), #ProfilePage
       ("/api", APIHandler),
       ('/recover', 'app.recover_psswrd.PasswordRecover'),
       ('/logout', Logout),

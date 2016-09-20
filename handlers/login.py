@@ -28,27 +28,20 @@ class LoginHandler(CompareRouteHandler):
         success = False
         msg = ""
 
-        # Generate password hash from password input
-        # enc = EncryptionHandler()
-        # password_hash = enc.createPasswordHash(password)
-
-        # Attempt to retrieve user from Datastore
-        # userRecord = UserAccount.query(UserAccount.email == email, UserAccount.password == password_hash).get()
-
         user_id = UserAccount.check_password(email, password)
 
         # If user does not exist, send an error message
         # Else, log the user in
         if user_id == None:
-            success = False
-            msg = "Wrong email/password!"
+            success += False
+            msg += "Wrong email/password!"
             status.append(success)
             status.append(msg)
             # self.render('/login.html')
             return status
         else:
-            success = True
-            msg = ""  # no message needed for a successful login
+            success += True
+            msg += ""  # no message needed for a successful login
             status.append(success)
             status.append(msg)
             # status.append(user_id.ws_key)

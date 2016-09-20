@@ -12,12 +12,12 @@
 	</div>
 
 	{% if change_password_error %}
-		<div class="alert alert-danger" role="alert" style="width: 300px">
+		<div class="alert alert-danger hideThis" role="alert" style="width: 300px">
 			<p style="text-align: center">{{change_password_error}}</p>
 		</div>
 
 	{% elif change_password_success %}
-		<div class="alert alert-success" role="alert"  style="width: 300px">
+		<div class="alert alert-success hideThis" role="alert"  style="width: 300px">
 			<p style="text-align: center">{{change_password_success}}</p>
 		</div>
 	{% endif %}
@@ -28,11 +28,11 @@
                 <li class="list-group-item">Name : {{ user_account.name }}</li>
                 <li class="list-group-item">Company : {{ user_account.company }}</li>
                 <li class="list-group-item">Email : {{ user_account.email }}</li>
-                <li class="list-group-item">Credits left: {{user_account.api_credits}} <span style="font-size:11px;"></span></li>
+                <li class="list-group-item">Credits left: {{ user_account.api_credits }} <span style="font-size:11px;"></span></li>
             </ul>
 		</div>
 		<div class="col-md-8">
-			<form method="POST" action="/profile">
+			<form method="POST" action="/compare-profile">
 			  <div class="form-group">
 				<label for="old_password">Old password</label>
 				<input type="password" class="form-control" id="old_password" name="old_password" placeholder="Old password" value="" required>

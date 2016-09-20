@@ -26,31 +26,31 @@ $("#routeBtn").click(function() {
         }
     }
    // Truck Capacity
-   if($('#priority_capacity').is(":checked")==true){
-
-       if ($('#truck_capacity').val().length === 0){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Please Enter Truck Capacity");
-            $('#truck_capacity').css('border-color', 'red');
-
-       }else if ($('#vehicle_type').val().length <= 1){
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Please Select Type of Truck");
-            $('#vehicle_type').css('border-color', 'red');
-
-       }else if ($('#starting_postal_cap').val().length === 0){
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Enter Starting Postal Code");
-            $('#starting_postal_cap').css('border-color', 'red');
-       }
-       else{
-            $('#truck_capacity').css('border-color', '');
-            $('#starting_postal_cap').css('border-color', '');
-            $('#vehicle_type').css('border-color', '');
-            $('#ajax_errors').hide();
-       }
-   } // end of truck capacity
+//   if($('#priority_capacity').is(":checked")==true){
+//
+//       if ($('#truck_capacity').val().length === 0){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Please Enter Truck Capacity");
+//            $('#truck_capacity').css('border-color', 'red');
+//
+//       }else if ($('#vehicle_type').val().length <= 1){
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Please Select Type of Truck");
+//            $('#vehicle_type').css('border-color', 'red');
+//
+//       }else if ($('#starting_postal_cap').val().length === 0){
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Enter Starting Postal Code");
+//            $('#starting_postal_cap').css('border-color', 'red');
+//       }
+//       else{
+//            $('#truck_capacity').css('border-color', '');
+//            $('#starting_postal_cap').css('border-color', '');
+//            $('#vehicle_type').css('border-color', '');
+//            $('#ajax_errors').hide();
+//       }
+//   } // end of truck capacity
 
    // Sort by Company
    if($('#sort_company').is(":checked")==true){
@@ -122,7 +122,7 @@ $("#routeBtn").click(function() {
     }
 
     // Sort by Company considering truck capacity
-   if($('#priority_capacity_comp').is(":checked")==true){
+   if($('#priority_capacity_comp').is(":checked")===true){
 
         // fields 2
         if ($('#vehicle_type_1').val().length <= 1 && $('#num_comp_val').val() == '1'){
@@ -160,6 +160,14 @@ $("#routeBtn").click(function() {
             $('#starting_postal_2').css('border-color', '');
             $('#ajax_errors').hide();
         }
+   }else{
+//     alert('Heyy!');
+     $('#starting_postal_1').css('border-color', '');
+     $('#ajax_errors').hide();
+   }
+
+
+
 
         // field three
 
@@ -227,7 +235,7 @@ $("#routeBtn").click(function() {
 //            $('#starting_postal_6').css('border-color', '');
 //            $('#ajax_errors').hide();
 //        }
-    } // end of Sort by companys
+    //} // end of Sort by companys
 
 });
 
@@ -235,13 +243,18 @@ $("#routeBtn").click(function() {
 $('#routeBtn').click(function () {
 
     var starting_postal = $("#starting_postal").val();
-    var starting_postal_cap = $("#starting_postal_cap").val();
+
     var starting_postal_1 = $("#starting_postal_1").val();
     var starting_postal_2 = $("#starting_postal_2").val();
     var starting_postal_3 = $("#starting_postal_3").val();
     var starting_postal_4 = $("#starting_postal_4").val();
     var starting_postal_5 = $("#starting_postal_5").val();
     var starting_postal_6 = $("#starting_postal_6").val();
+
+    var starting_postal_cap = $("#starting_postal_cap").val();
+    var type_of_truck = $("#type_of_truck").val();
+    var truck_capacity = $("#truck_capacity").val();
+    var num_of_truck = $("#num_of_truck").val();
 
     var vehicle_quantity = $("#vehicle_quantity").val();
     var vehicle_quantity_1 = $("#vehicle_quantity_1").val();
@@ -255,7 +268,6 @@ $('#routeBtn').click(function () {
     var email = $("[name=email_value]").val();
     var has_return = $("#return_startpoint")[0].checked;
 
-    var truck_capacity = $("#truck_capacity").val();
     var truck_capacity_1 = $("#truck_capacity_1").val();
     var truck_capacity_2 = $("#truck_capacity_2").val();
     var truck_capacity_3 = $("#truck_capacity_3").val();
@@ -287,13 +299,18 @@ $('#routeBtn').click(function () {
         dataType: 'json',
         data: {
             starting_postal: starting_postal,
-            starting_postal_cap: starting_postal_cap,
+
             starting_postal_1: starting_postal_1,
             starting_postal_2: starting_postal_2,
             starting_postal_3: starting_postal_3,
             starting_postal_4: starting_postal_4,
             starting_postal_5: starting_postal_5,
             starting_postal_6: starting_postal_6,
+
+            starting_postal_cap: starting_postal_cap,
+            type_of_truck: type_of_truck,
+            truck_capacity: truck_capacity,
+            num_of_truck: num_of_truck,
 
             vehicle_quantity: vehicle_quantity,
             vehicle_quantity_1: vehicle_quantity_1,
