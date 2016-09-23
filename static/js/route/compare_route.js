@@ -251,10 +251,22 @@ $('#routeBtn').click(function () {
     var starting_postal_5 = $("#starting_postal_5").val();
     var starting_postal_6 = $("#starting_postal_6").val();
 
+    // 1
     var starting_postal_cap = $("#starting_postal_cap").val();
     var type_of_truck = $("#type_of_truck").val();
     var truck_capacity = $("#truck_capacity").val();
     var num_of_truck = $("#num_of_truck").val();
+
+    // Additional the reserve Form and limit the number 4 Types of Truck
+    // 2
+    var type_of_truck_1 = $("#type_of_truck_1").val();
+    var truck_capacity_1 = $("#truck_capacity_1").val();
+    var num_of_truck_1 = $("#num_of_truck_1").val();
+
+    // 3
+    var type_of_truck_2 = $("#type_of_truck_2").val();
+    var truck_capacity_2 = $("#truck_capacity_2").val();
+    var num_of_truck_2 = $("#num_of_truck_2").val();
 
     var vehicle_quantity = $("#vehicle_quantity").val();
     var vehicle_quantity_1 = $("#vehicle_quantity_1").val();
@@ -307,10 +319,22 @@ $('#routeBtn').click(function () {
             starting_postal_5: starting_postal_5,
             starting_postal_6: starting_postal_6,
 
+            // 1
             starting_postal_cap: starting_postal_cap,
             type_of_truck: type_of_truck,
             truck_capacity: truck_capacity,
             num_of_truck: num_of_truck,
+
+            // Additional the reserve Form
+            // 2
+            type_of_truck_1: type_of_truck_1,
+            truck_capacity_1: type_of_truck_1,
+            num_of_truck_1: num_of_truck_1,
+
+            // 3
+            type_of_truck_2: type_of_truck_2,
+            truck_capacity_2: truck_capacity_2,
+            num_of_truck_2: num_of_truck_2,
 
             vehicle_quantity: vehicle_quantity,
             vehicle_quantity_1: vehicle_quantity_1,

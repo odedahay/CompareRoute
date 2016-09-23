@@ -99,13 +99,16 @@
             <div class="col-xs-12">
                 <div class="radio">
                     <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="optionsTruck" value="by_truck" checked><i class="fa fa-truck" aria-hidden="true"></i> Route by No. of Truck
+                        <input type="radio" name="optionsRadios" id="optionsTruck" value="by_truck" checked>
+                            <i class="fa fa-truck" aria-hidden="true"></i> Route by No. of Truck
                     </label>
                     <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="priority_capacity" value="by_capacity"><i class="fa fa-cubes" aria-hidden="true"></i> Route by Truck Capacity
+                        <input type="radio" name="optionsRadios" id="priority_capacity" value="by_capacity">
+                            <i class="fa fa-cubes" aria-hidden="true"></i> Route by Truck Capacity
                     </label>
                     <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="sort_company" value="by_companies"><i class="fa fa-bar-chart" aria-hidden="true"></i> Route by Companies
+                        <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Route by Companies
                     </label>
                 </div>
             </div>
@@ -136,8 +139,8 @@
                                   <option>13</option>
                                   <option>14</option>
                                   <option>15</option>
-                                  <option>16</option>
-                                  <option>17</option>
+                                  <!--<option>16</option>-->
+                                  <!--<option>17</option>-->
                             </select>
                         </div>
                     </div>
@@ -153,52 +156,33 @@
                         <input type="text" class="form-control input" id="starting_postal_cap" name="starting_postal_cap" placeholder="e.g. 570282" aria-describedby="helpBlock" value="461051">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-2 down_15">
-                        <label class="control-label font_11" for="type_of_truck"> Enter Type of Truck</label>
-                        <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" aria-describedby="helpBlock" value="Big Truck">
-                    </div>
-                    <div class="col-xs-2 down_15">
-                        <label class="control-label font_11" for="truck_capacity"> Enter Max Truck Capacity * </label>
-                        <input type="number" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" aria-describedby="helpBlock" value="10">
-                    </div>
-                    <div class="col-xs-2 down_15">
-                        <label class="control-label font_11" for="num_of_truck"> No. of Truck </label>
-                        <input type="number" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" aria-describedby="helpBlock" value="3">
-                    </div>
+                <div id="main_form">
 
-                    <div class="col-xs-2">
-                        <div style="margin-top:30px;">
-                         <input type="button" id="addKid()" onclick="add_kid()" value="+" />
+
+                    <div class="row">
+                        <div class="col-xs-2 down_15">
+                            <label class="control-label font_11" for="type_of_truck"> Enter Type of Truck</label>
+                             <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="Big Truck">
+                        </div>
+                        <div class="col-xs-2 down_15">
+                            <label class="control-label font_11" for="truck_capacity"> Enter Max Truck Capacity * </label>
+                            <input type="number" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="10">
+                        </div>
+                        <div class="col-xs-2 down_15">
+                            <label class="control-label font_11" for="num_of_truck"> No. of Truck </label>
+                            <input type="number" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" value="3">
+                        </div>
+                    </div>
+                    <!-- Dynamic Form Start Here-->
+                    <div id="items"></div>
+
+                    <!-- Dynamic Form Button Here-->
+                    <div class="row">
+                        <div class="col-xs-3 down_15">
+                            <input type="button" value="+ Add Different Truck" id="addBtn">
                         </div>
                     </div>
                 </div>
-                <!-- end Route By Capacity -->
-
-                <!--<div class="row">-->
-                    <!--<div class="col-xs-2 down_15">-->
-                        <!--<label class="control-label font_11" for="starting_postal_cap"> Enter Starting Postal Code * </label>-->
-                        <!--<input type="text" class="form-control input" id="starting_postal_cap" name="starting_postal_cap" placeholder="e.g. 570282" aria-describedby="helpBlock" value="461051">-->
-                    <!--</div>-->
-                    <!--<div class="col-xs-2">-->
-
-                        <!--<div class="vehicle_label" id="truck_1_label">-->
-                            <!--<label class="control-label font_11" for="vehicle_type">Select Type of Truck *</label>-->
-                        <!--</div>-->
-                        <!--<select class="form-control input" id="vehicle_type" name="vehicle_type">-->
-                            <!--<option value=" "></option>-->
-                            <!--<option value="truck_1">M3 Truck</option>-->
-                            <!--<option value="truck_2">Big Truck</option>-->
-                        <!--</select>-->
-
-                    <!--</div>-->
-                    <!--<div class="col-xs-2">-->
-                        <!--<div id="truck_2_bt">-->
-                            <!--<label class="control-label font_11" for="truck_capacity">Enter Truck Capacity *</label>-->
-                            <!--<input class="form-control input" id="truck_capacity" name="truck_capacity" type="number" min="1" max="500" placeholder="0" value="">-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
 
             </div> <!-- end of cr_capacity -->
 
@@ -609,6 +593,7 @@
     <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>
     <!--Scroll To Top-->
 </a>
+
 
 <script src="/js/jquery.progresstimer.js"></script>
 <script src="/js/excel_dl/jquery.btechco.excelexport.js"></script>

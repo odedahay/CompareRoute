@@ -514,27 +514,32 @@ $('.scrollToTop').click(function(){
     return false;
 });
 
-//By Route Truck Function
+// By Route Truck Function by Adding input fields
 
-var scntDiv = $('#p_scents');
-var i = $('#p_scents p').size() + 1;
+var counter = 1;
+var limitForms = 2;
 
-$('#addScnt').live('click', function() {
-    $('<p><label for="p_scnts"><input type="text" id="p_scnt" size="20" name="p_scnt_' + i +'" value="" placeholder="Input Value" /></label><label for="p_scnts_b"><input type="text" id="p_scnts_b" size="20" name="p_scnts_b_' + i +'" value="" placeholder="Input Value 2" /></label> <a href="#" id="remScnt">Remove</a></p>').appendTo(scntDiv);
-    i++;
-    return false;
-});
+$('#addBtn').click(function(e){
+    if (counter <= limitForms){
 
-$('#remScnt').live('click', function() {
-    if( i > 2 ) {
-        $(this).parents('p').remove();
-        i--;
+        event.preventDefault()
+        $('#items').append('<span><div class="row" id="group"><div class="col-xs-2 down_15"><input type="text" class="form-control input" id="type_of_truck_'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_'+counter+'" /></div>'+' <div class="col-xs-2" style="margin-top:10px;"><input type="button" value="-" id="delete" /></div></div></span>' );
+        counter++;
+
+    }else{
+
+        alert("You have reached the limit of adding Truck " + counter + " inputs");
     }
-    return false;
+});
+// Delete Input fields
+$('#items').on('click', '#delete', function(){
+    $('#group').parent().remove();
+    counter--;
 });
 
 
 //});
+
 // - - - - -End Back to Top - - - - - -//
 
 

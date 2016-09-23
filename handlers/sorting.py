@@ -22,13 +22,15 @@ from model.admin_account import postalRecordDB
 from model.admin_account import PostalRecordDB_alert
 from model.user_account import UserAccount
 
+import itertools
+
 # sorting function for company
 import sorting_company
 
 
 def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quantity, email, has_return,
                            vehicle_capacity, priority_capacity, priority_capacity_comp, vehicle_type, api_user,
-                           sort_company):
+                           sort_company, truck_capacity_grp):
     starting_address = str(starting_address)
 
     if sort_company == "true":
@@ -167,6 +169,18 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                             result_postal_seq.append([postal, orderId, capacity])
                             result_postal.append([postal, capacity])
 
+                # Create If condition = if the they use two or more vehicles
+                # Loop each truck capacity through each postal
+                # If reach the Truck, use the 2nd value of type truck
+
+                # Define and assign variables for truck
+                truck_dictionary = truck_details(truck_capacity_grp)
+
+                # Chunk according to Capacity / No of truck
+                result_chunck = list(chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
+
+                print ('result_chunck'), result_chunck
+
                 # Allocate the number of Trucks
                 vehicle_postal_list_new = list(chunk_to_sum(result_postal, int(vehicle_capacity)))
 
@@ -180,9 +194,9 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 num_of_vehicles = len(vehicle_postal_list_new)
                 vehicle_quantity = num_of_vehicles
 
-                # If the vehicle_quantity == num_of_truck
 
     else:
+
         # Chunk it through num - vehicle
         # Proposed Route
         vehicle_postal_list_new = chunkIt(postal_sorted, vehicle_quantity)
@@ -226,41 +240,257 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # User Count
     if api_user == "true":
         print "Data are from API User"
-        taskqueue.add(url='/sorting-proposed-api',
-                      params=({'compare_id': compare_id,
-                               'starting_address': starting_address,
-                               # 'origin_destination': origin_destination,
-                               'proposedPostlal': proposedPostlal,
-                               'currentdPostlal': currentdPostlal,
-                               'has_return': has_return,
-                               'email': email,
-                               'num_of_vehicle': vehicle_quantity,
-                               'vehicle_capacity': vehicle_capacity,
-                               'num_user_load': num_user_load
-                               }))
+        # taskqueue.add(url='/sorting-proposed-api',
+        #               params=({'compare_id': compare_id,
+        #                        'starting_address': starting_address,
+        #                        # 'origin_destination': origin_destination,
+        #                        'proposedPostlal': proposedPostlal,
+        #                        'currentdPostlal': currentdPostlal,
+        #                        'has_return': has_return,
+        #                        'email': email,
+        #                        'num_of_vehicle': vehicle_quantity,
+        #                        'vehicle_capacity': vehicle_capacity,
+        #                        'num_user_load': num_user_load
+        #                        }))
     else:
         print ('Route task added to the queue.')
-        taskqueue.add(url='/sorting-proposed',
-                      params=({'compare_id': compare_id,
-                               'starting_address': starting_address,
-                               # 'origin_destination': origin_destination,
-                               'proposedPostlal': proposedPostlal,
-                               'currentdPostlal': currentdPostlal,
-                               'has_return': has_return,
-                               'email': email,
-                               'num_of_vehicle': vehicle_quantity,
-                               'vehicle_capacity': vehicle_capacity,
-                               'num_user_load': num_user_load
-                               }))
+        # taskqueue.add(url='/sorting-proposed',
+        #               params=({'compare_id': compare_id,
+        #                        'starting_address': starting_address,
+        #                        # 'origin_destination': origin_destination,
+        #                        'proposedPostlal': proposedPostlal,
+        #                        'currentdPostlal': currentdPostlal,
+        #                        'has_return': has_return,
+        #                        'email': email,
+        #                        'num_of_vehicle': vehicle_quantity,
+        #                        'vehicle_capacity': vehicle_capacity,
+        #                        'num_user_load': num_user_load
+        #                        }))
 
     return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq
+
+# Function for assigning Variable to Truck Types:
+def truck_details(list):
+
+    target_list = []
+    max_list = []
+    truck_name_list = []
+    truck_dictionary = {}
+
+    if len(list) == 2:
+
+        for i in range(0, len(list)):
+            # Retrieve each truck pair
+            truck_pair = list[i]
+
+            # Lay dow the items of truck_pair
+            truck_name = str(truck_pair[0].strip())
+            target = int(truck_pair[1])
+            max = int(truck_pair[2])
+
+            # append each items:
+            truck_name_list.append(truck_name)
+            target_list.append(target)
+            max_list.append(max)
+
+        truck_1 = truck_name_list[0]
+        truck_2 = truck_name_list[1]
+        target_1 = target_list[0]
+        target_2 = target_list[1]
+        max_1 = max_list[0]
+        max_2 = max_list[0]
+
+        truck_dictionary = {
+            "truck_1": truck_1,
+            "truck_2": truck_2,
+            "target_1": target_1,
+            "target_2": target_2,
+            "max_1": max_1,
+            "max_2": max_2,
+        }
+
+    elif len(list) == 3:
+        # if the type of Truck are to 3:
+
+        for i in range(0, len(list)):
+            # Retrieve each truck pair
+            truck_pair = list[i]
+
+            # Lay dow the items of truck_pair
+            truck_name = str(truck_pair[0].strip())
+            target = int(truck_pair[1])
+            max = int(truck_pair[2])
+
+            # append each items:
+            truck_name_list.append(truck_name)
+            target_list.append(target)
+            max_list.append(max)
+
+        truck_1 = truck_name_list[0]
+        truck_2 = truck_name_list[1]
+        truck_3 = truck_name_list[2]
+        target_1 = target_list[0]
+        target_2 = target_list[1]
+        target_3 = target_list[2]
+        max_1 = max_list[0]
+        max_2 = max_list[1]
+        max_3 = max_list[2]
+
+        truck_dictionary = {
+            "truck_1": truck_1,
+            "truck_2": truck_2,
+            "truck_3": truck_3,
+            "target_1": target_1,
+            "target_2": target_2,
+            "target_3": target_3,
+            "max_1": max_1,
+            "max_2": max_2,
+            "max_3": max_3,
+        }
+
+    else:
+
+        # if type of truck is 1:
+        # Lay dow the items of truck_pair
+
+        for i in list:
+            list2 = i
+            truck_name_1 = str(list2[0])
+            target_1 = int(list2[1])
+            max_1 = int(list2[2])
+
+            truck_dictionary = {
+                "truck_name_1": truck_name_1,
+                "target_1": target_1,
+                "max_1": max_1,
+            }
+
+    return truck_dictionary
+
+
+def chunk_to_sum_no_truck(iterable, *list, **params):
+
+    chunk_sum = 0.0
+    chunk = []
+    array = []
+
+    # If else = if type truck capacity input = 3, 2 and 1
+
+    if len(list) == 3:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+        target_3 = params['target_3']
+
+        # No. of Truck
+        max_1 = params['max_1']
+        max_2 = params['max_2']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck_1 = target_1 * max_1
+        group_truck_2 = target_2 * max_2
+
+        for key, item in iterable:
+            chunk_sum += item
+
+            if len(array) <= group_truck_1:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            elif len(array) <= group_truck_2:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+            else:
+
+                if chunk_sum > target_3:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            array.append(chunk)
+
+    elif len(list) == 2:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+
+        # No. of Truck
+        max_1 = params['max_1']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck = target_1 * max_1
+
+        for key, item in iterable:
+            chunk_sum += item
+
+            if len(array) <= group_truck:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+            else:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            array.append(chunk)
+
+    else:
+
+        # if one type of truck input:
+        target_1 = params['target_1']
+
+        for key, item in iterable:
+            chunk_sum += item
+
+            if chunk_sum > target_1:
+
+                yield chunk
+                chunk = [key]
+                chunk_sum = item
+            else:
+                chunk.append(key)
+
+    if chunk:
+        yield chunk
 
 
 # Sorting happening here:
 def sort_by_postals(starting_address, postal_sequence_list, sort_company):
+
     # Set the up the required lists
     # Postal_dictionary to store same postal codes into 10
-    # Postal_list refers to the unique list of postals codes
+    # Postal_list refers to the unique list of postal codes
     # Order_dict to store all the specific details pertaining to the order
 
     if sort_company == "true":
@@ -331,6 +561,7 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
 def chunk_to_sum2_comp(iterable, target):
     chunk_sum = 0.0
     chunk = []
+
     for x in range(len(iterable)):
         chunk_seq = iterable[x]
 
@@ -376,6 +607,7 @@ def chunk_to_sum2(iterable, target):
 def chunk_to_sum(iterable, target):
     chunk_sum = 0.0
     chunk = []
+
     for key, item in iterable:
         chunk_sum += item
 
