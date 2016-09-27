@@ -53,113 +53,113 @@ $("#routeBtn").click(function() {
 //   } // end of truck capacity
 
    // Sort by Company
-   if($('#sort_company').is(":checked")==true){
-        if ($('#starting_postal_1').val().length === 0){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_1').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_1').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-        // Set 2
-        if ($('#starting_postal_2').val().length === 0 && $('#num_comp_val').val() == '2'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_2').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_2').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-        // Set 3
-        if ($('#starting_postal_3').val().length === 0 && $('#num_comp_val').val() == '3' ){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_3').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_3').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-        // Set 4
-        if ($('#starting_postal_4').val().length === 0 && $('#num_comp_val').val() == '4'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_4').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_4').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-         // Set 5
-        if ($('#starting_postal_5').val().length === 0 && $('#num_comp_val').val() == '5' ){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_5').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_5').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-         // Set 6
-        if ($('#starting_postal_6').val().length === 0 && $('#num_comp_val').val() == '6' ){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal_6').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_6').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-    }
+//   if($('#sort_company').is(":checked")==true){
+//        if ($('#starting_postal_1').val().length === 0){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_1').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_1').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//        // Set 2
+//        if ($('#starting_postal_2').val().length === 0 && $('#num_comp_val').val() == '2'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_2').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_2').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//        // Set 3
+//        if ($('#starting_postal_3').val().length === 0 && $('#num_comp_val').val() == '3' ){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_3').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_3').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//        // Set 4
+//        if ($('#starting_postal_4').val().length === 0 && $('#num_comp_val').val() == '4'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_4').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_4').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//         // Set 5
+//        if ($('#starting_postal_5').val().length === 0 && $('#num_comp_val').val() == '5' ){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_5').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_5').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//         // Set 6
+//        if ($('#starting_postal_6').val().length === 0 && $('#num_comp_val').val() == '6' ){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("No Starting Point");
+//            $('#starting_postal_6').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_6').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//    }
 
     // Sort by Company considering truck capacity
    if($('#priority_capacity_comp').is(":checked")===true){
 
         // fields 2
-        if ($('#vehicle_type_1').val().length <= 1 && $('#num_comp_val').val() == '1'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Select Type of Truck");
-            $('#vehicle_type_1').css('border-color', 'red');
-
-        }else if ($('#truck_capacity_1').val().length === 0 && $('#num_comp_val').val() == '1'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Select Type of Truck");
-            $('#truck_capacity_1').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_1').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
-
-        // field two
-
-        if ($('#vehicle_type_2').val().length <= 1 && $('#num_comp_val').val() == '2'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Select Type of Truck");
-            $('#vehicle_type_2').css('border-color', 'red');
-
-        }else if ($('#truck_capacity_2').val().length === 0 && $('#num_comp_val').val() == '2'){
-            //alert('Error!');
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("Select Type of Truck");
-            $('#truck_capacity_2').css('border-color', 'red');
-
-        }else{
-            $('#starting_postal_2').css('border-color', '');
-            $('#ajax_errors').hide();
-        }
+//        if ($('#vehicle_type_1').val().length <= 1 && $('#num_comp_val').val() == '1'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Select Type of Truck");
+//            $('#vehicle_type_1').css('border-color', 'red');
+//
+//        }else if ($('#truck_capacity_1').val().length === 0 && $('#num_comp_val').val() == '1'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Select Type of Truck");
+//            $('#truck_capacity_1').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_1').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
+//
+//        // field two
+//
+//        if ($('#vehicle_type_2').val().length <= 1 && $('#num_comp_val').val() == '2'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Select Type of Truck");
+//            $('#vehicle_type_2').css('border-color', 'red');
+//
+//        }else if ($('#truck_capacity_2').val().length === 0 && $('#num_comp_val').val() == '2'){
+//            //alert('Error!');
+//            $('#ajax_errors').show();
+//            $('#ajax_errors').html("Select Type of Truck");
+//            $('#truck_capacity_2').css('border-color', 'red');
+//
+//        }else{
+//            $('#starting_postal_2').css('border-color', '');
+//            $('#ajax_errors').hide();
+//        }
    }else{
 //     alert('Heyy!');
      $('#starting_postal_1').css('border-color', '');
@@ -242,22 +242,17 @@ $("#routeBtn").click(function() {
 // Click --> Generate Button
 $('#routeBtn').click(function () {
 
+    //route by truck
     var starting_postal = $("#starting_postal").val();
+    var vehicle_quantity = $("#vehicle_quantity").val();
 
-    var starting_postal_1 = $("#starting_postal_1").val();
-    var starting_postal_2 = $("#starting_postal_2").val();
-    var starting_postal_3 = $("#starting_postal_3").val();
-    var starting_postal_4 = $("#starting_postal_4").val();
-    var starting_postal_5 = $("#starting_postal_5").val();
-    var starting_postal_6 = $("#starting_postal_6").val();
-
+    //route by capacity
     // 1
     var starting_postal_cap = $("#starting_postal_cap").val();
     var type_of_truck = $("#type_of_truck").val();
     var truck_capacity = $("#truck_capacity").val();
     var num_of_truck = $("#num_of_truck").val();
 
-    // Additional the reserve Form and limit the number 4 Types of Truck
     // 2
     var type_of_truck_1 = $("#type_of_truck_1").val();
     var truck_capacity_1 = $("#truck_capacity_1").val();
@@ -268,7 +263,14 @@ $('#routeBtn').click(function () {
     var truck_capacity_2 = $("#truck_capacity_2").val();
     var num_of_truck_2 = $("#num_of_truck_2").val();
 
-    var vehicle_quantity = $("#vehicle_quantity").val();
+    //route by companies
+    var starting_postal_1 = $("#starting_postal_1").val();
+    var starting_postal_2 = $("#starting_postal_2").val();
+    var starting_postal_3 = $("#starting_postal_3").val();
+    var starting_postal_4 = $("#starting_postal_4").val();
+    var starting_postal_5 = $("#starting_postal_5").val();
+    var starting_postal_6 = $("#starting_postal_6").val();
+
     var vehicle_quantity_1 = $("#vehicle_quantity_1").val();
     var vehicle_quantity_2 = $("#vehicle_quantity_2").val();
     var vehicle_quantity_3 = $("#vehicle_quantity_3").val();
@@ -276,24 +278,31 @@ $('#routeBtn').click(function () {
     var vehicle_quantity_5 = $("#vehicle_quantity_5").val();
     var vehicle_quantity_6 = $("#vehicle_quantity_6").val();
 
+    //route by companies - companies
+    var type_of_truck_c1 = $("#type_of_truck_c1").val();
+    var type_of_truck_c2 = $("#type_of_truck_c2").val();
+    var type_of_truck_c3 = $("#type_of_truck_c3").val();
+    var type_of_truck_c4 = $("#type_of_truck_c4").val();
+    var type_of_truck_c5 = $("#type_of_truck_c5").val();
+    var type_of_truck_c6 = $("#type_of_truck_c6").val();
+
+    var truck_capacity_c1 = $("#truck_capacity_c1").val();
+    var truck_capacity_c2 = $("#truck_capacity_c2").val();
+    var truck_capacity_c3 = $("#truck_capacity_c3").val();
+    var truck_capacity_c4 = $("#truck_capacity_c4").val();
+    var truck_capacity_c5 = $("#truck_capacity_c5").val();
+    var truck_capacity_c6 = $("#truck_capacity_c6").val();
+
+    var num_of_truck_c1 = $("#num_of_truck_c1").val();
+    var num_of_truck_c2 = $("#num_of_truck_c2").val();
+    var num_of_truck_c3 = $("#num_of_truck_c3").val();
+    var num_of_truck_c4 = $("#num_of_truck_c4").val();
+    var num_of_truck_c5 = $("#num_of_truck_c5").val();
+    var num_of_truck_c6 = $("#num_of_truck_c6").val();
+
     var postal_sequence = $("#postal_sequence").val();
     var email = $("[name=email_value]").val();
     var has_return = $("#return_startpoint")[0].checked;
-
-    var truck_capacity_1 = $("#truck_capacity_1").val();
-    var truck_capacity_2 = $("#truck_capacity_2").val();
-    var truck_capacity_3 = $("#truck_capacity_3").val();
-    var truck_capacity_4 = $("#truck_capacity_4").val();
-    var truck_capacity_5 = $("#truck_capacity_5").val();
-    var truck_capacity_6 = $("#truck_capacity_6").val();
-
-    var vehicle_type = $("#vehicle_type").val();
-    var vehicle_type_1 = $("#vehicle_type_1").val();
-    var vehicle_type_2 = $("#vehicle_type_2").val();
-    var vehicle_type_3 = $("#vehicle_type_3").val();
-    var vehicle_type_4 = $("#vehicle_type_4").val();
-    var vehicle_type_5 = $("#vehicle_type_5").val();
-    var vehicle_type_6 = $("#vehicle_type_6").val();
 
     var optionsTruck = $("#optionsTruck")[0].checked;
     var priority_capacity = $("#priority_capacity")[0].checked;
@@ -311,13 +320,7 @@ $('#routeBtn').click(function () {
         dataType: 'json',
         data: {
             starting_postal: starting_postal,
-
-            starting_postal_1: starting_postal_1,
-            starting_postal_2: starting_postal_2,
-            starting_postal_3: starting_postal_3,
-            starting_postal_4: starting_postal_4,
-            starting_postal_5: starting_postal_5,
-            starting_postal_6: starting_postal_6,
+            vehicle_quantity: vehicle_quantity,
 
             // 1
             starting_postal_cap: starting_postal_cap,
@@ -325,10 +328,9 @@ $('#routeBtn').click(function () {
             truck_capacity: truck_capacity,
             num_of_truck: num_of_truck,
 
-            // Additional the reserve Form
             // 2
             type_of_truck_1: type_of_truck_1,
-            truck_capacity_1: type_of_truck_1,
+            truck_capacity_1: truck_capacity_1,
             num_of_truck_1: num_of_truck_1,
 
             // 3
@@ -336,7 +338,14 @@ $('#routeBtn').click(function () {
             truck_capacity_2: truck_capacity_2,
             num_of_truck_2: num_of_truck_2,
 
-            vehicle_quantity: vehicle_quantity,
+            //Route by Companies
+            starting_postal_1: starting_postal_1,
+            starting_postal_2: starting_postal_2,
+            starting_postal_3: starting_postal_3,
+            starting_postal_4: starting_postal_4,
+            starting_postal_5: starting_postal_5,
+            starting_postal_6: starting_postal_6,
+
             vehicle_quantity_1: vehicle_quantity_1,
             vehicle_quantity_2: vehicle_quantity_2,
             vehicle_quantity_3: vehicle_quantity_3,
@@ -344,25 +353,31 @@ $('#routeBtn').click(function () {
             vehicle_quantity_5: vehicle_quantity_5,
             vehicle_quantity_6: vehicle_quantity_6,
 
+            //route by companies - companies
+            type_of_truck_c1: type_of_truck_c1,
+            type_of_truck_c2: type_of_truck_c2,
+            type_of_truck_c3: type_of_truck_c3,
+            type_of_truck_c4: type_of_truck_c4,
+            type_of_truck_c5: type_of_truck_c5,
+            type_of_truck_c6: type_of_truck_c6,
+
+            truck_capacity_c1: truck_capacity_c1,
+            truck_capacity_c2: truck_capacity_c2,
+            truck_capacity_c3: truck_capacity_c3,
+            truck_capacity_c4: truck_capacity_c4,
+            truck_capacity_c5: truck_capacity_c5,
+            truck_capacity_c6: truck_capacity_c6,
+
+            num_of_truck_c1: num_of_truck_c1,
+            num_of_truck_c2: num_of_truck_c2,
+            num_of_truck_c3: num_of_truck_c3,
+            num_of_truck_c4: num_of_truck_c4,
+            num_of_truck_c5: num_of_truck_c5,
+            num_of_truck_c6: num_of_truck_c6,
+
             postal_sequence: postal_sequence,
             email: email,
             has_return: has_return,
-
-            truck_capacity: truck_capacity,
-            truck_capacity_1: truck_capacity_1,
-            truck_capacity_2: truck_capacity_2,
-            truck_capacity_3: truck_capacity_3,
-            truck_capacity_4: truck_capacity_4,
-            truck_capacity_5: truck_capacity_5,
-            truck_capacity_6: truck_capacity_6,
-
-            vehicle_type: vehicle_type,
-            vehicle_type_1: vehicle_type_1,
-            vehicle_type_2: vehicle_type_2,
-            vehicle_type_3: vehicle_type_3,
-            vehicle_type_4: vehicle_type_4,
-            vehicle_type_5: vehicle_type_5,
-            vehicle_type_6: vehicle_type_6,
 
             optionsTruck: optionsTruck,
             priority_capacity: priority_capacity,

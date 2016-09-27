@@ -90,8 +90,7 @@
                     </table>
                     <em class="tableize">Click to paste or Drop your file here</em>
                 </div> <!--end of tableize -->
-                <textarea class="form-control" id="postal_sequence" name="postal_sequence" rows="10" cols="120" title="click to copy/paste" spellcheck="false"  style="display: none;">
-                </textarea>
+                <textarea class="form-control" id="postal_sequence" name="postal_sequence" rows="10" cols="120" title="click to copy/paste" spellcheck="false"  style="display: none;"></textarea>
 
         </div><!--/sourceWrap -->
         <br />
@@ -110,6 +109,14 @@
                         <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
                             <i class="fa fa-bar-chart" aria-hidden="true"></i> Route by Companies
                     </label>
+
+                    <!--<label class="radio-inline" style="margin-right:10px">-->
+                        <!--<input type="reset" name="optionsRadios" id="refresh_btn" value="">-->
+                            <!--<i class="fa fa-refresh" aria-hidden="true"></i>-->
+                    <!--</label>-->
+
+                    <button type="button" class="btn btn-link" id="refresh_btn" title="Refresh Button" value="refresh_btn"><i class="fa fa-refresh" aria-hidden="true"></i>
+
                 </div>
             </div>
 
@@ -158,7 +165,6 @@
                 </div>
                 <div id="main_form">
 
-
                     <div class="row">
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="type_of_truck"> Enter Type of Truck</label>
@@ -174,12 +180,15 @@
                         </div>
                     </div>
                     <!-- Dynamic Form Start Here-->
+
                     <div id="items"></div>
 
                     <!-- Dynamic Form Button Here-->
                     <div class="row">
                         <div class="col-xs-3 down_15">
-                            <input type="button" value="+ Add Different Truck" id="addBtn">
+                            <button type="button" class="btn btn-link" id="addBtn">+ Add New Truck
+                                <span id="counter_fields"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -196,7 +205,9 @@
                              <input class="form-control input" id="num_comp_val" name="num_comp_val" type="number" min="1" value="">
                         </div>
                     </div>
+
                     <div class="col-xs-4">
+                        <!--NOTE: display:none-->
                         <div class="checkbox" style="margin-top: 16px;">
                              <label class="right_10">
                                 <input type="checkbox" name="checkbox" id="priority_capacity_comp" value="priority_capacity2">Route by Companies, Considering Route by Truck Capacity
@@ -219,241 +230,11 @@
                 </div>
 
                 <div class="row">
-
-                    <div class="col-xs-2">
-
-                        <label class="control-label font_11" for="starting_postal"><i class="numberCircle">1</i> Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_1" name="starting_postal_1" placeholder="Example: 461051" aria-describedby="helpBlock" value="461051">
-
-                        <label class="control-label font_11" for="starting_postal_2" id="starting_label_2"><i class="numberCircle">2</i>  Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_2" name="starting_postal_2" placeholder="Company 2 Postal" aria-describedby="helpBlock" value="730888">
-
-                        <label class="control-label font_11" for="starting_postal_2" id="starting_label_3"><i class="numberCircle">3</i>  Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_3" name="starting_postal_3" placeholder="Company 3 Postal" aria-describedby="helpBlock" value="">
-
-                        <label class="control-label font_11" for="starting_label_4" id="starting_label_4"><i class="numberCircle">4</i>  Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_4" name="starting_postal_4" placeholder="Company 4 Postal" aria-describedby="helpBlock" value="">
-
-                        <label class="control-label font_11" for="starting_label_5" id="starting_label_5"><i class="numberCircle">5</i>  Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_5" name="starting_postal_5" placeholder="Company 5 Postal" aria-describedby="helpBlock" value="">
-
-                        <label class="control-label font_11" for="starting_label_6" id="starting_label_6"><i class="numberCircle">6</i>  Starting Postal Code * </label>
-                        <input type="text" class="form-control input down_15" id="starting_postal_6" name="starting_postal_6" placeholder="Company 6 Postal" aria-describedby="helpBlock" value="">
-                    </div><!-- End of StartingPoint-->
-
-                    <div class="col-xs-2" id="vehicle_qty_div">
-                        <!-- Set 1-->
-                        <label class="control-label font_11" for="vehicle_quantity_1">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_1" name="vehicle_quantity_1">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                            <option>13</option>
-                            <option>14</option>
-                            <option>15</option>
-                        </select>
-                        <!-- Set 2-->
-                        <label class="control-label font_11" for="vehicle_quantity_2" id="vehicle_label_2">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_2" name="vehicle_quantity_2">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                              <option>8</option>
-                              <option>9</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                        </select>
-                        <!-- Set 3 -->
-                        <label class="control-label font_11" for="vehicle_quantity_3" id="vehicle_label_3">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_3" name="vehicle_quantity_3">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                              <option>8</option>
-                              <option>9</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                        </select>
-                        <!-- Set 4 -->
-                        <label class="control-label font_11" for="vehicle_quantity_4" id="vehicle_label_4">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_4" name="vehicle_quantity_4">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                              <option>8</option>
-                              <option>9</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                        </select>
-                        <!-- Set End -->
-                         <!-- Set 5 -->
-                        <label class="control-label font_11" for="vehicle_quantity_5" id="vehicle_label_5">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_5" name="vehicle_quantity_5">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                              <option>8</option>
-                              <option>9</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                        </select>
-                        <!-- Set End -->
-                         <!-- Set 6 -->
-                        <label class="control-label font_11" for="vehicle_quantity_6" id="vehicle_label_6">Enter No. of Truck *</label>
-                        <select class="form-control input down_15" id="vehicle_quantity_6" name="vehicle_quantity_6">
-                              <option>1</option>
-                              <option>2</option>
-                              <option>3</option>
-                              <option>4</option>
-                              <option>5</option>
-                              <option>6</option>
-                              <option>7</option>
-                              <option>8</option>
-                              <option>9</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                        </select>
-                        <!-- Set End -->
-                    </div> <!-- End of Truck-->
-
-                    <div class="col-xs-2 ">
-                        <div class="hidden_field1">
-                            <label class="control-label font_11" for="vehicle_type_1">Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_1" name="vehicle_type_1">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-
-                        </div>
-                    <!-- 2nd Truck set -->
-                         <div class="hidden_field2">
-                            <label class="control-label font_11" for="vehicle_type_2">Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_2" name="vehicle_type_2">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-
-                        </div>
-                    <!-- 3rd Truck set -->
-                        <div class="hidden_field3">
-                            <label class="control-label font_11" for="vehicle_type_3"> Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_3" name="vehicle_type_3">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-
-                        </div>
-                     <!-- 4th Truck set -->
-                        <div class="hidden_field4">
-                            <label class="control-label font_11" for="vehicle_type_4">Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_4" name="vehicle_type_4">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-
-                        </div>
-                         <!-- 5th Truck set -->
-                        <div class="hidden_field5">
-                            <label class="control-label font_11" for="vehicle_type_5">Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_5" name="vehicle_type_5">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-                        </div>
-                         <!-- 6th Truck set -->
-                        <div class="hidden_field6">
-                            <label class="control-label font_11" for="vehicle_type_6">Select Type of Truck *</label>
-                            <select class="form-control input down_15" id="vehicle_type_6" name="vehicle_type_6">
-                                <option value=" "></option>
-                                <option value="truck_1">M3 Truck</option>
-                                <option value="truck_2">Big Truck</option>
-                            </select>
-                        </div>
-                    </div><!-- Drop Down -->
-
-                    <div class="col-xs-2">
-                        <div class="hidden_field1">
-                            <label class="control-label font_11" for="truck_capacity_1">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_1" name="truck_capacity_1" placeholder="0" type="number" min="1"  value="">
-                        </div>
-                        <!-- 2nd set-->
-                        <div class="hidden_field2">
-                            <label class="control-label font_11" for="truck_capacity_2">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_2" name="truck_capacity_2"  placeholder="0" type="number" min="1" value="">
-                        </div>
-                        <!-- 3rd set-->
-                        <div class="hidden_field3">
-                            <label class="control-label font_11" for="truck_capacity_3">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_3" name="truck_capacity_3"  placeholder="0" type="number" min="1" value="">
-                        </div>
-                        <!-- 4th set-->
-                        <div class="hidden_field4">
-                            <label class="control-label font_11" for="truck_capacity_4">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_4" name="truck_capacity_4"  placeholder="0" type="number" min="1" value="">
-                        </div>
-                        <!-- 5th set-->
-                        <div class="hidden_field5">
-                            <label class="control-label font_11" for="truck_capacity_5">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_5" name="truck_capacity_5"  placeholder="0" type="number" min="1" value="">
-                        </div>
-                        <!-- 6th set-->
-                        <div class="hidden_field6">
-                            <label class="control-label font_11" for="truck_capacity_6">Enter Truck Capacity *</label>
-                            <input class="form-control input down_15" id="truck_capacity_6" name="truck_capacity_6"  placeholder="0" type="number" min="1" value="">
-                        </div>
-
-                    </div> <!-- emd of Master -->
-                 </div> <!-- End of Row-->
+                    <!-- Generating Fields -->
+                    <div id="fields_company"></div>
+                </div>
+                <div class="row">
+                </div> <!-- End of Row-->
             </div><!-- end of cr_companies -->
         </div>
         <!--  Check Box for Return Truck -->
@@ -469,7 +250,8 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div id="ajax_errors" class="alert alert-danger" role="alert" style="display: none;">
+                <div id="ajax_errors" class="alert alert-danger alert-dismissible" role="alert" style="display: none;">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> </button>
                     <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>Whoops!</strong></p>
                     <span>Something went wrong!</span>
                 </div>
@@ -515,24 +297,8 @@
             <!--  Company Visualization -->
             <div class="row">
                 <div class="col-lg-12">
+                    <!-- The have 4 || Company | Postal Code | Order Ids | Capacity ||  column -->
                     <table id="proposedTable_company" class="proposed_table"></table>
-                    <!--<div class="col-md-4">-->
-                    <!--<table id="table_comp_id" class="proposed_table">-->
-                        <!--<tr>-->
-                            <!--<th colspan="3">Company: Company_B</th>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td><strong>Postal Code</strong></td>-->
-                            <!--<td><strong>Order Id</strong></td>-->
-                            <!--<td><strong>Capacity</strong></td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td>123456</td>-->
-                            <!--<td>Order01</td>-->
-                            <!--<td>2</td>-->
-                        <!--</tr>-->
-                    <!--</table>-->
-                    <!--</div>-->
                 </div>
             </div>
             <div class="row">
