@@ -130,6 +130,7 @@ class SortingPrep(webapp2.RequestHandler):
         # For storage of a full valid sequence of postal codes
         postal_sequence_list = []
         postal_sequence_current = []
+        list_of_companies = []
 
         # Empty Array for Route By Capacity
         truck_capacity_list = []
@@ -221,31 +222,25 @@ class SortingPrep(webapp2.RequestHandler):
                 vehicle_quantity_list.extend([int(vehicle_quantity_2), int(vehicle_quantity_3), int(vehicle_quantity_4),int(vehicle_quantity_5), int(vehicle_quantity_6)])
 
             # Route by Companies, Considering Route by Truck Capacity validation
-            print ('priority_capacity_comp'), priority_capacity_comp
+
             if priority_capacity_comp == "true":
 
-                print('hello'), int(num_comp_val)
                 # Store all HQ postal code and Vehicle count accordingly
 
                 if int(num_comp_val) == 2:
 
-                    print "truck_capacity_list_c1", truck_capacity_list_c1
-
-                    truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
-                    truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                    truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
+                    truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
 
                     truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2])
 
-                    print ('c1'), truck_capacity_list_c1
-                    print ('c2'), truck_capacity_list_c2
-                    print ('Grp1'), truck_capacity_grp_comp1
-
                 if int(num_comp_val) == 3:
-                    truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
-                    truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
-                    truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
-                    truck_capacity_grp_comp1.extend(
-                        [truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3])
+
+                    truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
+                    truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                    truck_capacity_list_c3.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+
+                    truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3])
 
                 if int(num_comp_val) == 4:
                     truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
@@ -359,6 +354,7 @@ class SortingPrep(webapp2.RequestHandler):
                 if len(errors) == 0:
                     sorted_comp = postal_pair_split[3]
                     postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), sorted_comp])
+                    list_of_companies.append(sorted_comp)
             else:
                 postal_sequence_list.append([postal_code, str(order_id), int(truck_volume)])
             postal_sequence_current.append(postal_code)
@@ -370,6 +366,8 @@ class SortingPrep(webapp2.RequestHandler):
 
             # API Sensor
             api_user = "none"
+
+            print('truck_capacity_grp'), truck_capacity_grp
 
             if sort_company == "true":
 
@@ -397,6 +395,10 @@ class SortingPrep(webapp2.RequestHandler):
                     # group as per company
                     postal_sequence_company.append(list(group))
 
+                # Get All Name of the companies:
+                seen = {}
+                name_of_companies = [seen.setdefault(x, x) for x in list_of_companies if x not in seen]
+
                 # Start of validation
                 if int(len(postal_sequence_company)) != int(num_comp_val):
                     errors.extend(['Please Check Number of company inputs'])
@@ -404,20 +406,17 @@ class SortingPrep(webapp2.RequestHandler):
                 # Data Distribute through parallel loop according to number of company request
                 if priority_capacity_comp == "true":
 
-                    print('starting_postal_list'), starting_postal_list
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
-
-                        print('truck_capacity_grp'), truck_capacity_grp
 
                         origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
                             starting_post,
                             company_sequence,
-                            email, has_return,
                             vehicle_quantity,
+                            email, has_return,
                             priority_capacity,
                             priority_capacity_comp,
-                            api_user, sort_company, truck_capacity_grp)
+                            api_user, sort_company, truck_capacity_grp, options_truck)
 
                         propose_result_company.append(propose_result)
                         current_result_company.append(current_result)
@@ -439,7 +438,7 @@ class SortingPrep(webapp2.RequestHandler):
                             email, has_return,
                             priority_capacity,
                             priority_capacity_comp,
-                            api_user, sort_company, truck_capacity_grp)
+                            api_user, sort_company, truck_capacity_grp, options_truck)
 
                         propose_result_company.append(propose_result)
                         current_result_company.append(current_result)
@@ -484,6 +483,7 @@ class SortingPrep(webapp2.RequestHandler):
                             "propose_result": result_list_arr,
                             "propose_results": propose_result_company,
                             "postal_sequence": propose_result_sequence,
+                            "name_of_companies": name_of_companies,
                             "has_return": has_return
                         },
                         "geo_code_latlng": {
@@ -515,7 +515,7 @@ class SortingPrep(webapp2.RequestHandler):
                     email, has_return,
                     priority_capacity,
                     priority_capacity_comp,
-                    api_user, sort_company, truck_capacity_grp)
+                    api_user, sort_company, truck_capacity_grp, options_truck)
 
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used

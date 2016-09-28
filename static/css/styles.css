@@ -867,6 +867,7 @@ table.summary_Table td {
 }
 
 /* Making Center */
+
 .table>thead>tr>th,
 .table>tbody>tr>th,
 .table>tfoot>tr>th,
@@ -879,6 +880,31 @@ table.summary_Table td {
 }
 .table > thead{
     border-bottom: 1px solid #ccc;
+}
+
+/* Making Left */
+
+.tableL>thead>tr>th,
+.tableL>tbody>tr>td{
+    text-align: left;
+    vertical-align: top;
+    font-size:16px;
+    padding: 10px;
+}
+.tableL{
+    margin-bottom:20px;
+    border-collapse:collapse;
+    width: 90%;
+    margin:20px 0px;
+}
+.tableL > thead{
+    border-bottom: 1px solid #ccc;
+}
+
+.tableL tr th{
+   /* background-color:#c9c9c9;*/
+    background-color:#ddd;
+    padding:10px;
 }
 
 .clickable-row{

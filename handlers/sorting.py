@@ -30,7 +30,7 @@ import sorting_company
 
 def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quantity, email, has_return,
                            priority_capacity, priority_capacity_comp, api_user,
-                           sort_company, truck_capacity_grp):
+                           sort_company, truck_capacity_grp, options_truck):
     starting_address = str(starting_address)
 
     if sort_company == "true":
@@ -54,6 +54,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
     # Create Dic to combine ['postal_result', 'order_id', 'capacity']
     postal_sequence_sorted = []
+
+    # if options_truck == "true":
 
     for postal in postal_sorted:
         postal_new = postal
@@ -90,48 +92,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 if postal_new == postal_old:
                     postal_sequence_sorted.append([postal_new, order_id, capacity_load])
 
-    if sort_company == "true" and priority_capacity_comp == "true":
-
-        result_postal = []
-        result_postal_seq = []
-
-        for i in range(len(postal_sorted)):
-            postal = postal_sorted[i]
-
-            for x in range(len(postal_sequence_list)):
-                order_postal = postal_sequence_list[x]
-
-                postal2 = order_postal[0]
-                orderId = order_postal[1]
-                capacity = order_postal[2]
-                campany_id = order_postal[3]
-
-                # If postal codes has length of 5
-                if len(postal2) == 5:
-                    postal2 = "0" + postal2
-
-                # If postal codes match,
-                # Display the relevant Capacity loads
-                if postal == postal2:
-                    result_postal_seq.append([postal, orderId, capacity, campany_id])
-                    result_postal.append([postal, capacity])
-
-        # Define and assign variables for truck
-        truck_dictionary_comp = truck_details_companies(truck_capacity_grp)
-
-        # Chunk according to Capacity / No of truck
-        vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
-
-        # Current Route
-        vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
-
-        # for Postal Seq
-        vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
-
-        print ('truck_dictionary_comp'), truck_dictionary_comp
-        print ('vehicle_postal_list_new'),vehicle_postal_list_new
-
-    elif priority_capacity == "true":
+    if priority_capacity == "true":
 
         # If the OrderID and Load Capacity are not complete
         if checker_order_capacity(postal_sequence_list) == True:
@@ -173,6 +134,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                         result_postal_seq.append([postal, orderId, capacity])
                         result_postal.append([postal, capacity])
 
+            print ('result_postal'), result_postal
+
             # Define and assign variables for truck
             truck_dictionary = truck_details(truck_capacity_grp)
 
@@ -191,9 +154,51 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
             num_of_vehicles = len(vehicle_postal_list_new)
             vehicle_quantity = num_of_vehicles
 
+    elif sort_company == "true" and priority_capacity_comp == "true":
+
+        result_postal = []
+        result_postal_seq = []
+
+        for i in range(len(postal_sorted)):
+            postal = postal_sorted[i]
+
+            for x in range(len(postal_sequence_list)):
+                order_postal = postal_sequence_list[x]
+
+                postal2 = order_postal[0]
+                orderId = order_postal[1]
+                capacity = order_postal[2]
+                campany_id = order_postal[2]
+
+                # If postal codes has length of 5
+                if len(postal2) == 5:
+                    postal2 = "0" + postal2
+
+                # If postal codes match, display the relevant Capacity loads
+                if postal == postal2:
+                    result_postal_seq.append([postal, orderId, capacity, campany_id])
+                    result_postal.append([postal, capacity])
+
+        print ('result_postal'), result_postal
+
+        # Define and assign variables for truck
+        truck_dictionary_comp = truck_details(truck_capacity_grp)
+
+        print('truck_dictionary_comp'), truck_dictionary_comp
+
+        # Chunk according to Capacity / No of truck
+        vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
+
+        # Current Route
+        vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
+
+        # for Postal Seq
+        vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
+
+        print('vehicle_postal_list_new'), vehicle_postal_list_new
+
     else:
 
-        # Chunk it through num - vehicle
         # Proposed Route
         vehicle_postal_list_new = chunkIt(postal_sorted, vehicle_quantity)
 
@@ -202,11 +207,14 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
         # Propose Route w/ OrderID & Load Capacity
         vehicle_postal_list_new_seq = chunkIt(postal_sequence_sorted, vehicle_quantity)
-        # print('vehicle_postal_list_new_seq'), vehicle_postal_list_new_seq
 
         vehicle_capacity = 0
 
-    # Returning vehicle
+        print('vehicle_postal_list_new-11'), vehicle_postal_list_new
+
+        # Returning vehicle
+    print ('has_return'), has_return
+
     if has_return == "true":
 
         for vehicle_postal_list_return in vehicle_postal_list_new:
@@ -267,53 +275,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
 # Function for assigning Variable to Truck Types:
 
-def truck_details_companies(list):
-
-    truck_dictionary = {}
-
-    truck_name_1 = list[0]
-    target_1 = list[1]
-    max_1 = list[2]
-
-    truck_dictionary = {
-            "truck_name_1": truck_name_1,
-            "target_1": target_1,
-            "max_1": max_1,
-        }
-
-    # for i in range(0, len(list)):
-    #     list2 = list[i]
-    #
-    #     print('list2'), list2
-    #
-    #     truck_name_1 = str(list2[0])
-    #     target_1 = int(list2[1])
-    #     max_1 = int(list2[2])
-    #
-    #     truck_dictionary = {
-    #         "truck_name_1": truck_name_1,
-    #         "target_1": target_1,
-    #         "max_1": max_1,
-    #     }
-
-    if len(list) == 1:
-
-        for i in list:
-            list2 = i
-
-            print('list'), list2
-
-            truck_name_1 = str(list2[0])
-            target_1 = int(list2[1])
-            max_1 = int(list2[2])
-
-            truck_dictionary = {
-                "truck_name_1": truck_name_1,
-                "target_1": target_1,
-                "max_1": max_1,
-            }
-
-    return truck_dictionary
 
 def chunk_to_sum_no_truck_comp(iterable, *list, **params):
 
@@ -332,16 +293,102 @@ def chunk_to_sum_no_truck_comp(iterable, *list, **params):
     # company have 3 truck available : 3 x 3 = 9
     # group_truck = target_1 * max_1
 
-    print ('PARAMETER'), params
+    if len(list) == 3:
 
-    target_1 = params['target_1']
-    max_1 = params['max_1']
-    group_truck_1 = target_1 * max_1
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+        target_3 = params['target_3']
 
-    for key, item in iterable:
-        chunk_sum += item
+        # No. of Truck
+        max_1 = params['max_1']
+        max_2 = params['max_2']
 
-        if len(array) <= group_truck_1:
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck_1 = target_1 * max_1
+        group_truck_2 = target_2 * max_2
+
+        for key, item in iterable:
+            chunk_sum += item
+
+            if len(array) <= group_truck_1:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            elif len(array) <= group_truck_2:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+            else:
+
+                if chunk_sum > target_3:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            array.append(chunk)
+
+    elif len(list) == 2:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+
+        # No. of Truck
+        max_1 = params['max_1']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck = target_1 * max_1
+
+        for key, item in iterable:
+            chunk_sum += item
+
+            if len(array) <= group_truck:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+            else:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [key]
+                    chunk_sum = item
+                else:
+                    chunk.append(key)
+
+            array.append(chunk)
+
+    else:
+
+        # if one type of truck input:
+        target_1 = params['target_1']
+
+        for key, item in iterable:
+            chunk_sum += item
 
             if chunk_sum > target_1:
 
@@ -353,39 +400,6 @@ def chunk_to_sum_no_truck_comp(iterable, *list, **params):
 
     if chunk:
         yield chunk
-
-
-    # if len(list) == 1:
-    #
-    #     print ('PARAMETER'), params
-    #
-    #     target_1 = params['target_1']
-    #     max_1 = params['max_1']
-    #     group_truck_1 = target_1 * max_1
-    #
-    #     for key, item in iterable:
-    #         chunk_sum += item
-    #
-    #         if len(array) <= group_truck_1:
-    #
-    #             if chunk_sum > target_1:
-    #
-    #                 yield chunk
-    #                 chunk = [key]
-    #                 chunk_sum = item
-    #             else:
-    #                 chunk.append(key)
-    #         else:
-    #
-    #             if chunk_sum > target_3:
-    #
-    #                 yield chunk
-    #                 chunk = [key]
-    #                 chunk_sum = item
-    #             else:
-    #                 chunk.append(key)
-    #
-    #         array.append(chunk)
 
 
 def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
@@ -545,6 +559,41 @@ def truck_details(list):
 
     return truck_dictionary
 
+#
+# def truck_details_companies(list):
+#
+#     truck_dictionary = {}
+#
+#     if len(list) == 2:
+#
+#         for i in list:
+#             list2 = i
+#
+#             truck_name_1 = list2[0]
+#             target_1 = list2[1]
+#             max_1 = list2[2]
+#
+#             truck_dictionary = {
+#                     "truck_name_1": truck_name_1,
+#                     "target_1": target_1,
+#                     "max_1": max_1,
+#                 }
+#     else:
+#
+#         for i in list:
+#             list2 = i
+#             truck_name_1 = str(list2[0])
+#             target_1 = int(list2[1])
+#             max_1 = int(list2[2])
+#
+#             truck_dictionary = {
+#                 "truck_name_1": truck_name_1,
+#                 "target_1": target_1,
+#                 "max_1": max_1,
+#             }
+#
+#     return truck_dictionary
+
 
 def chunk_to_sum_no_truck(iterable, *list, **params):
 
@@ -553,7 +602,7 @@ def chunk_to_sum_no_truck(iterable, *list, **params):
     array = []
 
     # If else = if type truck capacity input = 3, 2 and 1
-    print ('params'), params
+
     if len(list) == 3:
 
         # Enter Max Truck Capacity *
@@ -695,7 +744,6 @@ def chunk_to_sum_no_truck_sequence(iterable, *list, **params):
         group_truck_3 = target_3 * max_3
         group_truck_4 = target_3 * max_4
         group_truck_5 = target_3 * max_5
-
 
         for x in range(len(iterable)):
             chunk_seq = iterable[x]

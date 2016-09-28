@@ -114,12 +114,12 @@ $("#priority_capacity_comp").change(function() {
 //// - - - - - Consider Truck Capacity, Option 2- - - - - //
 //
 $("#priority_capacity_comp").change(function() {
-     $("#vehicle_qty_div_info").hide();
+     //$("#vehicle_qty_div_info").hide();
 
      if(this.checked){
 
         $("#vehicle_qty_div").hide();
-        $("#vehicle_qty_div_info").show();
+       // $("#vehicle_qty_div_info").show();
 
         $(".hidden_field1").fadeIn();
         //$(".hidden_field_master").show();
@@ -176,7 +176,7 @@ $("#priority_capacity_comp").change(function() {
 //        }
      }
      else{
-        $("#vehicle_qty_div_info").hide();
+        //$("#vehicle_qty_div_info").hide();
         $("#vehicle_qty_div").show();
 
         //$(".hidden_field_master").hide();
@@ -257,11 +257,13 @@ $(function() {
     var priority_capacity_comp = $("#priority_capacity_comp")[0].checked;
 
     $sortCompanies.change(function() {
+         $("#vehicle_qty_div_info").hide();
 
         // checked the checkbox field
         if(this.checked) {
 
-            $("#vehicle_qty_div_info").hide();
+            $("#vehicle_qty_div_info").show();
+
 
             var postal_sequence = $("#postal_sequence").val();
 
@@ -350,35 +352,9 @@ function generateFields(name_of_company){
     $fields_parent.append($fields_column4);
     $fields_parent.append($fields_column5);
 
-    //$fields_parent.append($labels)
-    //$fields_parent.append($inputs)
-    //console.log($fields_column);
-
-
-//    $priority_capacity_company.change(function() {
-//        $("#vehicle_qty_div_info").hide();
-//
-////        $fields_column3.hide();
-////        $fields_column4.hide();
-////        $fields_column5.hide();
-//
-//         //if(this.checked){
-//         if($('#priority_capacity_comp').is(":checked")===true){
-//            //alert('test');
-//
-//         }
-//
-////        if($('#priority_capacity_comp').is(':checked')== true){
-////         alert('test');
-////        }
-//
-//     }); // end of Function
-
-
-    //var newHTML = [];
 
     for (i=0; i < name_of_company.length; i++){
-        company_name = name_of_company[i];
+        var company_name = name_of_company[i];
 
         //newHTML.push('<span>' + name_of_company[i] + '</span>');
         // Postal Code
@@ -391,13 +367,13 @@ function generateFields(name_of_company){
 
         // Truck Capacity
         $fields_column3.append('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Type of Truck</label>');
-        $fields_column3.append('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="Big Truck">');
+        $fields_column3.append('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="Truck">');
 
         $fields_column4.append('<label class="control-label font_11" for="truck_capacity_c'+(i+1)+'"> Enter Max Truck Capacity * </label>');
         $fields_column4.append('<input type="number" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="10">');
 
         $fields_column5.append('<label class="control-label font_11" for="num_of_truck_c'+(i+1)+'"> No. of Truck </label>');
-        $fields_column5.append('<input type="number" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="3">');
+        $fields_column5.append('<input type="number" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="1">');
 
 
     }//end of loop
