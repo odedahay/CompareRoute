@@ -109,15 +109,10 @@
                         <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
                             <i class="fa fa-bar-chart" aria-hidden="true"></i> Route by Companies
                     </label>
-
-                    <!--<label class="radio-inline" style="margin-right:10px">-->
-                        <!--<input type="reset" name="optionsRadios" id="refresh_btn" value="">-->
-                            <!--<i class="fa fa-refresh" aria-hidden="true"></i>-->
-                    <!--</label>-->
-
-                    <button type="button" class="btn btn-link" id="refresh_btn" title="Refresh Button" value="refresh_btn"><i class="fa fa-refresh" aria-hidden="true"></i>
-
+                    <button type="button" class="btn btn-link sort_company refreshBtn" id="refresh_btn" title="Refresh Button" style="margin-bottom:0px; padding:0;">
+                            <i class="fa fa-refresh" aria-hidden="true"></i> Reload the Route By Companies</button>
                 </div>
+
             </div>
 
             <div class="cr_truck box">
@@ -167,7 +162,7 @@
 
                     <div class="row">
                         <div class="col-xs-2 down_15">
-                            <label class="control-label font_11" for="type_of_truck"> Enter Type of Truck</label>
+                            <label class="control-label font_11" for="type_of_truck"> Enter Types of Truck</label>
                              <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="Big Truck">
                         </div>
                         <div class="col-xs-2 down_15">
@@ -203,25 +198,27 @@
 
                         <div class="alert alert-info alert-dismissible" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> </button>
-                          <strong>Note!</strong>
-                            <br /> M3 Truck's maximum vol. = 10 <br />
-                            Big Trucks's maximum vol. = 999 <br />
+                          <strong>Note!</strong><br />
+                            Route by Companies, Considering Route by Truck Capacity - An option similar to Route by Capacity <br />
+
                         </div>
                     </div>
 
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <div class="vehicle_label" id="num_company">
-                             <label class="control-label font_11" for="vehicle_quantity"><i class="fa fa-list-ol" aria-hidden="true"></i> No. of Companies (Max 6)</label>
-                             <input class="form-control input" id="num_comp_val" name="num_comp_val" type="number" min="1" value="">
+                             <!--<label class="control-label font_11" for="vehicle_quantity"></label>-->
+                             <input class="form-control input" id="num_comp_val" name="num_comp_val" type="number" min="1" style="pointer-events: none; border-color:#eee"  value="">
                         </div>
                     </div>
-
+                    <div class="col-xs-3" style="padding-top:10px">
+                           <span> No. of Companies Entry (Max 6)</span>  <!--<i class="fa fa-list-ol" aria-hidden="true"></i>-->
+                    </div>
                     <div class="col-xs-4">
-                        <!--NOTE: display:none-->
-                        <div class="checkbox" style="margin-top: 16px;">
+
+                        <div class="checkbox" style="padding-top: 5px;">
                              <label class="right_10">
                                 <input type="checkbox" name="checkbox" id="priority_capacity_comp" value="priority_capacity2">Route by Companies, Considering Route by Truck Capacity
                              </label>
@@ -234,7 +231,9 @@
                     <!-- Generating Fields -->
                     <div id="fields_company"></div>
                 </div>
+                <div id="fields_company_add"></div>
                 <div class="row">
+
                 </div> <!-- End of Row-->
             </div><!-- end of cr_companies -->
         </div>

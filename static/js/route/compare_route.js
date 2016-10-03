@@ -167,8 +167,6 @@ $("#routeBtn").click(function() {
    }
 
 
-
-
         // field three
 
 //        if ($('#vehicle_type_3').val().length <= 1 && $('#num_comp_val').val() == '3'){
@@ -300,6 +298,36 @@ $('#routeBtn').click(function () {
     var num_of_truck_c5 = $("#num_of_truck_c5").val();
     var num_of_truck_c6 = $("#num_of_truck_c6").val();
 
+    // sub fields 1
+    var type_of_truck_cc1 = $("#type_of_truck_cc1").val();
+    var type_of_truck_cc2 = $("#type_of_truck_cc2").val();
+    var type_of_truck_cc3 = $("#type_of_truck_cc3").val();
+
+    var truck_capacity_cc1 = $("#truck_capacity_cc1").val();
+    var truck_capacity_cc2 = $("#truck_capacity_cc2").val();
+    var truck_capacity_cc3 = $("#truck_capacity_cc3").val();
+
+    var num_of_truck_cc1 = $("#num_of_truck_cc1").val();
+    var num_of_truck_cc2 = $("#num_of_truck_cc2").val();
+    var num_of_truck_cc3 = $("#num_of_truck_cc3").val();
+
+    // sub fields 2
+    var type_of_truck_cc21 = $("#type_of_truck_cc21").val();
+    var type_of_truck_cc22 = $("#type_of_truck_cc22").val();
+    var type_of_truck_cc23 = $("#type_of_truck_cc23").val();
+
+    var truck_capacity_cc21 = $("#truck_capacity_cc21").val();
+    var truck_capacity_cc22 = $("#truck_capacity_cc22").val();
+    var truck_capacity_cc23 = $("#truck_capacity_cc23").val();
+
+    var num_of_truck_cc21 = $("#num_of_truck_cc21").val();
+    var num_of_truck_cc22 = $("#num_of_truck_cc22").val();
+    var num_of_truck_cc23 = $("#num_of_truck_cc23").val();
+
+    var add_truck_cc1 = $("#add_truck_cc1").val();
+    var add_truck_cc2 = $("#add_truck_cc2").val();
+    var add_truck_cc3 = $("#add_truck_cc3").val();
+
     var postal_sequence = $("#postal_sequence").val();
     var email = $("[name=email_value]").val();
     var has_return = $("#return_startpoint")[0].checked;
@@ -375,6 +403,35 @@ $('#routeBtn').click(function () {
             num_of_truck_c5: num_of_truck_c5,
             num_of_truck_c6: num_of_truck_c6,
 
+            // sub fields:1
+            type_of_truck_cc1: type_of_truck_cc1,
+            type_of_truck_cc2: type_of_truck_cc2,
+            type_of_truck_cc3: type_of_truck_cc3,
+
+            truck_capacity_cc1: truck_capacity_cc1,
+            truck_capacity_cc2: truck_capacity_cc2,
+            truck_capacity_cc3: truck_capacity_cc3,
+
+            num_of_truck_cc1: num_of_truck_cc1,
+            num_of_truck_cc2: num_of_truck_cc2,
+            num_of_truck_cc3: num_of_truck_cc3,
+
+             // sub fields:2
+            type_of_truck_cc21: type_of_truck_cc21,
+            type_of_truck_cc22: type_of_truck_cc22,
+            type_of_truck_cc23: type_of_truck_cc23,
+
+            truck_capacity_cc21: truck_capacity_cc21,
+            truck_capacity_cc22: truck_capacity_cc22,
+            truck_capacity_cc23: truck_capacity_cc23,
+
+            num_of_truck_cc21: num_of_truck_cc21,
+            num_of_truck_cc22: num_of_truck_cc22,
+            num_of_truck_cc23: num_of_truck_cc23,
+
+            add_truck_cc1: add_truck_cc1,
+            add_truck_cc2: add_truck_cc2,
+            add_truck_cc3: add_truck_cc3,
             postal_sequence: postal_sequence,
             email: email,
             has_return: has_return,
@@ -620,7 +677,8 @@ $('#routeBtn').click(function () {
 
                     }
                     var sum = counter_num_array.reduce(add, 0);
-                    $ul_sequence.append('Total Number of Proposed Sorted: '+sum+ '  Postal Codes  <br />');
+
+                    $ul_sequence.append('Total Number of Proposed Routes: '+sum+ '  Postal Codes  <br />');
                     $ul_sequence.append('Summary Truck Details : <br />');
 
                     // - - - - - - End of Table fo Sorted Results - - - - - - - //

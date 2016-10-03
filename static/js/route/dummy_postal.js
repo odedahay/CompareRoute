@@ -26,14 +26,14 @@ function dummyPostalCode(){
 				"218700 Order16 1 company_B",
 				"198713 Order17 1 company_B",
 				"389458 Order01 1 company_B",
-				"278986 Order02 1 company_C",
-				"431011 Order03 1 company_C",
-				"460102 Order04 1 company_C",
-				"408561 Order05 1 company_C",
-				"689575 Order06 1 company_C",
-				"560326 Order01 1 company_C",
-				"738728 Order01 2 company_C",
-				"159921 Order03 2 company_C",
+//				"278986 Order02 1 company_C",
+//				"431011 Order03 1 company_C",
+//				"460102 Order04 1 company_C",
+//				"408561 Order05 1 company_C",
+//				"689575 Order06 1 company_C",
+//				"560326 Order01 1 company_C",
+//				"738728 Order01 2 company_C",
+//				"159921 Order03 2 company_C",
 //
 			];
 

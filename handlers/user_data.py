@@ -13,7 +13,6 @@ class User_Data(base.BaseHandler):
         # User Records display in /compare_data.html
         user_accounts = UserAccount.check_if_exists(email)
 
-        print('user_accounts'), user_accounts
         user_id = user_accounts.email
 
         # Profile Records display in /admin1

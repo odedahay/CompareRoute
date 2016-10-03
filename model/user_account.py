@@ -17,6 +17,10 @@ class UserAccount(ndb.Model):
     api_credits = ndb.IntegerProperty(default=50)
 
     @classmethod
+    def super_user(cls):
+        pass
+
+    @classmethod
     def check_if_exists(cls, email):
         return cls.query(cls.email == email).get()
 
@@ -24,7 +28,6 @@ class UserAccount(ndb.Model):
     @classmethod
     def check_credit_usage(cls, email):
         user = cls.check_if_exists(email)
-        # defaultCredits = 100
 
         if user:
             use_credit = 1
@@ -188,7 +191,7 @@ class UserAccount(ndb.Model):
 
             user_confirmation_code = user.confirmation_code
             user_id = user.key.id()
-            # print('user_id'), user_id
+
             return {
                 'created': True,
                 'user_id': user_id,
@@ -198,5 +201,5 @@ class UserAccount(ndb.Model):
             return {
                 'created': False,
                 'title': 'Email is not found',
-                'message': 'Please check your email credential'
+                'message': 'Please make sure you have the correct email in our registration records '
             }

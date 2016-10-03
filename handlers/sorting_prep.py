@@ -96,6 +96,35 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_c5 = self.request.get("num_of_truck_c5")
         num_of_truck_c6 = self.request.get("num_of_truck_c6")
 
+        type_of_truck_cc1 = self.request.get("type_of_truck_cc1")
+        type_of_truck_cc2 = self.request.get("type_of_truck_cc2")
+        type_of_truck_cc3 = self.request.get("type_of_truck_cc3")
+
+        truck_capacity_cc1 = self.request.get("truck_capacity_cc1")
+        truck_capacity_cc2 = self.request.get("truck_capacity_cc2")
+        truck_capacity_cc3 = self.request.get("truck_capacity_cc3")
+
+        num_of_truck_cc1 = self.request.get("num_of_truck_cc1")
+        num_of_truck_cc2 = self.request.get("num_of_truck_cc2")
+        num_of_truck_cc3 = self.request.get("num_of_truck_cc3")
+
+        # 2
+        type_of_truck_cc21 = self.request.get("type_of_truck_cc21")
+        type_of_truck_cc22 = self.request.get("type_of_truck_cc22")
+        type_of_truck_cc23 = self.request.get("type_of_truck_cc23")
+
+        truck_capacity_cc21 = self.request.get("truck_capacity_cc21")
+        truck_capacity_cc22 = self.request.get("truck_capacity_cc22")
+        truck_capacity_cc23 = self.request.get("truck_capacity_cc23")
+
+        num_of_truck_cc21 = self.request.get("num_of_truck_cc21")
+        num_of_truck_cc22 = self.request.get("num_of_truck_cc22")
+        num_of_truck_cc23 = self.request.get("num_of_truck_cc23")
+
+        add_truck_cc1 = self.request.get("add_truck_cc1")
+        add_truck_cc2 = self.request.get("add_truck_cc2")
+        add_truck_cc3 = self.request.get("add_truck_cc3")
+
         postal_sequence = self.request.get("postal_sequence")
         email = self.request.get("email")
         has_return = self.request.get("has_return")
@@ -108,6 +137,10 @@ class SortingPrep(webapp2.RequestHandler):
         num_comp_val = self.request.get('num_comp_val')
 
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
+
+        print('add_truck_cc1'), add_truck_cc1
+        print('add_truck_cc2'), add_truck_cc2
+        print('add_truck_cc3'), add_truck_cc3
 
         # Error list for invalid postal codes
         # no_record_postal = []
@@ -148,6 +181,17 @@ class SortingPrep(webapp2.RequestHandler):
         truck_capacity_list_c4 = []
         truck_capacity_list_c5 = []
         truck_capacity_list_c6 = []
+        # sub truck
+        truck_capacity_list_cc1 = []
+        truck_capacity_list_cc1_grp = []
+        truck_capacity_list_cc2_grp = []
+        truck_capacity_list_cc3_grp = []
+
+        truck_capacity_list_cc21 = []
+        truck_capacity_list_cc22 = []
+
+        truck_capacity_list_cc21_grp = []
+        truck_capacity_list_cc23_grp = []
 
         # Type of Truck
         truck_capacity_grp_comp1 = []
@@ -229,12 +273,44 @@ class SortingPrep(webapp2.RequestHandler):
 
                 if int(num_comp_val) == 2:
 
-                    truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
-                    truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                    if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
 
-                    truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2])
+                        truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
+                        truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
+
+                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1])
+
+                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                        truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_c2])
+
+                    elif add_truck_cc1 == "true" and add_truck_cc2 == "true":
+
+                        print "Helloaaaa"
+
+                        truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
+                        truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
+
+                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1])
+
+                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
+
+                        truck_capacity_list_cc21_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21])
+
+                        truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_cc21_grp])
+
+                    else:
+
+                        truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
+                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+
+                        truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2])
 
                 if int(num_comp_val) == 3:
+
+                    if add_truck_cc == "add_2":
+
+                        pass
 
                     truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
                     truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
@@ -367,7 +443,7 @@ class SortingPrep(webapp2.RequestHandler):
             # API Sensor
             api_user = "none"
 
-            print('truck_capacity_grp'), truck_capacity_grp
+            print('truck_capacity_grp_comp1'), truck_capacity_grp_comp1
 
             if sort_company == "true":
 
@@ -406,8 +482,12 @@ class SortingPrep(webapp2.RequestHandler):
                 # Data Distribute through parallel loop according to number of company request
                 if priority_capacity_comp == "true":
 
+                    print ('name_of_companies'), name_of_companies
+
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
+
+                        print('truck_capacity_grp_ode'), truck_capacity_grp
 
                         origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
                             starting_post,
@@ -427,6 +507,69 @@ class SortingPrep(webapp2.RequestHandler):
                         latlng_array = map_visible(propose_result)
                         latlng_array_list.append(latlng_array)
 
+
+                    # validation Terms:
+                    Num_of_truck_issue = "Number of truck is not Reached.<br />Generated No. of Truck result for  "
+
+                    if int(num_comp_val) == 2:
+
+                        company_1 = int(len(propose_result_company[0]))
+                        company_2 = int(len(propose_result_company[1]))
+
+                        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+
+                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+
+                        if add_truck_cc1 == "true" and add_truck_cc2 == "true":
+
+                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+
+                            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
+                                errors.extend([Num_of_truck_issue, type_of_truck_cc21, " : ", company_2, "<br />"])
+
+                        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+
+                            if company_1 > int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue, type_of_truck_c1, " : ", company_1, "<br />"])
+
+                            if company_2 > int(num_of_truck_c2):
+                                    errors.extend([Num_of_truck_issue, type_of_truck_c2, " : ", company_2, "<br />"])
+
+                    if int(num_comp_val) == 3:
+
+                        company_1 = int(len(propose_result_company[0]))
+                        company_2 = int(len(propose_result_company[1]))
+                        company_3 = int(len(propose_result_company[2]))
+
+                        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+
+                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue,
+                                     type_of_truck_cc1, " : ", company_1, "<br />"])
+
+                        if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+
+                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+
+                            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
+                                errors.extend([Num_of_truck_issue, type_of_truck_cc21, " : ", company_2, "<br />"])
+
+                            if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
+                                errors.extend([Num_of_truck_issue, num_of_truck_cc31, " : ", company_3, "<br />"])
+
+                        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+
+                            if company_1 > int(num_of_truck_c1):
+                                errors.extend([Num_of_truck_issue, type_of_truck_c1, " : ", company_1, "<br />"])
+
+                            if company_2 > int(num_of_truck_c2):
+                                errors.extend([Num_of_truck_issue,type_of_truck_c2, " : ", company_2, "<br />"])
+
+                            if company_3 > int(num_of_truck_c3):
+                                errors.extend([Num_of_truck_issue,type_of_truck_c3, " : ", company_3, "<br />"])
                 else:
 
                     for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):
@@ -520,6 +663,8 @@ class SortingPrep(webapp2.RequestHandler):
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used
                 result_num_truck = len(vehicle_postal_list_new_seq)
+
+                print('result_num_truck'), result_num_truck
 
                 if len(truck_capacity_grp) == 1:
 

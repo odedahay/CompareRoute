@@ -11,7 +11,6 @@ class ResetHandler(webapp2.RequestHandler):
         
         # Generate password hash from password input
         userEmail = UserAccount.check_password_record(email)
-
         userRecord = UserAccount.query(UserAccount.email == email, UserAccount.password == userEmail).get()
 
         # If user does not exist, send an error message

@@ -35,7 +35,9 @@ class MainPage(base.BaseHandler):
             self.render("/home/home.html")
 
 class APIHandler(base.BaseHandler):
+
     def get(self):
+
         self.render("/api/api.html")
 
 class APIHandler_reg(base.BaseHandler):
@@ -131,7 +133,6 @@ class Postal_Search(postalchecker.Postal_move_Handler, base.BaseHandler):
         }
         self.render('admin/admin_search_postal.html', **tpl_values)
 
-
 class AdminHome_page(base.BaseHandler):
     def get(self):
 
@@ -146,7 +147,9 @@ class AdminHome_page(base.BaseHandler):
         web_id_counts_id = [(k, len(list(g))) for k, g in groupby(sorted(web_temp))]
         #  - - - - - - - - - - - - - - - API Commands  - - - - - - - - - - - - - - - - - - -
         api_routes = RouteDistance_api.query().order(-RouteDistance_api.created_date).fetch()
+
         api_temp = []
+
         for user in api_routes:
             user_id = user.user_id
             api_temp.append(str(user_id))
@@ -162,6 +165,14 @@ class AdminHome_page(base.BaseHandler):
             'api_routes': api_routes
         }
         self.render("admin/admin.html", **template_values)
+
+        if email:
+
+            self.render("/compare/compare.html", email=email)
+
+        else:
+            self.redirect("/")
+
 
 # This class is for groupings
 class AdminHome_page1(base.BaseHandler):
@@ -209,6 +220,7 @@ class AdminHome_page1(base.BaseHandler):
             'api_routes_user_id': api_routes_user_id,
             'api_number_of_usage': api_number_of_usage,
         }
+
         self.render("admin/admin_user.html", **template_values)
 
 class AdminSummary(base.BaseHandler):

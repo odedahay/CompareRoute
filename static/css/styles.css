@@ -1278,7 +1278,17 @@ ul.tabs li.current{
   font-size: 50px;
 
 }
+
 /*
 .red{ background: #ddd; }
 .green{ background: #00ff00; }
 .blue{ background: #0000ff; }*/
+
+/***  Style for Companies Button ***/
+
+.customBtn_comp{
+    display: block;
+    margin-bottom: 43px;
+    margin-top: 26px;
+}
+

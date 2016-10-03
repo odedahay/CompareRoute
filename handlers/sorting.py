@@ -168,7 +168,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 postal2 = order_postal[0]
                 orderId = order_postal[1]
                 capacity = order_postal[2]
-                campany_id = order_postal[2]
+                campany_id = order_postal[3]
 
                 # If postal codes has length of 5
                 if len(postal2) == 5:
@@ -179,7 +179,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                     result_postal_seq.append([postal, orderId, capacity, campany_id])
                     result_postal.append([postal, capacity])
 
-        print ('result_postal'), result_postal
+        print ('result_postal_seq'), result_postal_seq
 
         # Define and assign variables for truck
         truck_dictionary_comp = truck_details(truck_capacity_grp)
@@ -210,10 +210,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
         vehicle_capacity = 0
 
-        print('vehicle_postal_list_new-11'), vehicle_postal_list_new
-
         # Returning vehicle
-    print ('has_return'), has_return
 
     if has_return == "true":
 
@@ -253,7 +250,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         #                        'has_return': has_return,
         #                        'email': email,
         #                        'num_of_vehicle': vehicle_quantity,
-        #                        'vehicle_capacity': vehicle_capacity,
+        #                        # 'vehicle_capacity': vehicle_capacity,
         #                        'num_user_load': num_user_load
         #                        }))
     else:
@@ -267,7 +264,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         #                        'has_return': has_return,
         #                        'email': email,
         #                        'num_of_vehicle': vehicle_quantity,
-        #                        'vehicle_capacity': vehicle_capacity,
+        #                        # 'vehicle_capacity': vehicle_capacity,
         #                        'num_user_load': num_user_load
         #                        }))
 
@@ -419,43 +416,90 @@ def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
     # company have 3 truck available : 3 x 3 = 9
     # group_truck = target_1 * max_1
 
-    print('list-11'), list
+    if len(list) == 2:
 
-    target_1 = params['target_1']
-    max_1 = params['max_1']
-    group_truck_1 = target_1 * max_1
+        print "Hello"
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
 
-    for x in range(len(iterable)):
-        chunk_seq = iterable[x]
+        # No. of Truck
+        max_1 = params['max_1']
 
-        key = chunk_seq[0]
-        order = chunk_seq[1]
-        item = chunk_seq[2]
-        comp = chunk_seq[2]
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck = target_1 * max_1
 
-        chunk_sum += item
+        for x in range(len(iterable)):
+            chunk_seq = iterable[x]
 
-        if len(array) <= group_truck_1:
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            comp = chunk_seq[3]
 
-            if chunk_sum > target_1:
+            chunk_sum += item
 
-                yield chunk
-                chunk = [[key, order, item, comp]]
-                chunk_sum = item
+            if len(array) <= group_truck:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
             else:
-                chunk.append([key, order, item, comp])
 
-        else:
+                if chunk_sum > target_2:
 
-            if chunk_sum > target_2:
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
 
-                yield chunk
-                chunk = [[key, order, item, comp]]
-                chunk_sum = item
-            else:
-                chunk.append([key, order, item, comp])
+            array.append(chunk)
 
-        array.append(chunk)
+
+    else:
+
+        target_1 = params['target_1']
+        max_1 = params['max_1']
+        group_truck_1 = target_1 * max_1
+
+        for x in range(len(iterable)):
+            chunk_seq = iterable[x]
+
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            comp = chunk_seq[3]
+
+            chunk_sum += item
+
+            if len(array) <= group_truck_1:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
+
+            # else:
+            #
+            #     if chunk_sum > target_2:
+            #
+            #         yield chunk
+            #         chunk = [[key, order, item, comp]]
+            #         chunk_sum = item
+            #     else:
+            #         chunk.append([key, order, item, comp])
+
+            array.append(chunk)
 
     if chunk:
         yield chunk
@@ -468,6 +512,8 @@ def truck_details(list):
     max_list = []
     truck_name_list = []
     truck_dictionary = {}
+
+    print('listtode'), list
 
     if len(list) == 2:
 
@@ -1093,7 +1139,6 @@ def chunk_to_sum_no_truck_sequence(iterable, *list, **params):
     if chunk:
         yield chunk
 
-
 # Sorting happening here:
 def sort_by_postals(starting_address, postal_sequence_list, sort_company):
 
@@ -1103,6 +1148,7 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
     # Order_dict to store all the specific details pertaining to the order
 
     if sort_company == "true":
+
         postal_dictionary, postal_list, order_dict, capacity_dic, capacity_list, company_list = sorting_company.setLists_company(
             postal_sequence_list)
     else:
@@ -1114,8 +1160,12 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
     # Obtain ranked postal codes
     areaCodeRanking_dict = createPostalRanking()
 
+    print ('postal_list'), postal_list
+
     # Sort the postal code using AreCodeRanking Dictionary
     custPostal_arr_sorted = sortPostalArray(areaCodeRanking_dict, postal_list)
+
+    print ('custPostal_arr_sorted'), custPostal_arr_sorted
 
     # Split postal codes into list for each vehicle
     # vehicle_postal_list = chunkIt(custPostal_arr_sorted, num_of_vehicle)
@@ -1133,7 +1183,6 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
     # List of sorted Postal Code >= Single Hq Postal Code
     for vehicle_postal in vehicle_postal_list:
 
-        # print vehicle_postal
         ranked_postal = setPostalRank(areaCodeRanking_dict, vehicle_postal)
 
         less_than_starting_point = []
@@ -1142,6 +1191,8 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
 
             filtered_postal = ((k, v) for k, v in ranked_postal.items() if v >= int(starting_rank))
             sorted_postal = sorted(dict(filtered_postal).items(), key=lambda x: (x[1], x[0]), reverse=False)
+
+            print ('sorted_postal'), sorted_postal
 
             for key in sorted_postal:
                 less_than_starting_point.append(str(key).split(",")[0].replace("(", "").replace("'", ""))
@@ -1506,6 +1557,7 @@ def createPostalRanking():
 
 
 def sendEmail(COMPANY, VERISON, vehicle_type, current, new):
+
     currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 
     # Check for connection to internet

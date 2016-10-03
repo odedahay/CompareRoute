@@ -5,6 +5,7 @@ from encryption import EncryptionHandler
 
 class LoginHandler(CompareRouteHandler):
     def get(self):
+
         # check if activation code is provided
         # if yes, validate
 

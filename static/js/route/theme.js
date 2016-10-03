@@ -35,35 +35,36 @@ $(function() {
     if($('#optionsTruck').prop('checked', true)){
         $(".cr_truck").show();
     }
-
+    $(".refreshBtn").hide();
     $('input[type="radio"]').click(function(){
 
         if($(this).attr("value")=="by_truck"){
             $(".box").not(".cr_truck").hide();
             $(".cr_truck").show();
+            $(".refreshBtn").hide();
 
             //$("#vehicle_quantity").val('1');  // Option to reset the value
         }
         if($(this).attr("value")=="by_capacity"){
             $(".box").not(".cr_capacity").hide();
             $(".cr_capacity").show();
+            $(".refreshBtn").hide();
 
             //$("#truck_capacity").val('');  // Option to reset the value
         }
         if($(this).attr("value")=="by_companies"){
             $(".box").not(".cr_companies").hide();
             $(".cr_companies").show();
+            $(".refreshBtn").show();
+
+            // Always uncheck if the checkbox is checked when switching
+            $('#priority_capacity_comp').prop('checked', false);
 
             //$("#vehicle_quantity_1").val('1'); // Option to reset the value
         }
 
     });
 
-    $( '#refresh_btn' ).on( 'click', function() {
-        // call the ajax
-        //alert('hello');
-
-    });
 });
 
 
@@ -76,10 +77,12 @@ $("#priority_capacity").change(function() {
                 $('#truck_capacity').val('');
             }
          });
+
+         //$('.hidden_field1').fadeIn();
     }
 });
 
-// - - - - - Consider Truck Capacity, For Company Sorting- - - - - //
+// - - - - - Consider Truck Capacity, For Company Sorting- - - - - //  vehicle_qty_div
 $("#priority_capacity_comp").change(function() {
     if(this.checked){
         $( "#vehicle_type_1" ).change(function() {
@@ -118,10 +121,10 @@ $("#priority_capacity_comp").change(function() {
 
      if(this.checked){
 
-        $("#vehicle_qty_div").hide();
+       $(".vehicle_qty_div").hide();
+       $(".hidden_field1").fadeIn();
        // $("#vehicle_qty_div_info").show();
 
-        $(".hidden_field1").fadeIn();
         //$(".hidden_field_master").show();
 
 //        if($('#num_comp_val').val() == '2')  {
@@ -177,11 +180,11 @@ $("#priority_capacity_comp").change(function() {
      }
      else{
         //$("#vehicle_qty_div_info").hide();
-        $("#vehicle_qty_div").show();
+        $(".vehicle_qty_div").show();
+        $(".hidden_field1").hide();
 
         //$(".hidden_field_master").hide();
-        $(".hidden_field1").hide();
-//        $(".hidden_field2").hide();
+       // $(".hidden_field2").hide();
 //        $(".hidden_field3").hide();
 //        $(".hidden_field4").hide();
 //        $(".hidden_field5").hide();
@@ -249,34 +252,24 @@ $("#priority_capacity_comp").change(function() {
 //
 //});
 
-// Route by Companies
+// Route by Companies by Refreshing Btn:
 
-$(function() {
-
-    var $sortCompanies = $("#sort_company");
-    var priority_capacity_comp = $("#priority_capacity_comp")[0].checked;
-
-    $sortCompanies.change(function() {
-         $("#vehicle_qty_div_info").hide();
-
-        // checked the checkbox field
-        if(this.checked) {
-
-            $("#vehicle_qty_div_info").show();
-
-
-            var postal_sequence = $("#postal_sequence").val();
+$( '#refresh_btn' ).on( 'click', function() {
+        // call the ajax
+        //alert('hello');
+        //location.reload();
+         $('#priority_capacity_comp').prop('checked', false);
+         var postal_sequence = $("#postal_sequence").val();
 
             $.ajax({
                 type: "POST",
                 url: "/sorting_comp",
                 data: {
                     postal_sequence: postal_sequence,
-                    priority_capacity_comp: priority_capacity_comp,
                 },
                 beforeSend:function(){
 
-                     $('#progressbar').text('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+                     $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
                 },
                 success: function (response) {
 
@@ -297,6 +290,70 @@ $(function() {
 
                         // Generate the fields
                         generateFields(name_of_company);
+
+                        // show the input field
+                        $(".hidden_1").fadeIn();
+                    }
+                    else{
+                        var errors = response.errors;
+                        $('#ajax_errors').show();
+                        $('#ajax_errors').html(errors);
+                    }
+                },
+                error: function (response) {
+                    $('#progressbar').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                },
+            })
+
+
+    });
+
+$(function() {
+
+    var $sortCompanies = $("#sort_company");
+    //var $priority_capacity_comp = $("#priority_capacity_comp")[0].checked;
+
+    $sortCompanies.change(function() {
+         $("#vehicle_qty_div_info").hide();
+
+        // checked the checkbox field
+        if(this.checked) {
+
+            $("#vehicle_qty_div_info").show();
+            var postal_sequence = $("#postal_sequence").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/sorting_comp",
+                data: {
+                    postal_sequence: postal_sequence,
+                   // priority_capacity_comp: priority_capacity_comp,
+                },
+                beforeSend:function(){
+
+                     $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+                },
+                success: function (response) {
+
+                    var num_comp_val = response.data_valid_company[0].required_fields.num_comp_val;
+                    var name_of_company = response.data_valid_company[0].required_fields.name_of_companies;
+
+                    //console.log('Name of the companies', name_of_company);
+
+                    $('#progressbar').empty();
+                    $('#ajax_errors').empty();
+                    $('#ajax_errors').hide();
+
+                    var status = response.status;
+
+                    if (status == "ok"){
+                         // Print the number of companies
+                        $('#num_comp_val').val(num_comp_val);
+
+                        // Generate the fields
+                        generateFields(name_of_company);
+                        //additional Truck Btn
+                        //generateFields_add_truck(name_of_company);
 
                         // show the input field
                         $(".hidden_1").fadeIn();
@@ -330,58 +387,275 @@ $(function() {
 
 function generateFields(name_of_company){
 
-
     var $name_companies = $('.name_companies');
     var $priority_capacity_company = $('#priority_capacity_comp');
     var $fields_parent = $('#fields_company');
+    var $fields_company_add = $('#fields_company_add');
 
-    // avoid duplicate
+
+    var $fields_column7 = $('<div class ="hidden_field1"></div>');
+
     $fields_parent.empty();
     $fields_parent.show();
 
-    var $fields_column1 = $('<div class ="col-xs-2"></div>');
-    var $fields_column2 = $('<div class ="col-xs-2" id="vehicle_qty_div"></div>');
-    var $fields_column3 = $('<div class ="col-xs-2 hidden_field1"></div>');
-    var $fields_column4 = $('<div class ="col-xs-2 hidden_field1"></div>');
-    var $fields_column5 = $('<div class ="col-xs-2 hidden_field1"></div>');
+    $fields_parent.append($fields_parent_sub);
 
-
-    $fields_parent.append($fields_column1);
-    $fields_parent.append($fields_column2);
-    $fields_parent.append($fields_column3);
-    $fields_parent.append($fields_column4);
-    $fields_parent.append($fields_column5);
-
+    // Add fields
+    $fields_company_add.append($fields_column7);
 
     for (i=0; i < name_of_company.length; i++){
         var company_name = name_of_company[i];
 
         //newHTML.push('<span>' + name_of_company[i] + '</span>');
         // Postal Code
-        $fields_column1.append('<label class="control-label font_11" for="starting_postal_'+(i+1)+'"> <span class="name_companies"> Starting Postal: '+company_name +' * </span></label>')
-        $fields_column1.append('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="461051">')
 
-        // Truck Inputs
-        $fields_column2.append('<label class="control-label font_11" for="vehicle_quantity_'+(i+1)+'">Enter No. of Truck * </label>')
-        $fields_column2.append('<input type="number" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="1">')
+        var $fields_parent_sub = $('<div class ="row"></div>');
 
-        // Truck Capacity
-        $fields_column3.append('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Type of Truck</label>');
-        $fields_column3.append('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="Truck">');
+        var $fields_column1 = $('<div class ="col-xs-2"></div>');
+        var $fields_column2 = $('<div class ="col-xs-2 vehicle_qty_div"></div>');
+        // priority capacity
+        var $fields_column3 = $('<div class ="col-xs-2 hidden_field1"></div>');
+        var $fields_column4 = $('<div class ="col-xs-2 hidden_field1"></div>');
+        var $fields_column5 = $('<div class ="col-xs-2 hidden_field1"></div>');
+        var $fields_column6 = $('<div class ="hidden_field1"></div>'); // btn Add
 
-        $fields_column4.append('<label class="control-label font_11" for="truck_capacity_c'+(i+1)+'"> Enter Max Truck Capacity * </label>');
-        $fields_column4.append('<input type="number" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="10">');
+        var $fields_label01 = $('<label class="control-label font_11" for="starting_postal_'+(i+1)+'"> <span class="name_companies"> Starting Postal: '+company_name +' * </span></label>')
+        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="461051">')
 
-        $fields_column5.append('<label class="control-label font_11" for="num_of_truck_c'+(i+1)+'"> No. of Truck </label>');
-        $fields_column5.append('<input type="number" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="1">');
+        var $fields_label02 = $('<label class="control-label font_11" for="vehicle_quantity_'+(i+1)+'">Enter No. of Truck * </label>')
+        var $fields_input02 = $('<input type="number" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="1">')
 
+        var $fields_label03 = $('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Types of Truck</label>');
+        var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="Truck">');
+
+        var $fields_label04 = $('<label class="control-label font_11" for="truck_capacity_c'+(i+1)+'"> Enter Max Truck Capacity * </label>');
+        var $fields_input04 = $('<input type="number" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="10">');
+
+        var $fields_label05 = $('<label class="control-label font_11" for="num_of_truck_c'+(i+1)+'"> No. of Truck </label>');
+        var $fields_input05 = $('<input type="number" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="1">');
+
+        var $fields_button_add = $('<button id="add_button_c'+(i+1)+'" class="btn btn-link btn-sm customBtn_comp" >+ Add New Truck (3 of 1)</button>');
+
+        var $fields_parent_addBTn = $('<div class="row" id="btn_item_'+(i+1)+'" style="margin-bottom:15px; margin-top:-24px"></div>');
+
+        $fields_parent_sub.append($fields_column1);
+        $fields_parent_sub.append($fields_column2);
+        $fields_parent_sub.append($fields_column3);
+        $fields_parent_sub.append($fields_column4);
+        $fields_parent_sub.append($fields_column5);
+        $fields_parent_sub.append($fields_column6);
+
+        // Priority Truck
+        $fields_column1.append($fields_label01);
+        $fields_column1.append($fields_input01);
+
+        $fields_column2.append($fields_label02);
+        $fields_column2.append($fields_input02);
+
+        // Priority Capacity
+        $fields_column3.append($fields_label03);
+        $fields_column3.append($fields_input03);
+
+        $fields_column4.append($fields_label04);
+        $fields_column4.append($fields_input04);
+
+        $fields_column5.append($fields_label05);
+        $fields_column5.append($fields_input05);
+
+        // The button Add
+        $fields_column6.append($fields_button_add);
+
+        // append <row>
+        $fields_parent.append($fields_parent_sub);
+        $fields_parent.append($fields_parent_addBTn);
 
     }//end of loop
 
 
-     //$(".element").text(newHTML.join(""));
 
-    //$name_companies.text(newHTML.join(""));
+// function of the button:
+function generateFields_add_truck(){ }
+
+//Btn 1
+$(function() {
+    var counter = 1;
+    var limitTruck = 2;
+
+    $('#add_button_c1').click(function(event){
+
+        if (counter <= limitTruck){
+
+            event.preventDefault();
+            var $inputField_span = $('<span></span>');
+            var $inputField_row = $('<div class="row"></div>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc'+counter+'" /><input type="hidden" id="add_truck_cc1" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c1" style="margin-top:5px;" title="Delete"> Remove </button>');
+
+            $inputField_span.append($inputField_row);
+            $inputField_row.append($inputFields_col);
+
+            $('#add_button_c1').text("+ Add New Truck (3 of "+ (counter + 1)+" )");
+            $('#btn_item_1').append($inputField_span);
+            counter ++;
+
+        }else{
+
+            alert("You have reached the limit of adding Truck of " + counter + " inputs");
+        }
+       return false
+    });
+
+    $('#btn_item_1').on('click', '#delete_comp_c1', function(){
+        $('#add_button_c1').text("+ Add New Truck (3 of "+ (counter - 1)+" )");
+        $(this).parents('span').remove();
+        counter --;
+        return false;
+    });
+});
+
+// Btn 2
+$(function() {
+    var counter = 1;
+    var limitTruck = 2;
+
+    $('#add_button_c2').click(function(event){
+
+        if (counter <= limitTruck){
+
+            event.preventDefault();
+            var $inputField_span = $('<span></span>');
+            var $inputField_row = $('<div class="row"></div>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc2'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc2'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc2'+counter+'" /><input type="hidden" id="add_truck_cc2" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
+
+            $inputField_span.append($inputField_row);
+            $inputField_row.append($inputFields_col);
+
+            $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter + 1)+" )");
+            $('#btn_item_2').append($inputField_span);
+            counter ++;
+
+        }else{
+
+            alert("You have reached the limit of adding Truck of " + counter + " inputs");
+        }
+       return false
+    });
+
+    $('#btn_item_2').on('click', '#delete_comp_c2', function(){
+        $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter - 1)+" )");
+        $(this).parents('span').remove();
+        counter --;
+        return false;
+    });
+});
+
+
+// Btn 3
+$(function() {
+    var counter = 1;
+    var limitTruck = 2;
+
+    $('#add_button_c3').click(function(event){
+
+        if (counter <= limitTruck){
+
+            event.preventDefault();
+            var $inputField_span = $('<span></span>');
+            var $inputField_row = $('<div class="row"></div>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc3'+counter+'" /><input type="hidden" id="add_truck_cc3" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c3" style="margin-top:5px;" title="Delete"> Remove </button>');
+
+            $inputField_span.append($inputField_row);
+            $inputField_row.append($inputFields_col);
+
+            $('#add_button_c3').text("+ Add New Truck (3 of "+ (counter + 1)+" )");
+            $('#btn_item_3').append($inputField_span);
+            counter ++;
+
+        }else{
+
+            alert("You have reached the limit of adding Truck of " + counter + " inputs");
+        }
+       return false
+    });
+
+    $('#btn_item_3').on('click', '#delete_comp_c3', function(){
+        $('#add_button_c3').text("+ Add New Truck (3 of "+ (counter - 1)+" )");
+        $(this).parents('span').remove();
+        counter --;
+        return false;
+    });
+});
+
+
+
+
+//$(function() {
+//    var counter2 = 1;
+//    var limitForms2 = 3;
+//
+//    $('#add_button_c2').click(function(event){
+//
+//        if (counter2 <= limitForms2){
+//
+//            event.preventDefault();
+//            $inputField_parent = $('<span><div class="row"></div></span>');
+//            $inputFields = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Company 2 of Truck : '+counter2+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc2'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc2'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc2'+counter2+'" /></div><input type="hidden" id="add_truck_cc2" value="add_c2'+counter2+'"/><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
+//
+//            $inputField_parent.append($inputFields);
+//
+//            $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter2 )+" )");
+//            $('#btn_item_2').append($inputField_parent);
+//
+//            counter2++;
+//        }else{
+//
+//            alert("You have reached the limit of adding Truck of " + counter2 + " inputs");
+//        }
+//       return false
+//    });
+//
+//    $('#btn_item_2').on('click', '#delete_comp_c2', function(){
+//        $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter2 - 1)+" )");
+//        $(this).parents('span').remove();
+//        counter2 --;
+//
+//        return false;
+//    });
+//});
+//
+//// Btn 3
+//$(function() {
+//    var counter3 = 1;
+//    var limitForms3 = 3;
+//
+//    $('#add_button_c3').click(function(event){
+//
+//        if (counter3 <= limitForms3){
+//
+//            event.preventDefault();
+//            $inputField_parent = $('<span><div class="row"></div></span>');
+//            $inputFields = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Company 3 - truck : '+counter3+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc'+counter2+'" /></div><input type="hidden" id="add_truck_cc" value="add_2"/><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
+//
+//            $inputField_parent.append($inputFields);
+//
+//            $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter3 )+" )");
+//            $('#btn_item_2').append($inputField_parent);
+//
+//            counter3++;
+//        }else{
+//
+//            alert("You have reached the limit of adding Truck of " + counter3 + " inputs");
+//        }
+//       return false
+//    });
+//
+//    $('#btn_item_3').on('click', '#delete_comp_c3', function(){
+//        $('#add_button_c3').text("+ Add New Truck (3 of "+ (counter3 - 1)+" )");
+//        $(this).parents('span').remove();
+//        counter3 --;
+//
+//        return false;
+//    });
+//});
 
 
 
