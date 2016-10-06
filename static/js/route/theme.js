@@ -586,213 +586,6 @@ $(function() {
 });
 
 
-
-
-//$(function() {
-//    var counter2 = 1;
-//    var limitForms2 = 3;
-//
-//    $('#add_button_c2').click(function(event){
-//
-//        if (counter2 <= limitForms2){
-//
-//            event.preventDefault();
-//            $inputField_parent = $('<span><div class="row"></div></span>');
-//            $inputFields = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Company 2 of Truck : '+counter2+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc2'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc2'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc2'+counter2+'" /></div><input type="hidden" id="add_truck_cc2" value="add_c2'+counter2+'"/><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
-//
-//            $inputField_parent.append($inputFields);
-//
-//            $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter2 )+" )");
-//            $('#btn_item_2').append($inputField_parent);
-//
-//            counter2++;
-//        }else{
-//
-//            alert("You have reached the limit of adding Truck of " + counter2 + " inputs");
-//        }
-//       return false
-//    });
-//
-//    $('#btn_item_2').on('click', '#delete_comp_c2', function(){
-//        $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter2 - 1)+" )");
-//        $(this).parents('span').remove();
-//        counter2 --;
-//
-//        return false;
-//    });
-//});
-//
-//// Btn 3
-//$(function() {
-//    var counter3 = 1;
-//    var limitForms3 = 3;
-//
-//    $('#add_button_c3').click(function(event){
-//
-//        if (counter3 <= limitForms3){
-//
-//            event.preventDefault();
-//            $inputField_parent = $('<span><div class="row"></div></span>');
-//            $inputFields = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Company 3 - truck : '+counter3+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc'+counter2+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc'+counter2+'" /></div><input type="hidden" id="add_truck_cc" value="add_2"/><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
-//
-//            $inputField_parent.append($inputFields);
-//
-//            $('#add_button_c2').text("+ Add New Truck (3 of "+ (counter3 )+" )");
-//            $('#btn_item_2').append($inputField_parent);
-//
-//            counter3++;
-//        }else{
-//
-//            alert("You have reached the limit of adding Truck of " + counter3 + " inputs");
-//        }
-//       return false
-//    });
-//
-//    $('#btn_item_3').on('click', '#delete_comp_c3', function(){
-//        $('#add_button_c3').text("+ Add New Truck (3 of "+ (counter3 - 1)+" )");
-//        $(this).parents('span').remove();
-//        counter3 --;
-//
-//        return false;
-//    });
-//});
-
-
-
-//        if($('#num_comp_val').val() == '2')  {
-//            $('#vehicle_quantity_2').show();
-//            $('#starting_postal_2').show();
-//            $('#vehicle_label_2').show();
-//            $('#starting_label_2').show();
-//
-//            $('#starting_postal_3').hide();
-//            $('#vehicle_label_3').hide();
-//            $('#starting_label_3').hide();
-//            $('#vehicle_quantity_3').hide();
-//
-//            $('#input_num1').show();
-//            $('#label_num1').show();
-//
-//        }else if ($('#num_comp_val').val() == '3'){
-//                $('#starting_postal_3').show();
-//                $('#vehicle_label_3').show();
-//                $('#starting_label_3').show();
-//                $('#vehicle_quantity_3').show();
-//
-//                $('#vehicle_quantity_2').show();
-//                $('#starting_postal_2').show();
-//                $('#vehicle_label_2').show();
-//                $('#starting_label_2').show();
-//
-//                $('#input_num1').show();
-//                $('#label_num1').show();
-//
-//        }else if ($('#num_comp_val').val() == '4'){
-//
-//                $('#starting_postal_4').show();
-//                $('#vehicle_label_4').show();
-//                $('#starting_label_4').show();
-//                $('#vehicle_quantity_4').show();
-//
-//                $('#starting_postal_3').show();
-//                $('#vehicle_label_3').show();
-//                $('#starting_label_3').show();
-//                $('#vehicle_quantity_3').show();
-//
-//                $('#vehicle_quantity_2').show();
-//                $('#starting_postal_2').show();
-//                $('#vehicle_label_2').show();
-//                $('#starting_label_2').show();
-//
-//                $('#input_num1').show();
-//                $('#label_num1').show();
-//
-//        }else if ($('#num_comp_val').val() == '5'){
-//
-//                $('#starting_postal_5').show();
-//                $('#vehicle_label_5').show();
-//                $('#starting_label_5').show();
-//                $('#vehicle_quantity_5').show();
-//
-//                $('#starting_postal_4').show();
-//                $('#vehicle_label_4').show();
-//                $('#starting_label_4').show();
-//                $('#vehicle_quantity_4').show();
-//
-//                $('#starting_postal_3').show();
-//                $('#vehicle_label_3').show();
-//                $('#starting_label_3').show();
-//                $('#vehicle_quantity_3').show();
-//
-//                $('#vehicle_quantity_2').show();
-//                $('#starting_postal_2').show();
-//                $('#vehicle_label_2').show();
-//                $('#starting_label_2').show();
-//
-//                $('#input_num1').show();
-//                $('#label_num1').show();
-//
-//        }else if ($('#num_comp_val').val() == '6'){
-//
-//                $('#starting_postal_6').show();
-//                $('#vehicle_label_6').show();
-//                $('#starting_label_6').show();
-//                $('#vehicle_quantity_6').show();
-//
-//                $('#starting_postal_5').show();
-//                $('#vehicle_label_5').show();
-//                $('#starting_label_5').show();
-//                $('#vehicle_quantity_5').show();
-//
-//                $('#starting_postal_4').show();
-//                $('#vehicle_label_4').show();
-//                $('#starting_label_4').show();
-//                $('#vehicle_quantity_4').show();
-//
-//                $('#starting_postal_3').show();
-//                $('#vehicle_label_3').show();
-//                $('#starting_label_3').show();
-//                $('#vehicle_quantity_3').show();
-//
-//                $('#vehicle_quantity_2').show();
-//                $('#starting_postal_2').show();
-//                $('#vehicle_label_2').show();
-//                $('#starting_label_2').show();
-//
-//                $('#input_num1').show();
-//                $('#label_num1').show();
-//        }else {
-//
-//            $('#vehicle_quantity_2').hide();
-//            $('#starting_postal_2').hide();
-//            $('#vehicle_label_2').hide();
-//            $('#starting_label_2').hide();
-//
-//            $('#starting_postal_3').hide();
-//            $('#vehicle_label_3').hide();
-//            $('#starting_label_3').hide();
-//            $('#vehicle_quantity_3').hide();
-//
-//            $('#starting_postal_4').hide();
-//            $('#vehicle_label_4').hide();
-//            $('#starting_label_4').hide();
-//            $('#vehicle_quantity_4').hide();
-//
-//            $('#starting_postal_5').hide();
-//            $('#vehicle_label_5').hide();
-//            $('#starting_label_5').hide();
-//            $('#vehicle_quantity_5').hide();
-//
-//            $('#starting_postal_6').hide();
-//            $('#vehicle_label_6').hide();
-//            $('#starting_label_6').hide();
-//            $('#vehicle_quantity_6').hide();
-//
-//            $('#input_num1').hide();
-//            $('#label_num1').hide();
-//        }
-
-
 } // end of function
 
 // - - - - - Sorting by Company Option 2- - - - - //
@@ -864,10 +657,31 @@ $(function() {
         if (counter <= limitForms){
 
             event.preventDefault()
-            var $inputFields = $('<span><div class="row" id="group"><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_'+counter+'" /></div>'+' <div class="col-xs-2"><button class="btn btn-info btn-sm" id="delete" style="margin-top:5px;" title="Delete"> Remove </button></div></div></span>');
+            var $inputFields_span = $('<span></span>');
+            var $inputFields_row = $('<div class="row" id="group"></div>');
+
+            var $inputFields_div1 = $('<div class="col-xs-2 down_15"></div>');
+            var $inputFields_div2 = $('<div class="col-xs-2 down_15"></div>');
+            var $inputFields_div3 = $('<div class="col-xs-2 down_15"></div>');
+            var $inputFields_div4 = $('<div class="col-xs-2"></div>');
+
+            var $inputFields1 = $('<input type="text" class="form-control input" id="type_of_truck_'+counter+'" />');
+            var $inputFields2 = $('<input type="number" class="form-control input" id="truck_capacity_'+counter+'" />');
+            var $inputFields3 = $('<input type="number" class="form-control input" id="num_of_truck_'+counter+'" />');
+            var $button = $('<button class="btn btn-info btn-sm" id="delete" style="margin-top:5px;" title="Delete"> Remove </button>');
+
+            // append in span:
+            var parentNode = $inputFields_span.append($inputFields_row)
+            // append in row:
+            $inputFields_row.append($inputFields_div1, $inputFields_div2, $inputFields_div2, $inputFields_div3, $inputFields_div4);
+            // append in div:
+            $inputFields_div1.append($inputFields1);
+            $inputFields_div2.append($inputFields2);
+            $inputFields_div3.append($inputFields3);
+            $inputFields_div4.append($button);
 
             $('#counter_fields').text("(3 of "+ (counter + 1)+" )");
-            $('#items').append($inputFields);
+            $('#items').append(parentNode);
             counter++;
 
         }else{
@@ -888,7 +702,6 @@ $(function() {
 
 }); // end of function
 
-//});
 
 // - - - - -End Back to Top - - - - - -//
 

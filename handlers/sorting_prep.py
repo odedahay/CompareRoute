@@ -482,12 +482,8 @@ class SortingPrep(webapp2.RequestHandler):
                 # Data Distribute through parallel loop according to number of company request
                 if priority_capacity_comp == "true":
 
-                    print ('name_of_companies'), name_of_companies
-
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
-
-                        print('truck_capacity_grp_ode'), truck_capacity_grp
 
                         origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
                             starting_post,
@@ -506,7 +502,6 @@ class SortingPrep(webapp2.RequestHandler):
                         # GeoCode Map
                         latlng_array = map_visible(propose_result)
                         latlng_array_list.append(latlng_array)
-
 
                     # validation Terms:
                     Num_of_truck_issue = "Number of truck is not Reached.<br />Generated No. of Truck result for  "
@@ -649,7 +644,7 @@ class SortingPrep(webapp2.RequestHandler):
             else:
 
                 # - - - - - - - - - This is for Non-company sorting - - - - - - #
-                """ Route By Truck """
+                """ Route By Truck and Route by Capacity """
 
                 origin_destination, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
                     int(starting_postal),
@@ -661,24 +656,28 @@ class SortingPrep(webapp2.RequestHandler):
                     api_user, sort_company, truck_capacity_grp, options_truck)
 
                 # Validate if the capacity truck is according to available "num_of_truck"
-                # result_num_truck = is number of truck is used
-                result_num_truck = len(vehicle_postal_list_new_seq)
+                # result_num_truck = is number of truck is used through capacity
+                result_num_truck = len(propose_result)
 
-                print('result_num_truck'), result_num_truck
+                if priority_capacity == "true":
 
-                if len(truck_capacity_grp) == 1:
+                    # Vehicle Result base of the priority:
+                    vehicle_quantity = len(vehicle_postal_list_new_seq)
 
-                    if int(result_num_truck) > int(num_of_truck):
-                        errors.extend(["Number of truck is not reached.<br /> Generated No. of Truck result : ",  result_num_truck])
+                    # Validation Message
+                    validation_msg_truck = "Number of truck is not reached.<br /> Generated No. of Truck result : "
 
-                elif len(truck_capacity_grp) == 2:
+                    if len(truck_capacity_grp) == 1:
+                        if int(result_num_truck) > int(num_of_truck):
+                            errors.extend([validation_msg_truck,  result_num_truck])
 
-                    if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
-                        errors.extend(["Number of truck is not reached.<br /> Generated No. of Truck result : ",  result_num_truck])
+                    elif len(truck_capacity_grp) == 2:
+                        if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
+                            errors.extend([validation_msg_truck,  result_num_truck])
 
-                elif len(truck_capacity_grp) == 3:
-                    if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
-                        errors.extend(["Number of truck is not reached.<br /> Generated No. of Truck result : ",  result_num_truck])
+                    elif len(truck_capacity_grp) == 3:
+                        if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
+                            errors.extend([validation_msg_truck,  result_num_truck])
 
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)
@@ -690,10 +689,6 @@ class SortingPrep(webapp2.RequestHandler):
                 # Converting the total percentage saving of distance
                 difference_total = current_route_value - propose_route_value
                 percentage_savings = (difference_total / current_route_value) * 100
-
-                # Vehicle Result base of the priority:
-                if priority_capacity == "true":
-                    vehicle_quantity = len(vehicle_postal_list_new_seq)
 
                 # Converting JSON
                 response['status'] = 'ok'

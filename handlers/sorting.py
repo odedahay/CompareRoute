@@ -140,15 +140,12 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
             truck_dictionary = truck_details(truck_capacity_grp)
 
             # Chunk according to Capacity / No of truck
-            vehicle_postal_list_new = list(
-                chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
+            vehicle_postal_list_new = list(chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
             # Current Route
-            vehicle_current_postal_list = list(
-                chunk_to_sum_no_truck(capacity_list, *truck_capacity_grp, **truck_dictionary))
+            vehicle_current_postal_list = list(chunk_to_sum_no_truck(capacity_list, *truck_capacity_grp, **truck_dictionary))
 
             # for Postal Seq
-            vehicle_postal_list_new_seq = list(
-                chunk_to_sum_no_truck_sequence(result_postal_seq, *truck_capacity_grp, **truck_dictionary))
+            vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_sequence(result_postal_seq, *truck_capacity_grp, **truck_dictionary))
 
             # Number of vehicle allocated
             num_of_vehicles = len(vehicle_postal_list_new)
@@ -179,12 +176,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                     result_postal_seq.append([postal, orderId, capacity, campany_id])
                     result_postal.append([postal, capacity])
 
-        print ('result_postal_seq'), result_postal_seq
-
         # Define and assign variables for truck
         truck_dictionary_comp = truck_details(truck_capacity_grp)
-
-        print('truck_dictionary_comp'), truck_dictionary_comp
 
         # Chunk according to Capacity / No of truck
         vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
@@ -194,8 +187,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
         # for Postal Seq
         vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
-
-        print('vehicle_postal_list_new'), vehicle_postal_list_new
 
     else:
 
@@ -604,41 +595,6 @@ def truck_details(list):
             }
 
     return truck_dictionary
-
-#
-# def truck_details_companies(list):
-#
-#     truck_dictionary = {}
-#
-#     if len(list) == 2:
-#
-#         for i in list:
-#             list2 = i
-#
-#             truck_name_1 = list2[0]
-#             target_1 = list2[1]
-#             max_1 = list2[2]
-#
-#             truck_dictionary = {
-#                     "truck_name_1": truck_name_1,
-#                     "target_1": target_1,
-#                     "max_1": max_1,
-#                 }
-#     else:
-#
-#         for i in list:
-#             list2 = i
-#             truck_name_1 = str(list2[0])
-#             target_1 = int(list2[1])
-#             max_1 = int(list2[2])
-#
-#             truck_dictionary = {
-#                 "truck_name_1": truck_name_1,
-#                 "target_1": target_1,
-#                 "max_1": max_1,
-#             }
-#
-#     return truck_dictionary
 
 
 def chunk_to_sum_no_truck(iterable, *list, **params):

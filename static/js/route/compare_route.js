@@ -502,16 +502,24 @@ $('#routeBtn').click(function () {
                 var $p_note = $("<p style='font-weight:normal; font-size:16px;'></p>");
                 var $p_note1 = $("<p style='font-weight:normal; font-size:16px;'></p>");
 
+
+
                 // Details Table
                 var $ParentTable = $('<table class="tableL table-bordered"></table>');
-                var $tableThead = $('<thead><tr><th>Delivery Points </th><th>Type of Truck </th><th>Total Delivery Routes </th><th>Total Number Delivery Truck </th></tr></thead>');
 
+                // Route by Trucks
+                var $tableThead0 = $('<thead><tr><th>Total Delivery Routes </th><th>Total Delivery Truck</th></tr></thead>');
+                var $tableThead1 = $('<thead><tr><th>Delivery Points </th><th>Total Delivery Routes </th><th>Total Delivery Truck</th></tr></thead>');
+
+                // Route by Capacity
+                var $tableThead = $('<thead><tr><th>Delivery Capacity Loads Details </th><th>Type of Truck </th><th>Total Delivery Routes </th><th>Total Number Delivery Truck </th></tr></thead>');
                 var $tableTbody = $('<tbody></tbody>');
                 var $tableTd = $('<tr></tr>'); // min -4 td
                 var $tableTd1 = $('<td></td>');
                 var $tableTd2 = $('<td></td>');
                 var $tableTd3 = $('<td></td>');
                 var $ul_table = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+
                 //Companies
                 var $tableThead_comp = $('<thead><tr><th>Starting Postal Codes</th><th>Number of Companies</th><th>Number of Postal Codes </th></tr></thead>');
                 var $ul_table_truck = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
@@ -538,7 +546,6 @@ $('#routeBtn').click(function () {
                 $sorted_sequenceTable.append($proposedTable);
 
                 // Global Function //
-
 
                 // Addition
                 function add(a, b) {return a + b;}
@@ -752,7 +759,6 @@ $('#routeBtn').click(function () {
                     //Truck Options-2
                     var capacity_priority = response.data_result[0].capacity_priority.priority_capacity;
                     var vehicle_type = response.data_result[0].capacity_priority.vehicle_type;
-                    var vehicle_capacity = response.data_result[0].capacity_priority.vehicle_capacity;
 
                     //total_summary_saving
                     var propose_route_value = response.data_result[0].total_summary_saving.propose_distance;
@@ -777,6 +783,9 @@ $('#routeBtn').click(function () {
                         var order_postal_split = order_postal.split(" ");
                         order_postal_arr.push(order_postal_split)
                     }
+
+                    //console.log('capacity_priority-1', capacity_priority);
+                    //console.log('vehicle_type-1', vehicle_type);
 
                     //- - - - - - export btn - - - - -  - - - - -//
                     $("#download_button").show();
@@ -806,8 +815,28 @@ $('#routeBtn').click(function () {
                     // Condition for Route by Truck:
                     if(optionsTruck === true){
 
+                        $p_note.append('Summary Truck Details : <br />');
+
+                        // Summary Table
+                        $sorted_sequence.append($ParentTable);
+
                         // if the Truck is more than 1:
                         if(parseInt(vehicle_priority) > 1){
+                            // Summary Table
+                            $sorted_sequence.append($ParentTable);
+                            // Append the Thead (title of each col)
+                            $ParentTable.append($tableThead1);
+                            $ParentTable.append($tableTbody);
+
+                            // Col 1
+                            $tableTbody.append($tableTd)
+                            $tableTd.append($tableTd1);
+                            $tableTd1.append($ul_table);
+
+                            // Col 2
+                            $tableTd.append($tableTd2);
+                            // Col 3
+                            $tableTd.append($tableTd3);
 
                             var new_postal_code;
                             var counter_nums;
@@ -833,17 +862,31 @@ $('#routeBtn').click(function () {
                                         }
                                 }
                                 counter_num_array.push(counter_num);
-                                $ul_result.append('<li>Delivery Points for Truck '+(i+1)+' : '+counter_num+' Sorted Postal Code </li>');
+                                $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Sorted Postal Code </li>');
 
                             }
                             var sum = counter_num_array.reduce(add, 0);
 
                             // Total Number
-                            $p_note.append('Total Delivery Routes : '+sum+ ' Proposed Sorted Postal Code <br />');
-                            $p_note.append('Total Delivery Truck : '+vehicle_priority);
+                            //$p_note.append('Total Delivery Routes : '+sum+ ' Proposed Sorted Postal Code <br />');
+                            $tableTd2.append(+sum+ ' Proposed Sorted Postal Code <br />');
+                            $tableTd3.append('Total Delivery Truck : '+vehicle_priority);
 
                         }
                         else{
+
+                            // Append the Thead (title of each col)
+                            $ParentTable.append($tableThead0);
+                            $ParentTable.append($tableTbody);
+
+                            $tableTbody.append($tableTd)
+
+                            // Col 1
+                            $tableTd.append($tableTd2);
+                            // Col 2
+                            $tableTd.append($tableTd3);
+
+
                             var total_num_result;
                             var total_truck;
                             for (var a=0; a < latlng_array.length; a++){
@@ -853,8 +896,8 @@ $('#routeBtn').click(function () {
                             }
 
                             // Result
-                            $ul_result.append('<li>Total Delivery Proposed Routes : '+total_num_result+' Sorted Postal Code </li>');
-                            $ul_result.append('<li>Total Delivery Truck : '+vehicle_priority+'</li>');
+                            $tableTd2.append(+total_num_result+' Proposed Sorted Postal Code');
+                            $tableTd3.append('Total Delivery Truck : '+vehicle_priority);
 
                         }
 
@@ -865,11 +908,14 @@ $('#routeBtn').click(function () {
 
                         // Summary Table
                         $sorted_sequence.append($ParentTable);
+                        // Append the Thead (title of each col)
                         $ParentTable.append($tableThead);
+
                         $tableThead.appendTo($ParentTable);
                         $tableTbody.appendTo($ParentTable);
 
                         $tableTbody.append($tableTd);
+
                         $tableTd1.append($ul_table);
                         $tableTd2.append($ul_table_truck);
                         $tableTd1.appendTo($tableTd);
@@ -903,13 +949,21 @@ $('#routeBtn').click(function () {
 
                             for(i = 0; i < postal_sequence_new.length; i++){
                                 var postal_seq_vehicle = postal_sequence_new[i];
+
                                 var postal_code_arr = [];
+
+                                // Sum of Total Load per Trucks
+                                var loadsCount = postal_seq_vehicle.reduce(function(sum, current)
+                                    {
+                                        return sum + current[2];
+                                    }, 0 );
 
                                 // counts the postal code
                                 for(k = 0; k < postal_seq_vehicle.length; k++){
                                     var postal_seq_new = postal_seq_vehicle[k]
                                     var postal_code = postal_seq_new[0];
 
+                                    //console.log('postal_seq_new-1' ,postal_seq_new);
                                     var counter_num = k + 1;
 
                                     // Counter to check for repeated postal codes
@@ -923,7 +977,7 @@ $('#routeBtn').click(function () {
 
                                 // sum all
                                 counter_num_array.push(counter_num);
-                                $ul_table.append('<li>Truck '+(i+1)+' : '+counter_num+' Sorted Postal Code</li>');
+                                $ul_table.append('<li>Truck '+(i+1)+' : '+loadsCount+' Loads with '+counter_num+' delivery routes </li>');
                              }
                             // Sum all Delivery Postal Code
                             var sum = counter_num_array.reduce(add, 0);
