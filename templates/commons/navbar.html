@@ -17,12 +17,12 @@
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav" id="loggedNav">
 
                     {% if email %}
 
                         <li><a href="/compare"><i class="fa fa-map-marker"></i> Compare</a></li>
-                        <li><a href="/compare-data"><i class="fa fa-folder-open" aria-hidden="true"></i> Route Data</a></li>
+                        <li><a href="/compare-data"><i class="fa fa-folder-open" aria-hidden="true"></i> Route Log</a></li>
                         <li><a href="/compare-api"><i class="fa fa-code" aria-hidden="true"></i> API</a></li>
                         <li><a href="/compare-profile"><i class="fa fa-file" aria-hidden="true"></i> Profile</a></li>
 					{% else %}

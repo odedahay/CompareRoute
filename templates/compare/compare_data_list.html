@@ -20,8 +20,8 @@
 
 <div class="container theme-showcase" role="main" id="compare">
     <div class="page-header">
-        <h2>CompareRoute</h2>
-        <p class="lead">Route Details:</p>
+        <h2>CompareRoute Route Log</h2>
+        <p class="lead">Generated Proposed Route Log Details:</p>
         <hr />
         <div class="text-right">
             {% for back in web_routes %}
@@ -41,8 +41,8 @@
                         <th>Truck Capacity </th>
                         <th>Sorted Postal Code w/ Starting-Postal Pts.</th>
                         <th>Return Truck to Starting Postal (HQ) </th>
-                        <th>Current Total Distance </th>
-                        <th>Proposed Total Distance </th>
+                        <th>Original Route Total Distance </th>
+                        <th>Proposed Route Total Distance </th>
                     </tr>
                     <tr>
                         <td> {{ route_web.created_date.strftime('%Y-%m-%d %H:%m') }}</td>

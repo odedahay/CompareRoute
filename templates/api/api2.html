@@ -5,7 +5,9 @@
 
 <div class="container theme-showcase" role="main">
         <div class="page-header">
-             <h2>CompareRoute API details</h2>
+            <h2>CompareRoute API</h2>
+             <p class="lead">CompareRoute service API details:</p>
+
             <hr />
         </div>
         <div class="row">
@@ -167,7 +169,7 @@ xhr.addEventListener("readystatechange", function () {
   }
 });
 
-xhr.open("POST", "http://localhost:8080/api/v1?userId="+userId+"&keyId="+keyId);
+xhr.open("POST", "http://compare-route-3.appspot.com/api/v1?userId="+userId+"&keyId="+keyId);
 xhr.setRequestHeader("content-type", "application/json");
 xhr.setRequestHeader("cache-control", "no-cache");
 
@@ -177,7 +179,7 @@ xhr.send(data);
 <pre style="text-align:left; font-size:11px;">
 import requests
 
-url = "http://localhost:8080/api/v1"
+url = "http://compare-route-3.appspot.com/api/v1"
 
 querystring = {"userId":"email_address","keyId":"user-key"}
 payload = "\n{\n\"postalhq\": \"461051\", \n\"postal_result\": [\n\"469001\", \"Order01\", \"1\"],\n[\"760450\", \"Order02\", \"2\"],\n [\"596937\", \"Order03\", \"2\"],\n    [\"596740\", \"Order04\", \"2\"],\n    [\"098585\", \"Order05\", \"1\"],\n [\"109680\", \"Order06\", \"1\"]\n ],\n \"vehicle_quantity\": 1, \n \"has_return\": \"true\", \n \"priority_capacity\":\"false\",\n    \"vehicle_type\": \"truck_1\",\n    \"vehicle_capacity\": \"10\"\n}"
@@ -208,7 +210,7 @@ curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d
     "priority_capacity":"false",
     "vehicle_type": "truck_1",
     "vehicle_capacity": "10"
-}' "http://localhost:8080/api/v1?userId=email_address&keyId=user-key"
+}' "http://compare-route-3.appspot.com/api/v1?userId=email_address&keyId=user-key"
 </pre>
 			</div>
             <div class="col-xs-4">

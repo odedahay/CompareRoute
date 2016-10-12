@@ -494,7 +494,7 @@ $('#routeBtn').click(function () {
                 // HTML Tags Reference:
                 var $h2_success = $("<h2 style='font-weight:normal'></h2>");
                 var $download_div = $('<div id="download_button" style="margin:20px 0;"></div>');
-                var $download_button = $('<button id="btnExport" class="btn btn-success btn-xs">Export to excel</button>');
+                var $download_button = $('<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>'); //<a id="btn_export" class="btn btn-success btn-xs">Export to excel</a>
 
                 var $ul_sequence = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
                 var $ul_result = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
@@ -528,6 +528,7 @@ $('#routeBtn').click(function () {
 
                 // Summary Table
                 var $proposedTable = $('<table id="proposedTable" class="tableL table-bordered"></table>');
+                var $p_dlBtn = $('');
                 var $p_note2 = $('<p style="font-weight:normal; font-size:16px;"></p>');
 
                 //Status and Download
@@ -542,6 +543,7 @@ $('#routeBtn').click(function () {
                 $sorted_sequence.append($p_note);
 
                 // Div for Table for Postal Code list
+                $sorted_sequenceTable.append($p_dlBtn);
                 $sorted_sequenceTable.append($p_note2);
                 $sorted_sequenceTable.append($proposedTable);
 
@@ -842,7 +844,7 @@ $('#routeBtn').click(function () {
                             var counter_nums;
                             var counter_num_array = [];
 
-                             for(i = 0; i < postal_sequence_new.length; i++){
+                            for(i = 0; i < postal_sequence_new.length; i++){
                                 var postal_seq_vehicle = postal_sequence_new[i];
                                 var postal_code_arr = [];
 

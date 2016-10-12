@@ -19,8 +19,7 @@ class User_Data(base.BaseHandler):
         user_profile = UserAccount.check_if_exists(email)
 
         # Retrieved History of User_Id
-        user_routes_data = RouteDistance.query(RouteDistance.user_id == user_id).order(
-                                                                                -RouteDistance.created_date).fetch()
+        user_routes_data = RouteDistance.query(RouteDistance.user_id == user_id).order(-RouteDistance.created_date).fetch()
 
         template_values = {
             'email': email,

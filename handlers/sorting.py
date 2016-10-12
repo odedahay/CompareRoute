@@ -36,7 +36,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     if sort_company == "true":
         starting_address_seq = [starting_address, "", "", ""]
     else:
-        starting_address_seq = [starting_address, "", ""]
+        starting_address_seq = [starting_address, 0, 0]
 
     # Postal_dictionary to store same postal codes into 10
     # Postal_list refers to the unique list of postals codes
@@ -54,6 +54,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
     # Create Dic to combine ['postal_result', 'order_id', 'capacity']
     postal_sequence_sorted = []
+    postal_sequence_sorted_taskq = []
 
     # if options_truck == "true":
 
@@ -91,6 +92,15 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 # Display the relevant Capacity loads
                 if postal_new == postal_old:
                     postal_sequence_sorted.append([postal_new, order_id, capacity_load])
+                    postal_sequence_sorted_taskq.append([postal_new, order_id, str(capacity_load)])
+                    # joining = postal_sequence_join([postal_new, order_id, capacity_load])
+                    # # postal_sequence_sorted_taskq.append(str(postal))
+                    # # postal_sequence_sorted_taskq.append("-")
+                    # # postal_sequence_sorted_taskq.append(str(order_id))
+                    # # postal_sequence_sorted_taskq.append("-")
+                    # # postal_sequence_sorted_taskq.append(str(capacity_load))
+                    # # new_name = ''.join(postal_sequence_sorted_taskq)
+                    # print"try", new_name
 
     if priority_capacity == "true":
 
@@ -133,8 +143,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                     if postal == postal2:
                         result_postal_seq.append([postal, orderId, capacity])
                         result_postal.append([postal, capacity])
-
-            print ('result_postal'), result_postal
 
             # Define and assign variables for truck
             truck_dictionary = truck_details(truck_capacity_grp)
@@ -199,10 +207,9 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Propose Route w/ OrderID & Load Capacity
         vehicle_postal_list_new_seq = chunkIt(postal_sequence_sorted, vehicle_quantity)
 
-        vehicle_capacity = 0
+        # vehicle_capacity = 0
 
-        # Returning vehicle
-
+    # Returning vehicle
     if has_return == "true":
 
         for vehicle_postal_list_return in vehicle_postal_list_new:
@@ -227,37 +234,43 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # Converting to string of this Current data
     currentdPostlal = convert_to_string(vehicle_current_postal_list)
 
+    # Converting to string of this Sequence data
+    proposedPostlal_sequence = convert_to_string_seq(vehicle_postal_list_new_seq)
+
+
     num_user_load = "true"
 
     # User Count
     if api_user == "true":
         print "Data are from API User"
-        # taskqueue.add(url='/sorting-proposed-api',
-        #               params=({'compare_id': compare_id,
-        #                        'starting_address': starting_address,
-        #                        # 'origin_destination': origin_destination,
-        #                        'proposedPostlal': proposedPostlal,
-        #                        'currentdPostlal': currentdPostlal,
-        #                        'has_return': has_return,
-        #                        'email': email,
-        #                        'num_of_vehicle': vehicle_quantity,
-        #                        # 'vehicle_capacity': vehicle_capacity,
-        #                        'num_user_load': num_user_load
-        #                        }))
+        taskqueue.add(url='/sorting-proposed-api',
+                      params=({'compare_id': compare_id,
+                               'starting_address': starting_address,
+                               # 'origin_destination': origin_destination,
+                               'proposedPostlal': proposedPostlal,
+                               'currentdPostlal': currentdPostlal,
+                               'has_return': has_return,
+                               'email': email,
+                               'num_of_vehicle': vehicle_quantity,
+                               #'vehicle_capacity': vehicle_capacity,
+                               'num_user_load': num_user_load
+                               }))
     else:
         print ('Route task added to the queue.')
-        # taskqueue.add(url='/sorting-proposed',
-        #               params=({'compare_id': compare_id,
-        #                        'starting_address': starting_address,
-        #                        # 'origin_destination': origin_destination,
-        #                        'proposedPostlal': proposedPostlal,
-        #                        'currentdPostlal': currentdPostlal,
-        #                        'has_return': has_return,
-        #                        'email': email,
-        #                        'num_of_vehicle': vehicle_quantity,
-        #                        # 'vehicle_capacity': vehicle_capacity,
-        #                        'num_user_load': num_user_load
-        #                        }))
+        taskqueue.add(url='/sorting-proposed',
+                      params=({'compare_id': compare_id,
+                               'starting_address': starting_address,
+                               'proposedPostlal': proposedPostlal,
+                               'currentdPostlal': currentdPostlal,
+                               'proposedPostlal_sequence': proposedPostlal_sequence,
+                               'has_return': has_return,
+                               'email': email,
+                               'num_of_vehicle': vehicle_quantity,
+                               'priority_capacity': priority_capacity,
+                               #'vehicle_capacity': vehicle_capacity,
+                               'num_user_load': num_user_load,
+                               # 'objectt': objectt,
+                               }))
 
     return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq
 
@@ -1116,12 +1129,8 @@ def sort_by_postals(starting_address, postal_sequence_list, sort_company):
     # Obtain ranked postal codes
     areaCodeRanking_dict = createPostalRanking()
 
-    print ('postal_list'), postal_list
-
     # Sort the postal code using AreCodeRanking Dictionary
     custPostal_arr_sorted = sortPostalArray(areaCodeRanking_dict, postal_list)
-
-    print ('custPostal_arr_sorted'), custPostal_arr_sorted
 
     # Split postal codes into list for each vehicle
     # vehicle_postal_list = chunkIt(custPostal_arr_sorted, num_of_vehicle)
@@ -1263,7 +1272,53 @@ def convert_to_string(iterable):
     return result_str
 
 
+def convert_to_string_seq(vehicle_postal_list_seq):
+
+    result_str = ""
+
+    # iterate the 2 dimensional array
+    for vehicle_count in range(len(vehicle_postal_list_seq)):
+        seq_lists = vehicle_postal_list_seq[vehicle_count]
+
+        # Convert to String
+        if not result_str:
+            result_str += str(seq_lists)
+        else:
+            result_str += "_" + str(seq_lists)
+
+        result_str = result_str.replace(", ", "-").replace("\'", "").replace("[", "").replace("]", "")
+
+    return result_str
+
+def convert_to_join(iterable):
+
+    "This is the params expected: ['469001', 'Order01', 1]"
+
+    returning_box = []
+
+    for array_object in range(0, len(iterable)):
+    # for x in str(iterable):
+        print "array_object",  array_object
+
+    # postal = iterable[0]
+    # order_id = iterable[1]
+    # capacity = iterable[2]
+    #
+    # # push to the empty array
+    # returning_box.append(str(postal))
+    # returning_box.append('-')
+    # returning_box.append(str(order_id))
+    # returning_box.append('-')
+    # returning_box.append(str(capacity))
+    #
+    # # join all of them
+    # converted_object = ''.join(returning_box)
+
+    # Result expected: ['469001-Order01-1]
+    #return converted_object
+
 def startingpoint_latlong(starting_address):
+
     compare_startPos = postalRecordDB.check_if_exists(starting_address)
 
     if compare_startPos == None:

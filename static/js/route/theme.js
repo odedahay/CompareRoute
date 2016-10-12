@@ -1,8 +1,16 @@
-$(document).ready(function () {
-    $('#btnExport').click(download_excel);
 
-});
+// Main Navigation
+var url = window.location;
+// Will only work if string in href matches with location
+//$('#loggedNav li a[href="'+ url +'"]').parent().addClass('active');
 
+// relative and absolute HREF URL
+$('#loggedNav li a').filter(function() {
+    return this.href == url;
+}).parent().addClass('active');
+
+
+// Delete
 var table_example = $('#deleteMe');
 	table_example.click(function(){
 	event.stopPropagation(); 
@@ -588,16 +596,19 @@ $(function() {
 
 } // end of function
 
-// - - - - - Sorting by Company Option 2- - - - - //
+// - - - - - Download Button- - - - - //
+
+$('body').on('click', '#btn_export', function() {
+   //alert('test');
+   $("#proposedTable").btechco_excelexport({
+        containerid: "proposedTable",
+        datatype: $datatype.Table,
+        filename: 'compareroute_xls'
+    });
+
+});
 
 
-function download_excel(){
-  $("#proposedTable").btechco_excelexport({
-            containerid: "proposedTable",
-            datatype: $datatype.Table,
-            filename: 'compareroute'
-        });
-}
 
 $("#mark_botton").click(function(e){
     // alert('Hello');
@@ -618,6 +629,8 @@ $(".clickable-row").click(function() {
     window.document.location = $(this).data("href");
 });
 
+
+// Hide after 3sec the error message box
 //Display error message for 3 seconds and then fades out
 $('.hideThis').delay(3000).fadeOut();
 
@@ -696,7 +709,6 @@ $(function() {
         $('#counter_fields').html("(3 of "+ (counter - 1)+" )");
         $(this).parents('span').remove();
         counter--;
-
         return false;
     });
 

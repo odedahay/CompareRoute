@@ -33,14 +33,18 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         email = self.request.get('email')
         has_return = self.request.get('has_return')
         num_user_load = self.request.get('num_user_load')
+        priority_capacity = self.request.get('priority_capacity')
         #num_of_vehicles = self.request.get('num_of_vehicles')
 
         proposedPostlal = self.request.get('proposedPostlal')
         currentdPostlal = self.request.get('currentdPostlal')
+        proposedPostlal_seq = self.request.get('proposedPostlal_sequence')
+
+        objectt = self.request.get('objectt')
 
         origin_destination = sorting.startingpoint_latlong(starting_address)
 
-        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination, email)
+        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination, email, proposedPostlal_seq)
         current_total_dist = self.task_current_Route(compare_id, starting_address, currentdPostlal, origin_destination)
 
         # Counting the number of postal code:
@@ -54,6 +58,13 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                 postal_count_arr.append(current_post)
 
         postal_count = len(postal_count_arr)
+
+        if priority_capacity == "true":
+
+            print ("objectt"), objectt
+
+            # for x in vehicle_postal_list_new_seq:
+            #     print "Hello", vehicle_postal_list_new_seq[x]
 
         # Return vehicle
         if has_return == "true":
@@ -76,9 +87,12 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                                     float(proposed_total_dist), round(percentage_savings, 2),
                                     int(postal_count), return_vehicle, int(user_count))
 
-    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination, email):
+    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination, email, proposedPostlal_seq):
 
         actual_vehicle_postal = proposedPostlal.split("_")
+
+        # processing the table breakdown:
+        print "proposedPostlal_seq-task", proposedPostlal_seq
 
         origin_postcode = starting_address
         origin_destination = origin_destination
@@ -236,140 +250,3 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         longval = latlong.long
 
         return destinations, latval, longval
-
-
-
-
-
-
-
-
-
-# - - - - - - - - summary total - - - - - - - #
-# class summaryTotal_500(base.BaseHandler):
-#
-#     def post(self):
-#
-#         if not 'X-AppEngine-TaskName' in self.request.headers:
-#             self.error(403)
-#
-#         origin_destination = self.request.get('origin_destination')
-#         result_str = self.request.get('result_str')
-#
-#         response = {}
-#         errors = []
-#
-#         # - - - Format the result_str - - - #
-#
-#         result_str = result_str.strip()
-#         result_str_split = result_str.split(",")
-#
-#         # Chunk it
-#         result_str_chunk = sorting.chunkIt(result_str_split, 2)
-#
-#         # Assign per batch
-#         batch_1 = result_str_chunk[0]
-#         batch_2 = result_str_chunk[1]
-#
-#         # Get the last item of 1st Batch
-#         last_item = batch_1[-1]
-#
-#         # Insert the 'lastItemB' in the index of next list
-#         # To continue the route distance
-#         batch_2.insert(0, last_item)
-#
-#         # - - - - - Get value of list object- - - - - - #
-#         batch_1_val = latlong_summary_starting_tq(batch_1, origin_destination)
-#         batch_2_val = latlong_summary_tq(batch_2)
-#
-#         # Sum up all batches
-#         route_distance_add = batch_1_val + batch_2_val
-#         route_distance = float(route_distance_add) / 1000
-#
-#         return route_distance
-#
-#         # print "Result-1111", route_distance
-#         #
-#         # propose_route_value = route_distance
-#         # current_route_value = route_distance
-#         #
-#         # # Converting the total percentage saving of distance
-#         # difference_total = current_route_value - propose_route_value
-#         # percentage_savings = (difference_total / current_route_value) * 100
-#         #
-#         # # Converting JSON
-#         # response['status'] = 'ok'
-#         # response['data_result'] = [
-#         #     {
-#         #         "total_summary_saving": {
-#         #             "propose_distance": propose_route_value,
-#         #             "current_distance": current_route_value,
-#         #             "total_savings": percentage_savings
-#         #         }
-#         #     }
-#         # ]
-#         #
-#         # logging.info(response)
-#         # self.response.out.headers['Content-Type'] = 'application/json; charset=utf-8'
-#         # self.response.out.write(json.dumps(response, indent=2))
-#
-#
-# # - - -  function for conversion below - - - -#
-# def latlong_summary_tq(list):
-#
-#     url_disc = "http://dev.logistics.lol:5000/viaroute?"
-#     proposed_latlong = ""
-#
-#     for current_post in list:
-#         current_post = current_post.strip()
-#
-#         # Convert to Lat-Long the postal code
-#         destinations = sorting_prep.postalcode_latlong(current_post)
-#
-#         if not destinations:
-#             proposed_latlong += str(destinations)
-#         else:
-#             proposed_latlong += "&loc=" + str(destinations)
-#
-#     proposed_result = proposed_latlong
-#     proposed_api = url_disc + proposed_result
-#     dist_val = urllib2.urlopen(proposed_api)
-#     wjson = dist_val.read()
-#     distance2 = json.loads(wjson)
-#
-#     distance_val = distance2['route_summary']['total_distance']
-#
-#     return distance_val
-#
-# def latlong_summary_starting_tq(list, origin_destination):
-#
-#     url_disc = "http://dev.logistics.lol:5000/viaroute?loc="
-#     proposed_latlong = ""
-#
-#     for current_post in list:
-#         current_post = current_post.strip()
-#
-#         # Convert to Lat-Long the postal code
-#         destinations = sorting_prep.postalcode_latlong(current_post)
-#         # print "postal_code : ", current_post
-#
-#         if not destinations:
-#             proposed_latlong += str(destinations)
-#         else:
-#             proposed_latlong += "&loc=" + str(destinations)
-#
-#     proposed_result = origin_destination + proposed_latlong
-#     proposed_api = url_disc + proposed_result
-#     # print ('OSRM Link'), proposed_api
-#
-#     dist_val = urllib2.urlopen(proposed_api)
-#     wjson = dist_val.read()
-#     distance2 = json.loads(wjson)
-#     distance_val = distance2['route_summary']['total_distance']
-#
-#     return distance_val
-#
-#
-# app = webapp2.WSGIApplication(routes=[
-#     (r'/sorting-summary', summaryTotal_500)
-# ], config=base.sessionConfig, debug=True)

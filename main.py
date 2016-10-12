@@ -158,7 +158,7 @@ class AdminHome_page(base.BaseHandler):
 
         #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - -
         template_values = {
-            'email': email,
+            # 'email': email,
             'web_id_counts_id': web_id_counts_id,
             'api_id_counts_id': api_id_counts_id,
             'web_routes': web_routes,
@@ -166,12 +166,12 @@ class AdminHome_page(base.BaseHandler):
         }
         self.render("admin/admin.html", **template_values)
 
-        if email:
-
-            self.render("/compare/compare.html", email=email)
-
-        else:
-            self.redirect("/")
+        # if email:
+        #
+        #     self.render("/compare/compare.html", email=email)
+        #
+        # else:
+        #     self.redirect("/")
 
 
 # This class is for groupings

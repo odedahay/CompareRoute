@@ -1928,7 +1928,7 @@ def latlong_summary(list):
 
     proposed_result = proposed_latlong
     proposed_api = url_disc + proposed_result
-    print('proposed_api-2'), proposed_api
+
     dist_val = urllib2.urlopen(proposed_api, timeout=60)
 
     wjson = dist_val.read()
@@ -1987,9 +1987,6 @@ class SortingPrep_comp(webapp2.RequestHandler):
         priority_capacity_comp = self.request.get("priority_capacity_comp")
 
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
-
-
-        print ('priority_capacity_comp'), priority_capacity_comp
 
         # Error list for invalid postal codes
         no_record_postal = []
