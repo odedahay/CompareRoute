@@ -201,5 +201,5 @@ class UserAccount(ndb.Model):
             return {
                 'created': False,
                 'title': 'Email is not found',
-                'message': 'Please make sure you have the correct email in our registration records '
+                'message': 'Please make sure you use your registered email address'
             }

@@ -138,12 +138,13 @@ class SortingPrep(webapp2.RequestHandler):
 
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
 
-        print('add_truck_cc1'), add_truck_cc1
-        print('add_truck_cc2'), add_truck_cc2
-        print('add_truck_cc3'), add_truck_cc3
-
         # Error list for invalid postal codes
         # no_record_postal = []
+
+        # Error Variables:
+        error_StartingPoint = " Invalid Starting postal code <br />"
+        error_Num_of_truck = "Add more Truck! <br />The number of truck required based on capacity entered is "
+        error_valid_msg_truck = "Add more Truck! <br />The number of truck required based on capacity entered is "
 
         response = {}
         errors = []
@@ -151,6 +152,7 @@ class SortingPrep(webapp2.RequestHandler):
         # Check if the user if has valid credits
         credits_account = UserAccount.check_credit_usage(email)
         if credits_account == None:
+
             print "Error in Credits Account"
             errors.extend(["Error in Credits Access <br />"])
 
@@ -209,7 +211,6 @@ class SortingPrep(webapp2.RequestHandler):
 
         compare_id = datetime.now().strftime('%Y%m%d%H%m%f')
 
-        # - - - - - Lat-long for Starting point HQ - - - - - #
         # if options_truck == "true":
 
         # For Route by Truck Capacity validation
@@ -285,7 +286,6 @@ class SortingPrep(webapp2.RequestHandler):
 
                     elif add_truck_cc1 == "true" and add_truck_cc2 == "true":
 
-                        print "Helloaaaa"
 
                         truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
                         truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
@@ -347,26 +347,30 @@ class SortingPrep(webapp2.RequestHandler):
                         [truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3, truck_capacity_list_c4,
                          truck_capacity_list_c5, truck_capacity_list_c6])
 
-        else:
 
-            # Add "0" in front of five digit postal codes
-            if len(starting_postal) == 5:
-                starting_postal = "0" + starting_postal
+        # - - - - - Lat-long for Starting point HQ - - - - - #
+        # if starting_postal:
+        #     print "no content"
 
-            # # Remove "0" if  no record found
-            starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
+        # Add "0" in front of five digit postal codes
+        if len(starting_postal) == 5:
+            starting_postal = "0" + starting_postal
 
-            if starting_postal_hq == None:
-                errors.extend([starting_postal, ' Invalid starting postal code'])
+        # Remove "0" if  no record found
+        starting_postal_hq = postalRecordDB.check_if_exists(starting_postal)
 
-                # if int(vehicle_quantity) >= 17:
-                #     errors.extend(['Number vehicle maximum 17 only'])
+        if starting_postal_hq == None:
+
+            errors.extend([starting_postal, error_StartingPoint])
+
+            # if int(vehicle_quantity) >= 17:
+            #     errors.extend(['Number vehicle maximum 17 only'])
         # Counter checking of Postal Code
         num_post_code = 0
 
         # Extract the postal pair and validate the postal code while ignoring first line of headers
         # Note: Order ID is untouched as we do not know their format
-        for index in range(0, len(postal_sequence_split)):
+        for index in range(1, len(postal_sequence_split)):
 
             num_post_code = num_post_code + 1
 
@@ -443,8 +447,6 @@ class SortingPrep(webapp2.RequestHandler):
             # API Sensor
             api_user = "none"
 
-            print('truck_capacity_grp_comp1'), truck_capacity_grp_comp1
-
             if sort_company == "true":
 
                 """ each company will separated and this will indicate the color plotting in map like vehicle count """
@@ -503,68 +505,73 @@ class SortingPrep(webapp2.RequestHandler):
                         latlng_array = map_visible(propose_result)
                         latlng_array_list.append(latlng_array)
 
-                    # validation Terms:
-                    Num_of_truck_issue = "Number of truck is not Reached.<br />Generated No. of Truck result for  "
 
                     if int(num_comp_val) == 2:
 
                         company_1 = int(len(propose_result_company[0]))
                         company_2 = int(len(propose_result_company[1]))
+                        # HQ
+                        hq_comp_1 = starting_postal_list[0]
+                        hq_comp_2 = starting_postal_list[1]
 
                         if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+                                errors.extend([error_Num_of_truck, type_of_truck_cc1, " : ", company_1, "<br />"])
 
                         if add_truck_cc1 == "true" and add_truck_cc2 == "true":
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, " ", type_of_truck_cc1, " : ", company_1, "<br />"])
 
                             if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                                errors.extend([Num_of_truck_issue, type_of_truck_cc21, " : ", company_2, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, " ", type_of_truck_cc21, " : ", company_2, "<br />"])
 
                         if not add_truck_cc1 == "true" and not add_truck_cc2 == "true":
 
                             if company_1 > int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue, type_of_truck_c1, " : ", company_1, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, " ", type_of_truck_c1, " : ", company_1, "<br />"])
 
                             if company_2 > int(num_of_truck_c2):
-                                    errors.extend([Num_of_truck_issue, type_of_truck_c2, " : ", company_2, "<br />"])
+                                    errors.extend([error_Num_of_truck, " for ", hq_comp_1, " ", type_of_truck_c2, " : ", company_2, "<br />"])
 
                     if int(num_comp_val) == 3:
 
                         company_1 = int(len(propose_result_company[0]))
                         company_2 = int(len(propose_result_company[1]))
                         company_3 = int(len(propose_result_company[2]))
+                        # HQ
+                        hq_comp_1 = starting_postal_list[0]
+                        hq_comp_2 = starting_postal_list[1]
+                        hq_comp_3 = starting_postal_list[2]
 
                         if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue,
+                                errors.extend([error_Num_of_truck,
                                      type_of_truck_cc1, " : ", company_1, "<br />"])
 
                         if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue, type_of_truck_cc1, " : ", company_1, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, " ", type_of_truck_cc1, " : ", company_1, "<br />"])
 
                             if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                                errors.extend([Num_of_truck_issue, type_of_truck_cc21, " : ", company_2, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, " ", type_of_truck_cc21, " : ", company_2, "<br />"])
 
                             if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
-                                errors.extend([Num_of_truck_issue, num_of_truck_cc31, " : ", company_3, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_3, " ", num_of_truck_cc31, " : ", company_3, "<br />"])
 
                         if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
 
                             if company_1 > int(num_of_truck_c1):
-                                errors.extend([Num_of_truck_issue, type_of_truck_c1, " : ", company_1, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, " ", type_of_truck_c1, " : ", company_1, "<br />"])
 
                             if company_2 > int(num_of_truck_c2):
-                                errors.extend([Num_of_truck_issue,type_of_truck_c2, " : ", company_2, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, " ", type_of_truck_c2, " : ", company_2, "<br />"])
 
                             if company_3 > int(num_of_truck_c3):
-                                errors.extend([Num_of_truck_issue,type_of_truck_c3, " : ", company_3, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ", hq_comp_3, " ", type_of_truck_c3, " : ", company_3, "<br />"])
                 else:
 
                     for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):
@@ -664,20 +671,18 @@ class SortingPrep(webapp2.RequestHandler):
                     # Vehicle Result base of the priority:
                     vehicle_quantity = len(vehicle_postal_list_new_seq)
 
-                    # Validation Message
-                    validation_msg_truck = "Number of truck is not reached.<br /> Generated No. of Truck result : "
 
                     if len(truck_capacity_grp) == 1:
                         if int(result_num_truck) > int(num_of_truck):
-                            errors.extend([validation_msg_truck,  result_num_truck])
+                            errors.extend([error_valid_msg_truck,  result_num_truck])
 
                     elif len(truck_capacity_grp) == 2:
                         if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
-                            errors.extend([validation_msg_truck,  result_num_truck])
+                            errors.extend([error_valid_msg_truck,  result_num_truck])
 
                     elif len(truck_capacity_grp) == 3:
                         if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
-                            errors.extend([validation_msg_truck,  result_num_truck])
+                            errors.extend([error_valid_msg_truck, result_num_truck])
 
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)
@@ -2010,7 +2015,7 @@ class SortingPrep_comp(webapp2.RequestHandler):
 
         # Extract the postal pair and validate the postal code while ignoring first line of headers
         # Note: Order ID is untouched as we do not know their format
-        for index in range(0, len(postal_sequence_split)):
+        for index in range(1, len(postal_sequence_split)):
             num_post_code = num_post_code + 1
 
             # Retrieve each postal pair

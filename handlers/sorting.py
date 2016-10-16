@@ -237,7 +237,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # Converting to string of this Sequence data
     proposedPostlal_sequence = convert_to_string_seq(vehicle_postal_list_new_seq)
 
-
     num_user_load = "true"
 
     # User Count
@@ -275,7 +274,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq
 
 # Function for assigning Variable to Truck Types:
-
 
 def chunk_to_sum_no_truck_comp(iterable, *list, **params):
 
@@ -401,7 +399,6 @@ def chunk_to_sum_no_truck_comp(iterable, *list, **params):
 
     if chunk:
         yield chunk
-
 
 def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
 
@@ -608,7 +605,6 @@ def truck_details(list):
             }
 
     return truck_dictionary
-
 
 def chunk_to_sum_no_truck(iterable, *list, **params):
 
@@ -1263,12 +1259,16 @@ def checker_order_capacity_comp(iterable):
 
 def convert_to_string(iterable):
     result_str = ""
+
     for postal_code in iterable:
+
         if not result_str:
             result_str += str(postal_code)
         else:
             result_str += "_" + str(postal_code)
+
     result_str = result_str.replace("[", "").replace("]", "").replace("\'", "")
+
     return result_str
 
 
@@ -1278,6 +1278,7 @@ def convert_to_string_seq(vehicle_postal_list_seq):
 
     # iterate the 2 dimensional array
     for vehicle_count in range(len(vehicle_postal_list_seq)):
+
         seq_lists = vehicle_postal_list_seq[vehicle_count]
 
         # Convert to String
@@ -1290,32 +1291,6 @@ def convert_to_string_seq(vehicle_postal_list_seq):
 
     return result_str
 
-def convert_to_join(iterable):
-
-    "This is the params expected: ['469001', 'Order01', 1]"
-
-    returning_box = []
-
-    for array_object in range(0, len(iterable)):
-    # for x in str(iterable):
-        print "array_object",  array_object
-
-    # postal = iterable[0]
-    # order_id = iterable[1]
-    # capacity = iterable[2]
-    #
-    # # push to the empty array
-    # returning_box.append(str(postal))
-    # returning_box.append('-')
-    # returning_box.append(str(order_id))
-    # returning_box.append('-')
-    # returning_box.append(str(capacity))
-    #
-    # # join all of them
-    # converted_object = ''.join(returning_box)
-
-    # Result expected: ['469001-Order01-1]
-    #return converted_object
 
 def startingpoint_latlong(starting_address):
 

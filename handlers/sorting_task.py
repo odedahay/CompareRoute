@@ -92,7 +92,16 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         actual_vehicle_postal = proposedPostlal.split("_")
 
         # processing the table breakdown:
-        print "proposedPostlal_seq-task", proposedPostlal_seq
+        proposedPostlal_seq = proposedPostlal_seq.split("_")
+
+        for propsed_seq_1 in proposedPostlal_seq:
+            propsed_seq_1 = propsed_seq_1.split("-")
+
+            for propsed_seq_2 in propsed_seq_1:
+
+                print "propsed_seq_2", propsed_seq_2
+
+        #  - - - To Be Continue - - - - #
 
         origin_postcode = starting_address
         origin_destination = origin_destination

@@ -1,4 +1,3 @@
-import webapp2
 from handlers import base
 
 class ComparePage(base.BaseHandler):

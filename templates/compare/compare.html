@@ -3,47 +3,138 @@
 {% include "commons/navbar.html" %}
 {% block content %}
 
-<style>
-    #progress{
-     width:300px;
-     height:20px;
-     border:1px solid rgba(0,0,0,0.5);
-    }
-    #bar{
-     width:0%;
-     height:20px;
-     background-color:green;
-     -webkit-transition:width 700ms ease;   
-    }
-
-</style>
 
 <div class="container theme-showcase" role="main" id="compare">
 
     <div class="page-header">
         <h2>CompareRoute</h2>
-        <p class="lead">Enter data for routing:</p>
+        <!--<p class="lead">Enter data to generate route:</p>-->
+        <p class="lead">Fastest route, shortest routes</p>
         <hr />
     </div>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-        <div class="row">
-            <div class="col-lg-12 text-right">
-                <a href="https://docs.google.com/spreadsheets/d/11LhunrfPyc5x5jI-X9wQvXbIRE9bvyux_CZP9mCGt-o/edit?usp=sharing" target="_blank" class="btn btn-success btn-xs">
-                   <i class="fa fa-download" aria-hidden="true"></i> Download Template
-                </a>
+
+        <div class="row down_15" style="margin-left: -10px; border-bottom: 1px solid #dadada;">
+            <div class="col-md-12">
+                <div class="radio">
+                    <label class="radio-inline" style="margin-right:10px">
+                        <input type="radio" name="optionsRadios" id="optionsTruck" value="by_truck" checked>
+                            <i class="fa fa-truck" aria-hidden="true"></i> Route for Multiple Trucks
+                    </label>
+                    <label class="radio-inline" style="margin-right:10px">
+                        <input type="radio" name="optionsRadios" id="priority_capacity" value="by_capacity">
+                            <i class="fa fa-cubes" aria-hidden="true"></i> Route by Maximizing Truck Capacity
+                    </label>
+                    <label class="radio-inline" style="margin-right:10px">
+                        <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Consolidate delivery for Multiple Companies
+                    </label>
+                    <button type="button" class="btn btn-link sort_company refreshBtn" id="refresh_btn" title="Refresh Button" style="margin-bottom:0px; padding:0;">
+                            <i class="fa fa-refresh" aria-hidden="true"></i> Reload </button>
+                </div>
+
             </div>
         </div>
         <div id="sourceWrap">
-            <label class="control-label" for="postal_sequence">Enter Your Location Details (Postal Sequence) </label>
-            <div id="deleteMe" class="tableize" style="height: 217px;">
-                    <table class="tableize" id="table_deleteMe">
+
+            <label class="control-label" for="postal_sequence">Enter your Delivery Location Details</label>
+
+                <div class="tableize textbox_truck tableDisplay cr_truck">
+                    <table class="tableize tableize_opacity" >
                         <tr>
-                            <th width="30%">Postal Code Example</th>
+                            <th width="30%">Postal Code</th>
                             <th>Order ID</th>
-                            <th>Volume </th>
-                            <th>Company </th>
+                        </tr>
+                        <tr>
+                            <td>369974</td>
+                            <td>Order01</td>
+                        </tr>
+                        <tr>
+                            <td>760450</td>
+                            <td>Order02</td>
+                        </tr>
+                        <tr>
+                            <td>596740</td>
+                            <td>Order03</td>
+                        </tr>
+                        <tr>
+                            <td>098585</td>
+                            <td>Order04</td>
+                        </tr>
+                        <tr>
+                            <td>049909</td>
+                            <td>Order05</td>
+                        </tr>
+                        <tr>
+                            <td>560405</td>
+                            <td>Order06</td>
+                        </tr>
+                        <tr>
+                            <td>237983</td>
+                            <td>Order08</td>
+                        </tr>
+                    </table>
+                    <em class="tableize">Click to paste or Drop your file here</em>
+                </div> <!--end of tableize -->
+
+                <div class="tableize textbox_capacity tableDisplay cr_capacity">
+                    <table class="tableize tableize_opacity">
+                        <tr>
+                            <th width="30%">Postal Code</th>
+                            <th>Order ID</th>
+                            <th>Truck Capacity </th>
+
+                        </tr>
+                        <tr>
+                            <td>369974</td>
+                            <td>Order01</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>760450</td>
+                            <td>Order02</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>596740</td>
+                            <td>Order03</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>098585</td>
+                            <td>Order04</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>049909</td>
+                            <td>Order05</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>560405</td>
+                            <td>Order06</td>
+                            <td>2</td>
+
+                        </tr>
+                        <tr>
+                            <td>237983</td>
+                            <td>Order08</td>
+                            <td>3</td>
+
+                        </tr>
+                    </table>
+                    <em class="tableize">Click to paste or Drop your file here</em>
+                </div> <!--end of tableize -->
+
+                <div class="tableize textbox_companies tableDisplay cr_companies">
+                    <table class="tableize tableize_opacity">
+                        <tr>
+                            <th>Postal Code</th>
+                            <th>Order ID</th>
+                            <th>Truck Capacity </th>
+                            <th>Company Name</th>
                         </tr>
                         <tr>
                             <td>369974</td>
@@ -60,25 +151,25 @@
                         <tr>
                             <td>596740</td>
                             <td>Order03</td>
-                            <td>3</td>
+                            <td>1</td>
                             <td>company_A</td>
                         </tr>
                         <tr>
                             <td>098585</td>
                             <td>Order04</td>
-                            <td>4</td>
+                            <td>1</td>
                             <td>company_A</td>
                         </tr>
                         <tr>
                             <td>049909</td>
                             <td>Order05</td>
-                            <td>5</td>
+                            <td>1</td>
                             <td>company_A</td>
                         </tr>
                         <tr>
                             <td>560405</td>
                             <td>Order06</td>
-                            <td>6</td>
+                            <td>2</td>
                             <td>company_A</td>
                         </tr>
                         <tr>
@@ -90,37 +181,35 @@
                     </table>
                     <em class="tableize">Click to paste or Drop your file here</em>
                 </div> <!--end of tableize -->
-                <textarea class="form-control" id="postal_sequence" name="postal_sequence" rows="10" cols="120" title="click to copy/paste" spellcheck="false"  style="display: none;"></textarea>
 
+                <textarea class="form-control" id="postal_sequence" name="postal_sequence" rows="10" cols="120" title="click to copy/paste" spellcheck="false"  style="display: none;"></textarea>
+                <p class="js_error postalSeq"></p>
         </div><!--/sourceWrap -->
-        <br />
+
         <div class="row">
-            <div class="col-xs-12">
-                <div class="radio">
-                    <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="optionsTruck" value="by_truck" checked>
-                            <i class="fa fa-truck" aria-hidden="true"></i> Route by No. of Truck
-                    </label>
-                    <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="priority_capacity" value="by_capacity">
-                            <i class="fa fa-cubes" aria-hidden="true"></i> Route by Truck Capacity
-                    </label>
-                    <label class="radio-inline" style="margin-right:10px">
-                        <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Route by Companies
-                    </label>
-                    <button type="button" class="btn btn-link sort_company refreshBtn" id="refresh_btn" title="Refresh Button" style="margin-bottom:0px; padding:0;">
-                            <i class="fa fa-refresh" aria-hidden="true"></i> Reload the Route By Companies</button>
-                </div>
+            <div class="col-md-6 ">
+                <p class="bubble">
+                    <a class="close close_cust" id="closeBtn" data-dismiss="alert">×</a>
+                    <span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks
+                </p>
 
             </div>
+            <div class="col-md-6 space_10">
+                <!--<div class="col-md-6 col-md-offset-6 space_10">-->
+                <span class="spreedSheetStyle">You may use our
+                <a href="https://docs.google.com/spreadsheets/d/11LhunrfPyc5x5jI-X9wQvXbIRE9bvyux_CZP9mCGt-o/edit?usp=sharing" target="_blank" class="btn btn-success btn-xs" style="margin: 0 5px;">
+                   <i class="fa fa-download" aria-hidden="true"></i> Spreadsheet Template
+                </a>to populate the Postal Code Sequence</span>
+            </div>
+        </div>
 
+        <div class="row">
             <div class="cr_truck box">
-
                 <div class="row">
-                    <div class="col-xs-3 down_15">
+                    <div class="col-xs-2 down_15">
                         <label class="control-label font_11" for="starting_postal">Enter Starting Postal Code * </label>
-                        <input type="text" class="form-control input" id="starting_postal" name="starting_postal" placeholder="e.g. 461051" aria-describedby="helpBlock" value="461051">
+                        <input type="text" class="form-control input" id="starting_postal" name="starting_postal" placeholder="e.g. 461051" aria-describedby="helpBlock" value="">
+                        <p class="js_error startingPoint"></p>
                     </div>
                     <div class="col-xs-2">
                          <div class="form-group">
@@ -141,8 +230,7 @@
                                   <option>13</option>
                                   <option>14</option>
                                   <option>15</option>
-                                  <!--<option>16</option>-->
-                                  <!--<option>17</option>-->
+
                             </select>
                         </div>
                     </div>
@@ -150,28 +238,32 @@
             </div>    <!-- end of cr_truck -->
 
             <div class="cr_capacity box">
-
                  <!-- New Fields for Route By Capacity -->
                 <div class="row">
                     <div class="col-xs-2 down_15">
                         <label class="control-label font_11" for="starting_postal_cap"> Enter Starting Postal Code * </label>
                         <input type="text" class="form-control input" id="starting_postal_cap" name="starting_postal_cap" placeholder="e.g. 570282" aria-describedby="helpBlock" value="461051">
+                        <p class="js_error startingPoint"></p>
                     </div>
                 </div>
                 <div id="main_form">
 
                     <div class="row">
                         <div class="col-xs-2 down_15">
-                            <label class="control-label font_11" for="type_of_truck"> Enter Types of Truck</label>
-                             <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="Big Truck">
+                            <label class="control-label font_11" for="type_of_truck"> Enter Types of Truck *</label>
+                             <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="MK100">
+                             <p class="js_error typeTruck"></p>
                         </div>
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="truck_capacity"> Enter Max Truck Capacity * </label>
-                            <input type="number" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="3">
+                            <input type="text" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="15">
+                            <p class="js_error truckCapacity"></p>
+
                         </div>
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="num_of_truck"> No. of Truck </label>
-                            <input type="number" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" value="2">
+                            <input type="text" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" value="4">
+                             <p class="js_error numTruck"></p>
                         </div>
                     </div>
                     <!-- Dynamic Form Start Here-->
@@ -195,7 +287,7 @@
                         <div class="alert alert-info alert-dismissible" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> </button>
                           <strong>Note!</strong><br />
-                            Route by Companies, Considering Route by Truck Capacity - An option similar to Route by Capacity <br />
+                            For any Delivery Location Details update, please click <i class="fa fa-arrow-right" aria-hidden="true"></i>   " <i class="fa fa-refresh" aria-hidden="true"></i> Reload "  button <br />
 
                         </div>
                     </div>
@@ -210,13 +302,15 @@
                         </div>
                     </div>
                     <div class="col-xs-3" style="padding-top:10px">
-                           <span> No. of Companies Entry (Max 6)</span>  <!--<i class="fa fa-list-ol" aria-hidden="true"></i>-->
+                           <span> Number of Companies (Max 6)</span>  <!--<i class="fa fa-list-ol" aria-hidden="true"></i>-->
                     </div>
                     <div class="col-xs-4">
 
                         <div class="checkbox" style="padding-top: 5px;">
                              <label class="right_10">
-                                <input type="checkbox" name="checkbox" id="priority_capacity_comp" value="priority_capacity2">Route by Companies, Considering Route by Truck Capacity
+                                <input type="checkbox" name="checkbox" id="priority_capacity_comp" value="priority_capacity2">
+                                 <!--Route by Companies, Considering Route by Truck Capacity-->
+                                 Consider Maximizing Truck Capacity
                              </label>
                         </div>
                     </div>
@@ -233,6 +327,7 @@
                 </div> <!-- End of Row-->
             </div><!-- end of cr_companies -->
         </div>
+
         <!--  Check Box for Return Truck -->
         <div class="row">
             <div class="col-xs-3">
@@ -246,11 +341,14 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div id="ajax_errors" class="alert alert-danger alert-dismissible" role="alert" style="display: none;">
+
+
+                <div id="message-errors" class="alert alert-danger" role="alert" style="display: none;">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> </button>
-                    <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>Whoops!</strong></p>
-                    <span>Something went wrong!</span>
+                    <p id="alertMessage"><strong>Error!</strong></p>
+                    <span></span>
                 </div>
+
             </div>
             <div class="col-lg-12">
                 <hr />
@@ -260,8 +358,9 @@
             </div>
         </div>
 
-      <a name="id3"/></a>
+    <a name="id3"/></a>
     </div> <!-- end of Jumbobtron -->
+
     <!--  Progress Bar -->
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -293,13 +392,7 @@
                 </div>
 
             </div>
-            <!--&lt;!&ndash;  Company Visualization &ndash;&gt;-->
-            <!--<div class="row">-->
-                <!--<div class="col-lg-12">-->
-                    <!--&lt;!&ndash; The have 4 || Company | Postal Code | Order Ids | Capacity ||  column &ndash;&gt;-->
-                    <!--<table id="proposedTable_company" class="tableL"></table>-->
-                <!--</div>-->
-            <!--</div>-->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div id="loading_map" style="display: block; "></div>
@@ -331,7 +424,7 @@
                     <div id="visualization_table" style="display:none;">
                         <table id="summaryTable" class="summary_Table" >
                             <br />
-                            <b>Total Summary Savings</b>
+                            <b>Summary Savings</b>
                             <tr>
                                 <th>Current Total Distance</th>
                                 <th>Proposed Total Distance </th>

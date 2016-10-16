@@ -161,47 +161,6 @@ header .intro-text .skills {
 }
 
 
-@media(min-width:768px) {
-      header .container {
-        padding-top: 80px;
-        padding-bottom: 100px;
-    }
-
-    header .intro-text .name {
-        font-size: 4.85em;
-        color: #333;
-    }
-
-    header .intro-text .skills {
-        font-size: 1.75em;
-        color: #333;
-    }
-    .navbar-fixed-top {
-        padding: 25px 0;
-        -webkit-transition: padding .3s;
-        -moz-transition: padding .3s;
-        transition: padding .3s;
-    }
-
-    .navbar-fixed-top .navbar-brand {
-        font-size: 2em;
-        -webkit-transition: all .3s;
-        -moz-transition: all .3s;
-        transition: all .3s;
-        padding: 0 13px 0 0;
-        margin-top: 0;
-    }
-
-    .navbar-fixed-top.navbar-shrink {
-        padding: 10px 0;
-        border-bottom: 1px solid #4170a8;
-
-    }
-
-    .navbar-fixed-top.navbar-shrink .navbar-brand {
-        font-size: 1.5em;
-    }
-}
 
 
 .navbar {
@@ -305,29 +264,7 @@ h4.service-heading {
     text-transform: none;
 }
 
-@media(min-width:768px) {
-    .intro {
-        height: 100%;
-        padding: 0;
-    }
 
-    .intro .intro-body .brand-heading {
-        font-size: 80px;
-        color: #333;
-    }
-
-    .intro .intro-body .intro-text {
-        font-size: 26px;
-        color: #333;
-    }
-    .content-section {
-        padding-top: 250px;
-    }
-    section {
-      padding: 150px 0;
-    }
-    .jumbotron { padding-top: 30px;}
-}
 .bg-light-gray {
     background-color: #f7f7f7;
 }
@@ -638,11 +575,10 @@ table.table{
 
 
 div.tableize{
-  
   /*filter:alpha(opacity=80);*/
   position:relative;
   box-sizing:border-box;
-  height:140px;
+  height:215px;
   overflow:auto;
   overflow-y:hidden;
   overflow-x:hidden;
@@ -675,10 +611,9 @@ div.tableize em.tableize{
   opacity:0;filter:alpha(opacity=0)
 
 }
-#table_deleteMe{
+.tableize_opacity{
   opacity:.4;filter:alpha(opacity=40)
    cursor: pointer;
-
 }
 div.tableize table.tableize{
   overflow:auto;
@@ -732,7 +667,11 @@ div.tableize-unhover table.tableize{
   opacity:1!important;filter:alpha(opacity=100)!important
 }
 
-/****Signing****/
+/*To the the Template*/
+.tableDisplay{
+    display:none;
+}
+
 /****Signing ***/
 
 #login-dp{
@@ -775,7 +714,72 @@ div.tableize-unhover table.tableize{
     color: #fff;
     background-color:#59b5fa;
 }
-@media(max-width:768px){
+
+/************ media 768 **************/
+
+
+@media(min-width:768px) {
+    header .container {
+        padding-top: 80px;
+        padding-bottom: 100px;
+    }
+
+    header .intro-text .name {
+        font-size: 4.85em;
+        color: #333;
+    }
+
+    header .intro-text .skills {
+        font-size: 1.75em;
+        color: #333;
+    }
+    .navbar-fixed-top {
+        padding: 25px 0;
+        -webkit-transition: padding .3s;
+        -moz-transition: padding .3s;
+        transition: padding .3s;
+    }
+
+    .navbar-fixed-top .navbar-brand {
+        font-size: 2em;
+        -webkit-transition: all .3s;
+        -moz-transition: all .3s;
+        transition: all .3s;
+        padding: 0 13px 0 0;
+        margin-top: 0;
+    }
+
+    .navbar-fixed-top.navbar-shrink {
+        padding: 10px 0;
+        border-bottom: 1px solid #4170a8;
+
+    }
+
+    .navbar-fixed-top.navbar-shrink .navbar-brand {
+        font-size: 1.5em;
+    }
+    .intro {
+        height: 100%;
+        padding: 0;
+    }
+
+    .intro .intro-body .brand-heading {
+        font-size: 80px;
+        color: #333;
+    }
+
+    .intro .intro-body .intro-text {
+        font-size: 26px;
+        color: #333;
+    }
+    .content-section {
+        padding-top: 250px;
+    }
+    section {
+      padding: 150px 0;
+    }
+    .jumbotron { padding-top: 30px;}
+
     #login-dp{
         background-color: inherit;
         color: #fff;
@@ -783,6 +787,12 @@ div.tableize-unhover table.tableize{
     #login-dp .bottom{
         background-color: inherit;
         border-top:0 none;
+    }
+     .col-xs-3 {
+        width: 25%;
+    }
+    .col-xs-2 {
+        width: 18%;
     }
 }
 
@@ -1077,16 +1087,7 @@ aside.clients p{
     }
 
 }*/
-@media(min-width:768px) {
 
-
-   .col-xs-3 {
-        width: 25%;
-    }
-    .col-xs-2 {
-        width: 18%;
-    }
-}
 
 .move-left{ padding-left:20px }
 
@@ -1244,9 +1245,9 @@ ul.tabs li.current{
 .box{
     padding: 0;
     display: none;
-    margin-top: 40px;
+    margin-top: 10px;
     border-top:1px solid #dadada;
-    padding-top:25px;
+    padding-top:10px;
 }
 
 .cr_truck{}
@@ -1284,6 +1285,12 @@ ul.tabs li.current{
 .green{ background: #00ff00; }
 .blue{ background: #0000ff; }*/
 
+/***  Compare page ***/
+
+hr {
+    margin-bottom: 0;
+}
+
 /***  Style for Companies Button ***/
 
 .customBtn_comp{
@@ -1292,3 +1299,103 @@ ul.tabs li.current{
     margin-top: 26px;
 }
 
+/***  Download Template ***/
+.spreedSheetStyle{
+    font-size: 13px;
+    font-style: italic;
+    color: #0ca788;
+}
+.space_10{
+ margin-top: 10px;
+ margin-bottom:10px;
+}
+/*** Validation / Error Styles **********/
+
+p.js_error{
+
+    display:none;
+    font-size:.85em;
+    color: #fff;
+    text-align:center;
+    position: relative;
+    margin-top: 4px;
+    width: 100%;
+    padding: 4px;
+    background: #f06253;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+p.js_error:after{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 10px 9px;
+    border-color: #f06253 transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    top: -9px;
+    left: 65px;
+}
+
+/*** Customizing the default Parent Design **********/
+
+.alert-danger{
+    background-color: #f06253;
+}
+.close_cust{
+    color: #626060;
+}
+#alertMessage{
+    font-size: 1.125em;
+}
+.notification{
+    max-width:300px;
+    font-size:12px;
+    margin-bottom: 0px;
+    padding: 5px;
+}
+
+/*** Bubble note in landing page **********/
+
+p.bubble {
+    font-size: .80em;
+    position: relative;
+    width: 185px;
+    height: 33px;
+    padding: 6px 3px;
+    background: #cfe5ea;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    border: #98acb1 solid 1px;
+    margin-top:10px;
+}
+
+p.bubble:after{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 20px 15px 0;
+    border-color: #cfe5ea transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    bottom: -10px;
+    left: 20px;
+}
+
+p.bubble:before{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 8px 0;
+    border-color: #98acb1 transparent;
+    display: block;
+    width: 0;
+    z-index: 0;
+    bottom: -16px;
+    left: 27px;
+}

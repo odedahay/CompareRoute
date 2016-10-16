@@ -2,24 +2,21 @@
 // Main Navigation
 var url = window.location;
 // Will only work if string in href matches with location
-//$('#loggedNav li a[href="'+ url +'"]').parent().addClass('active');
+$('#loggedNav li a[href="'+ url +'"]').parent().addClass('active');
 
 // relative and absolute HREF URL
 $('#loggedNav li a').filter(function() {
     return this.href == url;
 }).parent().addClass('active');
 
+// relative and absolute HREF URL
+$('#admin_nav li a').filter(function() {
+    return this.href == url;
+}).parent().addClass('active');
 
-// Delete
-var table_example = $('#deleteMe');
-	table_example.click(function(){
-	event.stopPropagation(); 
+$('#admin_nav li a[href="'+ url +'"]').parent().addClass('active');
 
-	$(this).hide();
 
-    $('#postal_sequence').css("display", "inline-block");
-    // $('#postal_sequence').val().replace(/\s\s+/g, ' ');
-})
 
 // Password validation for confirmation:
 $('#btn_profile').prop('disabled', true);
@@ -36,40 +33,132 @@ $('#cfm_new_password').on('keyup', function () {
 });
 
 
-// --- Radio Btn Logic --- //
+// Global Variable of CompareRoute landing page
+// TextArea input
+var postalSequence = $('#postal_sequence');
+var template_byTruck = $('.textbox_truck');
+var template_byCapacity = $('.textbox_capacity');
+var template_byCompanies = $('.textbox_companies');
+
+// radio button event:
+var routeFields = $(".box");
+var tableDisplay = $('.tableDisplay');
+
+// input fields
+var cr_truck = $('.cr_truck');
+var cr_capacity = $('.cr_capacity');
+var cr_companies = $('.cr_companies');
+
+// Template Companies:
+var refreshBtn_companies = $('.refreshBtn');
+
+// error variables:
+var errorInput = $('.js_error');
+var errorMainBox = $('#message-errors');
 
 $(function() {
 
-    if($('#optionsTruck').prop('checked', true)){
-        $(".cr_truck").show();
-    }
-    $(".refreshBtn").hide();
+    // Default Open for Optimizing Truck
+    if($('#optionsTruck').prop('checked', true)){ $(".cr_truck").show();}
+
+    // close Btn:
+    $("#closeBtn").on('click', function(){
+        $(this).parent().remove();
+    })
+    // When it click
+    template_byTruck.on('click', function(event){
+        $(this).hide();
+        postalSequence.css("display", "inline-block");
+    });
+
+   postalSequence.hide();
+
     $('input[type="radio"]').click(function(){
 
-        if($(this).attr("value")=="by_truck"){
-            $(".box").not(".cr_truck").hide();
-            $(".cr_truck").show();
-            $(".refreshBtn").hide();
+        if($(this).attr("value")==="by_truck"){
 
-            //$("#vehicle_quantity").val('1');  // Option to reset the value
-        }
-        if($(this).attr("value")=="by_capacity"){
-            $(".box").not(".cr_capacity").hide();
-            $(".cr_capacity").show();
-            $(".refreshBtn").hide();
+            // default
+            routeFields.not(cr_truck).hide();
 
-            //$("#truck_capacity").val('');  // Option to reset the value
+            // TextBox display
+            tableDisplay.not(cr_truck).hide();
+            cr_truck.show();
+
+            // TextBox Template:
+            template_byTruck.show();
+            postalSequence.hide();
+
+            // When it click the textarea field:
+            template_byTruck.on('click', function(event){
+                $(this).hide();
+                postalSequence.css("display", "inline-block");
+            });
+
+            //main error validation
+            errorMainBox.hide();
+
         }
-        if($(this).attr("value")=="by_companies"){
-            $(".box").not(".cr_companies").hide();
-            $(".cr_companies").show();
-            $(".refreshBtn").show();
+
+        if($(this).attr("value")==="by_capacity"){
+
+            routeFields.not(cr_capacity).hide();
+
+            // TextBox display
+            tableDisplay.not(cr_capacity).hide();
+
+            cr_capacity.show();
+            refreshBtn_companies.hide();
+
+            // TextBox Template:
+            template_byCapacity.show();
+
+            // Hide Route by Truck
+            template_byTruck.hide();
+            postalSequence.hide();
+
+            // When it click the textArea field:
+            template_byCapacity.on('click', function(event){
+                $(this).hide();
+                postalSequence.css("display", "inline-block");
+
+            });
+             //main error validation
+            errorMainBox.hide();
+        }
+        if($(this).attr("value")==="by_companies"){
+
+             routeFields.not(cr_companies).hide();
+
+             // TextBox display
+             tableDisplay.not(cr_companies).hide();
+             cr_companies.show();
+             refreshBtn_companies.show();
+
+             // TextBox Template:
+             template_byCompanies.show();
+             postalSequence.hide();
+
+             // When it click the textarea field:
+             template_byCompanies.on('click', function(event){
+
+                $(this).hide();
+                postalSequence.css("display", "inline-block");
+
+            });
+
+            //main error validation
+            errorMainBox.hide();
 
             // Always uncheck if the checkbox is checked when switching
             $('#priority_capacity_comp').prop('checked', false);
 
             //$("#vehicle_quantity_1").val('1'); // Option to reset the value
         }
+
+        // hide the error message
+        // if switching tab
+        errorInput.hide();
+
 
     });
 
@@ -608,31 +697,31 @@ $('body').on('click', '#btn_export', function() {
 
 });
 
-
-
+// undefined function
 $("#mark_botton").click(function(e){
     // alert('Hello');
     e.preventDefault()
     $( "#changeColor" ).append( "- <span class='addedStyle'>added!</span>" );
 })
 
-
+// undefined function
 $('#myTabs a').click(function (e) {
   e.preventDefault()
   $(this).tab('show')
 })
 
 
+// - - Route Log page table - - - - - -//
 /* Make the table row click-able */
-
 $(".clickable-row").click(function() {
     window.document.location = $(this).data("href");
 });
 
 
+// - - API page for the page - - - - - -//
 // Hide after 3sec the error message box
 //Display error message for 3 seconds and then fades out
-$('.hideThis').delay(3000).fadeOut();
+//$('.hideThis').delay(3000).fadeOut();
 
 
 // Make Credit button disabled
@@ -641,16 +730,18 @@ $('#api_credits').on('keyup', function () {
 });
 
 
-// - - - - - Back to Top - - - - - -//
-//$(document).ready(function(){
-
+// - - Back to Top Function- - - - - -//
 //Check to see if the window is top if not then display button
 $(window).scroll(function(){
+
     if ($(this).scrollTop() > 400) {
         $('.scrollToTop').fadeIn();
+
     } else {
+
         $('.scrollToTop').fadeOut();
     }
+
 });
 
 //Click event to scroll to top
@@ -660,13 +751,15 @@ $('.scrollToTop').click(function(){
 });
 
 
-// By Route Truck Function by Adding input fields
+// - - By Route Truck Capacity Function by Adding input fields - - - - - -//
+
 $(function() {
     var counter = 1;
     var limitForms = 2;
 
 
     $('#addBtn').click(function(event){
+
         if (counter <= limitForms){
 
             event.preventDefault()
@@ -678,27 +771,31 @@ $(function() {
             var $inputFields_div3 = $('<div class="col-xs-2 down_15"></div>');
             var $inputFields_div4 = $('<div class="col-xs-2"></div>');
 
-            var $inputFields1 = $('<input type="text" class="form-control input" id="type_of_truck_'+counter+'" />');
-            var $inputFields2 = $('<input type="number" class="form-control input" id="truck_capacity_'+counter+'" />');
-            var $inputFields3 = $('<input type="number" class="form-control input" id="num_of_truck_'+counter+'" />');
+            var $inputFields1 = $('<input type="text" class="form-control input" id="type_of_truck_'+counter+'" /><p class="js_error typeTruck_'+counter+'"></p>');
+            var $inputFields2 = $('<input type="text" class="form-control input" id="truck_capacity_'+counter+'" /><p class="js_error truckCapacity_'+counter+'"></p>');
+            var $inputFields3 = $('<input type="text" class="form-control input" id="num_of_truck_'+counter+'" /><p class="js_error numTruck_'+counter+'"></p><input type="hidden" id="add_truck_capacity_'+counter+'" value="'+counter+'"/>');
             var $button = $('<button class="btn btn-info btn-sm" id="delete" style="margin-top:5px;" title="Delete"> Remove </button>');
 
             // append in span:
             var parentNode = $inputFields_span.append($inputFields_row)
+
             // append in row:
             $inputFields_row.append($inputFields_div1, $inputFields_div2, $inputFields_div2, $inputFields_div3, $inputFields_div4);
+
             // append in div:
             $inputFields_div1.append($inputFields1);
             $inputFields_div2.append($inputFields2);
             $inputFields_div3.append($inputFields3);
             $inputFields_div4.append($button);
 
-            $('#counter_fields').text("(3 of "+ (counter + 1)+" )");
+            $('#counter_fields').text(" ("+(counter+ 1)+" of 3)");
             $('#items').append(parentNode);
             counter++;
 
         }else{
+
             alert("You have reached the limit of adding Truck " + counter + " inputs");
+
         }
 
         return false;
@@ -713,31 +810,3 @@ $(function() {
     });
 
 }); // end of function
-
-
-// - - - - -End Back to Top - - - - - -//
-
-
-//Validation for Postal Sequence:
-
-// - - - - - Sorting by Company - - - - - //
-//  function route_by_Company(){
-//    if($('#sort_company').is(":checked")){
-//        var postal_sequence = $('textarea#postal_sequence').val().split('\n');
-////        console.log('this is message', postal_sequence);
-////        for(i = 0; i < postal_sequence.length; i++){
-////            var postal_seq = postal_sequence[i].trim();
-////            console.log('this is postal_seq', postal_seq);
-////        }
-//        postal_seq_array = []
-//        $.each(postal_sequence, function(index, item){
-//            var postal_seq = item.trim();
-//            postal_seq_array.push(postal_seq);
-//        });
-//        for(i = 0; i < postal_seq_array.length; i++){
-//            var items = postal_seq_array[i];
-//            console.log('test',items);
-//        }
-//    }// end click
-//}
-

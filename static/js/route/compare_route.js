@@ -1,241 +1,239 @@
+$(function() {
+
+// validation for onload
+if (typeof jQuery === "undefined") {
+    throw new Error("jQuery progress timer requires jQuery");
+}
+
+// scroll up and down
 function scrollToAnchor(aid){
     var aTag = $("a[name='"+ aid +"']");
     $('html,body').animate({scrollTop: aTag.offset().top}, 1000);
 }
 
-// Validate Route's Function
-$("#routeBtn").click(function() {
-   scrollToAnchor('id3');
 
-    // Option Truck
-    if($('#optionsTruck').is(":checked")==true){
-         //alert('Error!');
-        if ($('#starting_postal').val().length === 0){
+// validation for Route by Trucks:
+var errorBox = $('#message-errors');
 
-            //alert('Error!');
 
-            $('#ajax_errors').show();
-            $('#ajax_errors').html("No Starting Point");
-            $('#starting_postal').css('border-color', 'red');
+//buttons
+var btn_generateRoute = $("#routeBtn");
 
-        }else{
+//forms
+////var startingPoint = $('#starting_postal').val();
+//var postal_sequence = $('#postal_sequence').val();
 
-            $('#starting_postal').css('border-color', '');
-            $('#ajax_errors').hide();
 
-        }
+// Validate HQ point
+// Route by Truck
+function checkStarting_Point(starting_postal){
+
+    var errorInput = $('.startingPoint');
+    var errorMessage;
+
+    // create regex to validate if numbers onlyåå
+    var reg = /^[0-9]+$/;
+
+    if(starting_postal === 'undefined'  || starting_postal === ''){
+
+        errorMessage = "*Postal Code required!";
+        errorInput.fadeIn();
+        errorInput.html(errorMessage);
+
+        return false;
+
+    }else if( (starting_postal.length) < 5 || (starting_postal.length) > 6 ){
+
+        //console.log(errorMessage);
+        errorMessage = "*Postal Code should only be 6 digits";
+        errorInput.fadeIn();
+        errorInput.html(errorMessage);
+
+        return false;
+
+    }else if (!reg.test(starting_postal)){
+
+        errorMessage = "*Postal Code should be numbers only";
+        errorInput.fadeIn();
+        errorInput.html(errorMessage);
+
+        return false;
+
+    }else{
+
+        errorInput.hide();
+        return true;
+
     }
-   // Truck Capacity
-//   if($('#priority_capacity').is(":checked")==true){
-//
-//       if ($('#truck_capacity').val().length === 0){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Please Enter Truck Capacity");
-//            $('#truck_capacity').css('border-color', 'red');
-//
-//       }else if ($('#vehicle_type').val().length <= 1){
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Please Select Type of Truck");
-//            $('#vehicle_type').css('border-color', 'red');
-//
-//       }else if ($('#starting_postal_cap').val().length === 0){
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Enter Starting Postal Code");
-//            $('#starting_postal_cap').css('border-color', 'red');
-//       }
-//       else{
-//            $('#truck_capacity').css('border-color', '');
-//            $('#starting_postal_cap').css('border-color', '');
-//            $('#vehicle_type').css('border-color', '');
-//            $('#ajax_errors').hide();
-//       }
-//   } // end of truck capacity
+} // end
 
-   // Sort by Company
-//   if($('#sort_company').is(":checked")==true){
-//        if ($('#starting_postal_1').val().length === 0){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_1').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_1').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//        // Set 2
-//        if ($('#starting_postal_2').val().length === 0 && $('#num_comp_val').val() == '2'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_2').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_2').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//        // Set 3
-//        if ($('#starting_postal_3').val().length === 0 && $('#num_comp_val').val() == '3' ){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_3').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_3').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//        // Set 4
-//        if ($('#starting_postal_4').val().length === 0 && $('#num_comp_val').val() == '4'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_4').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_4').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//         // Set 5
-//        if ($('#starting_postal_5').val().length === 0 && $('#num_comp_val').val() == '5' ){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_5').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_5').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//         // Set 6
-//        if ($('#starting_postal_6').val().length === 0 && $('#num_comp_val').val() == '6' ){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("No Starting Point");
-//            $('#starting_postal_6').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_6').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//    }
+// validation function for Postal Sequence
+function postalSequence_area(postal_sequence){
+    var errorInput = $('.postalSeq');
+    var errorMessage;
 
-    // Sort by Company considering truck capacity
-   if($('#priority_capacity_comp').is(":checked")===true){
+    if(postal_sequence === ''){
 
-        // fields 2
-//        if ($('#vehicle_type_1').val().length <= 1 && $('#num_comp_val').val() == '1'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#vehicle_type_1').css('border-color', 'red');
-//
-//        }else if ($('#truck_capacity_1').val().length === 0 && $('#num_comp_val').val() == '1'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_1').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_1').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//
-//        // field two
-//
-//        if ($('#vehicle_type_2').val().length <= 1 && $('#num_comp_val').val() == '2'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#vehicle_type_2').css('border-color', 'red');
-//
-//        }else if ($('#truck_capacity_2').val().length === 0 && $('#num_comp_val').val() == '2'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_2').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_2').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-   }else{
-//     alert('Heyy!');
-     $('#starting_postal_1').css('border-color', '');
-     $('#ajax_errors').hide();
-   }
+        errorMessage = "*Please, Enter your Delivery Location Details!";
+        errorInput.fadeIn();
+        errorInput.html(errorMessage);
 
+        return
 
-        // field three
+    }else{
 
-//        if ($('#vehicle_type_3').val().length <= 1 && $('#num_comp_val').val() == '3'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#vehicle_type_3').css('border-color', 'red');
-//
-//        }else if ($('#truck_capacity_3').val().length === 0 && $('#num_comp_val').val() == '3'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_3').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_3').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//
-//        // field 4th
-//        if ($('#truck_capacity_4').val().length === 0 && $('#num_comp_val').val() == '4'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_4').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_4').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//
-//        // field 5th
-//        if ($('#vehicle_type_5').val().length <= 1 && $('#num_comp_val').val() == '5'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#vehicle_type_5').css('border-color', 'red');
-//
-//        }else if ($('#truck_capacity_5').val().length === 0){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_5').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_5').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-//
-//        // field 6th
-//        if ($('#vehicle_type_6').val().length <= 1 && $('#num_comp_val').val() == '6'){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#vehicle_type_6').css('border-color', 'red');
-//
-//        }else if ($('#truck_capacity_6').val().length === 0){
-//            //alert('Error!');
-//            $('#ajax_errors').show();
-//            $('#ajax_errors').html("Select Type of Truck");
-//            $('#truck_capacity_6').css('border-color', 'red');
-//
-//        }else{
-//            $('#starting_postal_6').css('border-color', '');
-//            $('#ajax_errors').hide();
-//        }
-    //} // end of Sort by companys
+        errorInput.hide();
+        return true;
+    }
+}
 
-});
+// validation for truck capacity
+function truck_capacity_area(type_of_truck, truck_capacity, num_of_truck){
+
+    var errorInput1 = $('.typeTruck');
+    var errorInput2 = $('.truckCapacity');
+    var errorInput3 = $('.numTruck');
+
+    var errorMessage;
+     // create regex to validate if numbers onlyåå
+    var reg = /^[0-9]+$/;
+
+    errorInput1.hide();
+    errorInput2.hide();
+    errorInput3.hide();
+
+    //check the fields if empty
+    if(type_of_truck === ''){
+
+        errorMessage = "*Please Enter Types of Truck!";
+        errorInput1.fadeIn();
+        errorInput1.html(errorMessage);
+
+        return false;
+
+    }
+    else if( truck_capacity === '' || parseInt(truck_capacity) <= 0 || !reg.test(truck_capacity) ){
+
+        errorMessage = "*Please Enter Valid Truck Capacity";
+        errorInput2.fadeIn();
+        errorInput2.html(errorMessage);
+
+        return false;
+    }
+    else if( num_of_truck === '' || parseInt(num_of_truck) <= 0  || !reg.test(num_of_truck) ){
+
+        errorMessage = "*Please Enter Valid Number of Truck";
+        errorInput3.fadeIn();
+        errorInput3.html(errorMessage);
+
+        return false;
+    }
+    else{
+
+        errorInput1.hide();
+        errorInput2.hide();
+        errorInput3.hide();
+        return true;
+    }
+
+}
+
+// validation for truck capacity second field
+function truck_capacity_area_1(type_of_truck_1, truck_capacity_1, num_of_truck_1){
+
+    var errorInput1 = $('.typeTruck_1');
+    var errorInput2 = $('.truckCapacity_1');
+    var errorInput3 = $('.numTruck_1');
+
+    var errorMessage;
+    var reg = /^[0-9]+$/;
+
+     errorInput1.hide();
+     errorInput2.hide();
+     errorInput3.hide();
+
+    //check the fields if empty
+    if(type_of_truck_1 === ''){
+
+        errorMessage = "*Please Enter Types of Truck!";
+        errorInput1.fadeIn();
+        errorInput1.html(errorMessage);
+
+        return false;
+
+    }
+    else if( truck_capacity_1 === '' || parseInt(truck_capacity_1) <= 0 || !reg.test(truck_capacity_1) ){
+
+        errorMessage = "*Please Enter Valid Truck Capacity ";
+        errorInput2.fadeIn();
+        errorInput2.html(errorMessage);
+
+        return false;
+    }
+    else if( num_of_truck_1 === '' || parseInt(num_of_truck_1) <= 0 || !reg.test(num_of_truck_1) ){
+
+        errorMessage = "*Please Enter valid Number of Truck";
+        errorInput3.fadeIn();
+        errorInput3.html(errorMessage);
+
+        return false;
+    }
+    else{
+        errorInput1.hide();
+        errorInput2.hide();
+        errorInput3.hide();
+        return true;
+    }
+}
+
+// validation for truck capacity third field
+function truck_capacity_area_2(type_of_truck_2, truck_capacity_2, num_of_truck_2){
+
+    var errorInput1 = $('.typeTruck_2');
+    var errorInput2 = $('.truckCapacity_2');
+    var errorInput3 = $('.numTruck_2');
+
+    var errorMessage;
+    var reg = /^[0-9]+$/;
+
+     errorInput1.hide();
+     errorInput2.hide();
+     errorInput3.hide();
+
+    //check the fields if empty
+    if(type_of_truck_2 === ''){
+
+        errorMessage = "*Please Enter Types of Truck!";
+        errorInput1.fadeIn();
+        errorInput1.html(errorMessage);
+
+        return false;
+
+    }
+    else if( truck_capacity_2 === '' || parseInt(truck_capacity_2) <= 0 || !reg.test(truck_capacity_2) ){
+
+        errorMessage = "*Please Enter Valid Truck Capacity ";
+        errorInput2.fadeIn();
+        errorInput2.html(errorMessage);
+
+        return false;
+    }
+    else if( num_of_truck_2 === '' || parseInt(num_of_truck_2) <= 0 || !reg.test(num_of_truck_2) ){
+
+        errorMessage = "*Please Enter valid Number of Truck";
+        errorInput3.fadeIn();
+        errorInput3.html(errorMessage);
+
+        return false;
+    }
+    else{
+        errorInput1.hide();
+        errorInput2.hide();
+        errorInput3.hide();
+        return true;
+    }
+}
+
 
 // Click --> Generate Button
 $('#routeBtn').click(function () {
@@ -324,9 +322,13 @@ $('#routeBtn').click(function () {
     var num_of_truck_cc22 = $("#num_of_truck_cc22").val();
     var num_of_truck_cc23 = $("#num_of_truck_cc23").val();
 
+    // Event Counter
     var add_truck_cc1 = $("#add_truck_cc1").val();
     var add_truck_cc2 = $("#add_truck_cc2").val();
     var add_truck_cc3 = $("#add_truck_cc3").val();
+
+    var count_truck1 = $("#add_truck_capacity_1").val();
+    var count_truck2 = $("#add_truck_capacity_2").val();
 
     var postal_sequence = $("#postal_sequence").val();
     var email = $("[name=email_value]").val();
@@ -342,766 +344,877 @@ $('#routeBtn').click(function () {
     $('#prog').progressbar({ value: 0 });
 
 
-    $.ajax({
-        type: "POST",
-        url: "/sorting",
-        dataType: 'json',
-        data: {
-            starting_postal: starting_postal,
-            vehicle_quantity: vehicle_quantity,
-
-            // 1
-            starting_postal_cap: starting_postal_cap,
-            type_of_truck: type_of_truck,
-            truck_capacity: truck_capacity,
-            num_of_truck: num_of_truck,
-
-            // 2
-            type_of_truck_1: type_of_truck_1,
-            truck_capacity_1: truck_capacity_1,
-            num_of_truck_1: num_of_truck_1,
-
-            // 3
-            type_of_truck_2: type_of_truck_2,
-            truck_capacity_2: truck_capacity_2,
-            num_of_truck_2: num_of_truck_2,
-
-            //Route by Companies
-            starting_postal_1: starting_postal_1,
-            starting_postal_2: starting_postal_2,
-            starting_postal_3: starting_postal_3,
-            starting_postal_4: starting_postal_4,
-            starting_postal_5: starting_postal_5,
-            starting_postal_6: starting_postal_6,
-
-            vehicle_quantity_1: vehicle_quantity_1,
-            vehicle_quantity_2: vehicle_quantity_2,
-            vehicle_quantity_3: vehicle_quantity_3,
-            vehicle_quantity_4: vehicle_quantity_4,
-            vehicle_quantity_5: vehicle_quantity_5,
-            vehicle_quantity_6: vehicle_quantity_6,
-
-            //route by companies - companies
-            type_of_truck_c1: type_of_truck_c1,
-            type_of_truck_c2: type_of_truck_c2,
-            type_of_truck_c3: type_of_truck_c3,
-            type_of_truck_c4: type_of_truck_c4,
-            type_of_truck_c5: type_of_truck_c5,
-            type_of_truck_c6: type_of_truck_c6,
-
-            truck_capacity_c1: truck_capacity_c1,
-            truck_capacity_c2: truck_capacity_c2,
-            truck_capacity_c3: truck_capacity_c3,
-            truck_capacity_c4: truck_capacity_c4,
-            truck_capacity_c5: truck_capacity_c5,
-            truck_capacity_c6: truck_capacity_c6,
-
-            num_of_truck_c1: num_of_truck_c1,
-            num_of_truck_c2: num_of_truck_c2,
-            num_of_truck_c3: num_of_truck_c3,
-            num_of_truck_c4: num_of_truck_c4,
-            num_of_truck_c5: num_of_truck_c5,
-            num_of_truck_c6: num_of_truck_c6,
-
-            // sub fields:1
-            type_of_truck_cc1: type_of_truck_cc1,
-            type_of_truck_cc2: type_of_truck_cc2,
-            type_of_truck_cc3: type_of_truck_cc3,
-
-            truck_capacity_cc1: truck_capacity_cc1,
-            truck_capacity_cc2: truck_capacity_cc2,
-            truck_capacity_cc3: truck_capacity_cc3,
-
-            num_of_truck_cc1: num_of_truck_cc1,
-            num_of_truck_cc2: num_of_truck_cc2,
-            num_of_truck_cc3: num_of_truck_cc3,
-
-             // sub fields:2
-            type_of_truck_cc21: type_of_truck_cc21,
-            type_of_truck_cc22: type_of_truck_cc22,
-            type_of_truck_cc23: type_of_truck_cc23,
-
-            truck_capacity_cc21: truck_capacity_cc21,
-            truck_capacity_cc22: truck_capacity_cc22,
-            truck_capacity_cc23: truck_capacity_cc23,
-
-            num_of_truck_cc21: num_of_truck_cc21,
-            num_of_truck_cc22: num_of_truck_cc22,
-            num_of_truck_cc23: num_of_truck_cc23,
-
-            add_truck_cc1: add_truck_cc1,
-            add_truck_cc2: add_truck_cc2,
-            add_truck_cc3: add_truck_cc3,
-            postal_sequence: postal_sequence,
-            email: email,
-            has_return: has_return,
-
-            optionsTruck: optionsTruck,
-            priority_capacity: priority_capacity,
-            priority_capacity_comp: priority_capacity_comp,
-            sort_company: sort_company,
-
-            num_comp_val: num_comp_val
-        },
-        beforeSend:function(){
-            // this is where we append a loading image
-            $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
-
-            $("#sorted_sequence").hide();
-            $("#sorted_sequence0").hide();
-
-            $("#sorted_sequence0_ul").hide();
-            $("#sorted_sequence0_ul_02").hide();
-            //$("#sorted_sequence1").hide();
-
-            $("#proposedTable_company").hide();
-
-            $("#visualization").hide();
-            $("#visualization_tab_comp").hide();
-            $("#visualization_table").hide();
-            $(".hidden_field_legend").hide();
-
-            //$("#routeBtn").prop('disabled', true);
-         },
-        success: function (response) {
-
-            // Main Variable for Layout
-            var $sorted_sequence = $("#sorted_sequence0");
-            var $sorted_sequenceTable = $("#sorted_sequence");
-
-            $sorted_sequence.empty();
-            $sorted_sequenceTable.empty();
-
-            $('#progressbar').empty();
-            $('#ajax_errors').empty();
-
-            $("#sorted_sequence0_ul").empty();
-            $("#sorted_sequence0_ul_02").empty();
-            //$("#sorted_sequence1").empty();
-            $("#proposedTable_company").empty();
-            $("#visualization_tab_comp").empty();
-
-            $("#map_legend").empty();
-            $('#ajax_errors').hide();
-
-            //$("#routeBtn").prop('disabled', false);
-
-            var status = response.status;
-            var sort_company = response.sort_company;
-
-            if (status === "ok"){
-
-                // HTML Tags Reference:
-                var $h2_success = $("<h2 style='font-weight:normal'></h2>");
-                var $download_div = $('<div id="download_button" style="margin:20px 0;"></div>');
-                var $download_button = $('<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>'); //<a id="btn_export" class="btn btn-success btn-xs">Export to excel</a>
-
-                var $ul_sequence = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-                var $ul_result = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-
-                var $p_note = $("<p style='font-weight:normal; font-size:16px;'></p>");
-                var $p_note1 = $("<p style='font-weight:normal; font-size:16px;'></p>");
-
-
-
-                // Details Table
-                var $ParentTable = $('<table class="tableL table-bordered"></table>');
-
-                // Route by Trucks
-                var $tableThead0 = $('<thead><tr><th>Total Delivery Routes </th><th>Total Delivery Truck</th></tr></thead>');
-                var $tableThead1 = $('<thead><tr><th>Delivery Points </th><th>Total Delivery Routes </th><th>Total Delivery Truck</th></tr></thead>');
-
-                // Route by Capacity
-                var $tableThead = $('<thead><tr><th>Delivery Capacity Loads Details </th><th>Type of Truck </th><th>Total Delivery Routes </th><th>Total Number Delivery Truck </th></tr></thead>');
-                var $tableTbody = $('<tbody></tbody>');
-                var $tableTd = $('<tr></tr>'); // min -4 td
-                var $tableTd1 = $('<td></td>');
-                var $tableTd2 = $('<td></td>');
-                var $tableTd3 = $('<td></td>');
-                var $ul_table = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-
-                //Companies
-                var $tableThead_comp = $('<thead><tr><th>Starting Postal Codes</th><th>Number of Companies</th><th>Number of Postal Codes </th></tr></thead>');
-                var $ul_table_truck = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-                var $ul_table_name = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-                var $ul_table_delivery = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-
-                // Summary Table
-                var $proposedTable = $('<table id="proposedTable" class="tableL table-bordered"></table>');
-                var $p_dlBtn = $('');
-                var $p_note2 = $('<p style="font-weight:normal; font-size:16px;"></p>');
-
-                //Status and Download
-                $download_div.append($download_button)
-                $sorted_sequence.append($h2_success);
-                $sorted_sequence.append($download_div);
-
-                //List of Data Entry
-                $sorted_sequence.append($ul_sequence);
-                $sorted_sequence.append($ul_result);
-                $sorted_sequence.append($p_note1);
-                $sorted_sequence.append($p_note);
-
-                // Div for Table for Postal Code list
-                $sorted_sequenceTable.append($p_dlBtn);
-                $sorted_sequenceTable.append($p_note2);
-                $sorted_sequenceTable.append($proposedTable);
-
-                // Global Function //
-
-                // Addition
-                function add(a, b) {return a + b;}
-
-                if (sort_company === "true"){
-
-                    //required fields:
-                    var starting = response.data_result[0].required_fields.starting_postal;
-
-                    var postal_sequence_company = response.data_result[0].required_fields.postal_sequence;
-                    var result_list = response.data_result[0].required_fields.propose_result;
-                    var result_list_list = response.data_result[0].required_fields.propose_results;
-                    var name_of_company = response.data_result[0].required_fields.name_of_companies;
-                    var has_return = response.data_result[0].required_fields.has_return;
-
-                    //GeoCode for LatLng
-                    var latlng_array_list = response.data_result[0].geo_code_latlng.latlng_array;
-        
-                    //total_summary_saving
-                    var total_savings = response.data_result[0].total_summary_saving.total_savings;
-
-                    // Counter to check for repeated postal codes
-                    function unique(originalArray){
-                        var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
-                        var i = ar.length;
-                        while(i--){  //Iterate through the array
-                            if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
-                                ar.splice(i,1);  //Remove that element!
-                            }
-                        }
-                        return ar; //Return the new, more unique array
-                    }
-
-                    // Counter for PostalCode Sorted;
-                    var counter =1;
-                    var split = postal_sequence.split("\n")
-
-                    for(var i=0;i < split.length;i++){
-                        postalSorted = counter++
-                    }
-
-                    /*$("#sorted_sequence0_ul").show();
-                    $("#sorted_sequence0_ul_02").show();*/
-                    //$("#sorted_sequence1").show();
-
-                    $("#proposedTable").show();
-                    $("#proposedTable_company").show();
-
-                    $sorted_sequence.show();
-                    $sorted_sequenceTable.show();
-                    //- - - - - - - - Info Box - - - - - - - - - -//
-
-                    $(".hidden_field_legend").show();
-                    $("#priority_capacity_comp").show();
-
-                    $sorted_sequence.append($ParentTable);
-                    $ParentTable.append($tableThead_comp);
-                    $tableThead_comp.appendTo($ParentTable);
-                    $tableTbody.appendTo($ParentTable);
-
-                    $tableTbody.append($tableTd);
-                    $tableTd1.append($ul_table_truck); //$ul_table
-                    $tableTd2.append($ul_table_name);
-                    $tableTd3.append($ul_table_delivery);
-                    $tableTd1.appendTo($tableTd);
-                    $tableTd2.appendTo($tableTd);
-                    $tableTd3.appendTo($tableTd);
-
-                    $h2_success.text('Successful!')
-
-                    $("#download_button").show();
-
-                    // Sequence Entered
-                    //$ul_sequence.append('<li>Starting Postal Code : '+num_comp_val+'</li>');
-                    //$ul_sequence.append('<li>Starting Postal Code : '+postalSorted+'</li>');
-
-                    for (i=0; i < name_of_company.length; i++){
-                        var company_name = name_of_company[i];
-                         $ul_table_name.append("<li> "+ (i + 1) + " : " +company_name+ "</li>");
-                    }
-
-                    for (var hq = 0; hq < starting.length; hq++){
-                        var hq_startingPoint = starting[hq];
-
-                        $ul_table_truck.append("<li>Company "+(hq + 1) +" : " +hq_startingPoint+ "</li>");
-                    }
-
-
-                    // - - - - - - Global Message - - - - - - - //
-                    // Message Layout
-                    $p_note2.text('Breakdown of Proposed Postal Code Routes');
-
-                    // Table Layout
-                    $proposedTable.append("<tr><th colspan='2'>Sorted Postal Code</th> <th>Order ID (s)</th><th>Truck Vol.</th><th>Company ID</th></tr>");
-
-                    var new_postal_code;
-                    var counter_nums;
-                    var counter_num_array = [];
-
-                    // Loop the Postal Sequence
-                    for(i = 0; i < postal_sequence_company.length; i++){
-                        var postal_seq_vehicle = postal_sequence_company[i];
-
-                        // Truck Counter
-                        $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Company " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
-
-                        for(x = 0; x < postal_seq_vehicle.length; x++ ){
-                            var company_set = postal_seq_vehicle[x];
-                            var postal_code_arr = [];
-
-                            $proposedTable.append("<tr><td colspan='5'><b>Company " + (i + 1) + " - <span class='label label-info'>Truck "+(x + 1)+ "</span></b> : </td></td></tr>" );
-
-                            var counter_num = x + 1;
-
-                            for (z = 0; z < company_set.length; z++){
-                                 var company_details = company_set[z];
-
-                                 var postal_code = company_details[0];
-                                 var order_id = company_details[1];
-                                 var capacity_load = company_details[2];
-                                 var company_id = company_details[3];
-
-                                // Counter to check for repeated postal codes
-                                postal_code_arr.push(postal_code);
-                                var new_postal_code = unique(postal_code_arr);
-
-                                for (c = 0; c < new_postal_code.length; c++){
-                                    var counter_num = c + 1;
+    // Declare variable will for event
+    var generate_route = false;
+    var truckCapacity_false = false;
+
+    // Route by Truck
+    if(optionsTruck === true){
+
+        var startingValue = checkStarting_Point(starting_postal);
+        var postalSeqValue = postalSequence_area(postal_sequence);
+
+        // if all true, generate_route = true
+        if(startingValue === true && postalSeqValue === true){
+
+            generate_route = true;
+        }
+
+        //console.log(startingValue);
+    }
+    // Check if Priority Capacity only
+    if (priority_capacity === true){
+
+        //if not exist
+        if(!count_truck2){
+            count_truck2 = 0;
+        }
+
+        // Create Variable to generate events
+        var truckCount = ( parseInt(count_truck1) + parseInt(count_truck2) );
+
+        var startingValue = checkStarting_Point(starting_postal_cap);
+        var postalSeqValue = postalSequence_area(postal_sequence);
+
+        // I set num_truck for event to know if they additional fields
+       // if( parseInt(count_truck1) === truckCount ){
+        if( parseInt(truckCount) === 1 ){
+
+             // Validate the two Truck forms
+            var truckCapacity = truck_capacity_area(type_of_truck, truck_capacity, num_of_truck);
+            var truckCapacity1 = truck_capacity_area_1(type_of_truck_1, truck_capacity_1, num_of_truck_1);
+
+            // check truckCapacity1 if true
+            if(truckCapacity1 !== false ){
+                truckCapacity_false = true;
+            }
+
+        }
+        else if ( parseInt(truckCount) === 3 ){
+
+            // Validate the two Truck forms
+            var truckCapacity = truck_capacity_area(type_of_truck, truck_capacity, num_of_truck);
+            var truckCapacity1 = truck_capacity_area_1(type_of_truck_1, truck_capacity_1, num_of_truck_1);
+            var truckCapacity2 = truck_capacity_area_2(type_of_truck_2, truck_capacity_2, num_of_truck_2);
+
+            // check truckCapacity1
+            if(truckCapacity2 !== false ){
+                truckCapacity_false = true;
+            }
+
+        }else{
+
+            // validate One Truck forms
+            var truckCapacity0 = truck_capacity_area(type_of_truck, truck_capacity, num_of_truck);
+            truckCapacity_false = truckCapacity0;
+
+             console.log('HELLO3', truckCapacity0);
+
+        }
+        console.log('HELLO', truckCapacity_false);
+        // Initiate the value
+        truckCapacity = truckCapacity_false;
+
+        // if all true, generate_route = true
+        if(startingValue === true && postalSeqValue === true && truckCapacity === true){
+            generate_route = true;
+        }
+    }
+
+   // Check first value of inputs before it process
+   //if(startingValue === true && postalSeqValue === true){
+   if(generate_route === true){
+
+        $.ajax({
+            type: "POST",
+            url: "/sorting",
+            dataType: 'json',
+            data: {
+                starting_postal: starting_postal,
+                vehicle_quantity: vehicle_quantity,
+
+                // 1
+                starting_postal_cap: starting_postal_cap,
+                type_of_truck: type_of_truck,
+                truck_capacity: truck_capacity,
+                num_of_truck: num_of_truck,
+
+                // 2
+                type_of_truck_1: type_of_truck_1,
+                truck_capacity_1: truck_capacity_1,
+                num_of_truck_1: num_of_truck_1,
+
+                // 3
+                type_of_truck_2: type_of_truck_2,
+                truck_capacity_2: truck_capacity_2,
+                num_of_truck_2: num_of_truck_2,
+
+                //Route by Companies
+                starting_postal_1: starting_postal_1,
+                starting_postal_2: starting_postal_2,
+                starting_postal_3: starting_postal_3,
+                starting_postal_4: starting_postal_4,
+                starting_postal_5: starting_postal_5,
+                starting_postal_6: starting_postal_6,
+
+                vehicle_quantity_1: vehicle_quantity_1,
+                vehicle_quantity_2: vehicle_quantity_2,
+                vehicle_quantity_3: vehicle_quantity_3,
+                vehicle_quantity_4: vehicle_quantity_4,
+                vehicle_quantity_5: vehicle_quantity_5,
+                vehicle_quantity_6: vehicle_quantity_6,
+
+                //route by companies - companies
+                type_of_truck_c1: type_of_truck_c1,
+                type_of_truck_c2: type_of_truck_c2,
+                type_of_truck_c3: type_of_truck_c3,
+                type_of_truck_c4: type_of_truck_c4,
+                type_of_truck_c5: type_of_truck_c5,
+                type_of_truck_c6: type_of_truck_c6,
+
+                truck_capacity_c1: truck_capacity_c1,
+                truck_capacity_c2: truck_capacity_c2,
+                truck_capacity_c3: truck_capacity_c3,
+                truck_capacity_c4: truck_capacity_c4,
+                truck_capacity_c5: truck_capacity_c5,
+                truck_capacity_c6: truck_capacity_c6,
+
+                num_of_truck_c1: num_of_truck_c1,
+                num_of_truck_c2: num_of_truck_c2,
+                num_of_truck_c3: num_of_truck_c3,
+                num_of_truck_c4: num_of_truck_c4,
+                num_of_truck_c5: num_of_truck_c5,
+                num_of_truck_c6: num_of_truck_c6,
+
+                // sub fields:1
+                type_of_truck_cc1: type_of_truck_cc1,
+                type_of_truck_cc2: type_of_truck_cc2,
+                type_of_truck_cc3: type_of_truck_cc3,
+
+                truck_capacity_cc1: truck_capacity_cc1,
+                truck_capacity_cc2: truck_capacity_cc2,
+                truck_capacity_cc3: truck_capacity_cc3,
+
+                num_of_truck_cc1: num_of_truck_cc1,
+                num_of_truck_cc2: num_of_truck_cc2,
+                num_of_truck_cc3: num_of_truck_cc3,
+
+                 // sub fields:2
+                type_of_truck_cc21: type_of_truck_cc21,
+                type_of_truck_cc22: type_of_truck_cc22,
+                type_of_truck_cc23: type_of_truck_cc23,
+
+                truck_capacity_cc21: truck_capacity_cc21,
+                truck_capacity_cc22: truck_capacity_cc22,
+                truck_capacity_cc23: truck_capacity_cc23,
+
+                num_of_truck_cc21: num_of_truck_cc21,
+                num_of_truck_cc22: num_of_truck_cc22,
+                num_of_truck_cc23: num_of_truck_cc23,
+
+                add_truck_cc1: add_truck_cc1,
+                add_truck_cc2: add_truck_cc2,
+                add_truck_cc3: add_truck_cc3,
+                postal_sequence: postal_sequence,
+                email: email,
+                has_return: has_return,
+
+                optionsTruck: optionsTruck,
+                priority_capacity: priority_capacity,
+                priority_capacity_comp: priority_capacity_comp,
+                sort_company: sort_company,
+
+                num_comp_val: num_comp_val
+            },
+            beforeSend:function(){
+                var errorBox = $('#message-errors');
+
+                // this is where we append a loading image
+                $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+
+                $("#sorted_sequence").hide();
+                $("#sorted_sequence0").hide();
+
+                $("#sorted_sequence0_ul").hide();
+                $("#sorted_sequence0_ul_02").hide();
+                //$("#sorted_sequence1").hide();
+
+                $("#proposedTable_company").hide();
+
+                $("#visualization").hide();
+                $("#visualization_tab_comp").hide();
+                $("#visualization_table").hide();
+                $(".hidden_field_legend").hide();
+
+                errorBox.hide();
+                //$("#routeBtn").prop('disabled', true);
+             },
+            success: function (response) {
+
+                // Main Variable for Layout
+                var $sorted_sequence = $("#sorted_sequence0");
+                var $sorted_sequenceTable = $("#sorted_sequence");
+                var errorBox = $('#message-errors');
+
+                $sorted_sequence.empty();
+                $sorted_sequenceTable.empty();
+
+                $('#progressbar').empty();
+
+                $("#sorted_sequence0_ul").empty();
+                $("#sorted_sequence0_ul_02").empty();
+                //$("#sorted_sequence1").empty();
+                $("#proposedTable_company").empty();
+                $("#visualization_tab_comp").empty();
+
+                $("#map_legend").empty();
+
+
+                //$("#routeBtn").prop('disabled', false);
+
+                var status = response.status;
+                var sort_company = response.sort_company;
+
+                if (status === "ok"){
+
+                    // HTML Tags Reference:
+                    var $h2_success = $("<h2 style='font-weight:normal'></h2>");
+                    var $download_div = $('<div id="download_button" style="margin:20px 0;"></div>');
+                    var $download_button = $('<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>'); //<a id="btn_export" class="btn btn-success btn-xs">Export to excel</a>
+
+                    var $ul_sequence = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+                    var $ul_result = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+
+                    var $p_note = $("<p style='font-weight:normal; font-size:16px;'></p>");
+                    var $p_note1 = $("<p style='font-weight:normal; font-size:16px;'></p>");
+
+                    // Details Table
+                    var $ParentTable = $('<table class="tableL table-bordered"></table>');
+
+                    // Route by Trucks
+                    var $tableThead0 = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+
+                    // Route by Capacity
+                    var $tableThead1 = $('<thead><tr><th>Summary Details </th><th></th><th></th></tr></thead>');
+                    var $tableTbody = $('<tbody></tbody>');
+                    var $tableTd = $('<tr></tr>'); // min -4 td
+                    var $tableTd1 = $('<td></td>');
+                    var $tableTd2 = $('<td></td>');
+                    var $tableTd3 = $('<td></td>');
+                    var $ul_table = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+                    var $ul_table1 = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+
+                    //Companies
+                    var $tableThead_comp = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+                    var $ul_table_truck = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+                    var $ul_table_name = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+                    var $ul_table_delivery = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
+
+                    // Summary Table
+                    var $proposedTable = $('<table id="proposedTable" class="tableL table-bordered"></table>');
+                    var $p_dlBtn = $('');
+                    var $p_note2 = $('<p style="font-weight:normal; font-size:16px;"></p>');
+
+                    //Status and Download
+                    $download_div.append($download_button)
+                    $sorted_sequence.append($h2_success);
+                    $sorted_sequence.append($download_div);
+
+                    //List of Data Entry
+                    $sorted_sequence.append($ul_sequence);
+                    $sorted_sequence.append($ul_result);
+                    $sorted_sequence.append($p_note1);
+                    $sorted_sequence.append($p_note);
+
+                    // Div for Table for Postal Code list
+                    $sorted_sequenceTable.append($p_dlBtn);
+                    $sorted_sequenceTable.append($p_note2);
+                    $sorted_sequenceTable.append($proposedTable);
+
+                    // Global Function //
+
+                    // Addition
+                    function add(a, b) {return a + b;}
+
+                    if (sort_company === "true"){
+
+                        //required fields:
+                        var starting = response.data_result[0].required_fields.starting_postal;
+
+                        var postal_sequence_company = response.data_result[0].required_fields.postal_sequence;
+                        var result_list = response.data_result[0].required_fields.propose_result;
+                        var result_list_list = response.data_result[0].required_fields.propose_results;
+                        var name_of_company = response.data_result[0].required_fields.name_of_companies;
+                        var has_return = response.data_result[0].required_fields.has_return;
+
+                        //GeoCode for LatLng
+                        var latlng_array_list = response.data_result[0].geo_code_latlng.latlng_array;
+
+                        //total_summary_saving
+                        var total_savings = response.data_result[0].total_summary_saving.total_savings;
+
+                        // Counter to check for repeated postal codes
+                        function unique(originalArray){
+                            var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
+                            var i = ar.length;
+                            while(i--){  //Iterate through the array
+                                if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
+                                    ar.splice(i,1);  //Remove that element!
                                 }
-                                $proposedTable.append("<tr><td>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td><td>"+company_id+"</td></tr>");
                             }
-                            // Summary Table
-                            counter_num_array.push(counter_num);
-                            $ul_table_delivery.append('<li>Company '+(i+1)+' : '+counter_num+' Sorted Postal Code </li>');
+                            return ar; //Return the new, more unique array
                         }
 
-                    }
-                    var sum = counter_num_array.reduce(add, 0);
+                        // Counter for PostalCode Sorted;
+                        var counter =1;
+                        var split = postal_sequence.split("\n")
 
-                    $ul_sequence.append('Total Number of Proposed Routes: '+sum+ '  Postal Codes  <br />');
-                    $ul_sequence.append('Summary Truck Details : <br />');
+                        for(var i=0;i < split.length;i++){
+                            postalSorted = counter++
+                        }
 
-                    // - - - - - - End of Table fo Sorted Results - - - - - - - //
+                        /*$("#sorted_sequence0_ul").show();
+                        $("#sorted_sequence0_ul_02").show();*/
+                        //$("#sorted_sequence1").show();
 
-                    // - - - - - - Start Map Results - - - - - - - //
-                    var postal_seq = postal_sequence;
-                    var postal_seq_arr = postal_seq.split("\n");
+                        $("#proposedTable").show();
+                        $("#proposedTable_company").show();
 
-                    // Storing the order ID and postal pairs  // current route
-                    var order_postal_arr = [];
+                        $sorted_sequence.show();
+                        $sorted_sequenceTable.show();
+                        //- - - - - - - - Info Box - - - - - - - - - -//
 
-                    for(i = 0; i < postal_seq_arr.length; i ++){
-                        var order_postal = postal_seq_arr[i];
-                        order_postal = order_postal.replace(/\s+/g, " ");
-                        order_postal = order_postal.replace("\t", " ");
-                        order_postal = order_postal.trim();
+                        $(".hidden_field_legend").show();
+                        $("#priority_capacity_comp").show();
 
-                        var order_postal_split = order_postal.split(" ");
-                        order_postal_arr.push(order_postal_split)
-                    }
-
-                    // - - - - -  Callback Function for map - - - - - - //
-
-                   // generateGMap_company(starting_postal, result_list, order_postal_arr, latlng_array, sort_company);
-                    generateGMap_company(starting, result_list, result_list_list, order_postal_arr, latlng_array_list, sort_company);
-
-                    // Table below map - Summary-Value
-                    $('#visualization_tab_comp').show()
-
-                    //Summary Report for
-                    //generateSummaryReport_comp(total_savings)
-
-                    // Loop the Summary Saving
-                    for(i = 0; i < total_savings.length; i++){
-                        var route_savings = total_savings[i];
-                        console.log('route_savings', route_savings);
-
-                        var current = route_savings[0];
-                        var proposed = route_savings[1];
-                        var savings = route_savings[2];
-
-                        $("#visualization_tab_comp").append("<div class='col-md-4'> <strong>Company "+(i +1)+"</strong><table class='summary_Table'><tr><th>Current Total Distance</th><th>Proposed Total Distance</th><th>Total Savings</tr><tr><td>"+current+" km"+"</td><td>"+proposed+" km"+"</td><td>"+savings+" %"+"</td></tr></table></div>");
-                    }
-                    // $('.modal-body').html(response['html']);
-                    // $('#register-button').css('display', 'none');
-
-                    //send email section
-                    $.post('/email_info',  {
-                        'starting_postal': $('#starting_postal').val(),
-                        'original': $("#postal_sequence").val(),
-                        'generated': $('#sorted_sequence').val()
-                    });
-
-                } //End of sort_company
-
-                else{
-
-                    //required fields:
-                    var starting = response.data_result[0].required_fields.starting_postal;
-
-                    var postal_sequence_new = response.data_result[0].required_fields.postal_sequence;
-                    var result_list = response.data_result[0].required_fields.propose_result;
-                    var has_return = response.data_result[0].required_fields.has_return;
-
-                    //GeoCode for LatLng
-                    var latlng_array = response.data_result[0].geo_code_latlng.latlng_array;
-
-                    //Truck Options-1:
-                    var vehicle_priority = response.data_result[0].vehicle_priority.vehicle_num;
-
-                    //Truck Options-2
-                    var capacity_priority = response.data_result[0].capacity_priority.priority_capacity;
-                    var vehicle_type = response.data_result[0].capacity_priority.vehicle_type;
-
-                    //total_summary_saving
-                    var propose_route_value = response.data_result[0].total_summary_saving.propose_distance;
-                    var current_route_value = response.data_result[0].total_summary_saving.current_distance;
-                    var total_savings = response.data_result[0].total_summary_saving.total_savings;
-
-                    // Get the value from unsorted Postal Code
-                    // var postal_seq = $("#postal_sequence").val();
-                    var postal_seq = postal_sequence;
-                    var postal_seq_arr = postal_seq.split("\n");
-
-                    // Storing the order ID and postal pairs  // current route
-                    var order_postal_arr = [];
-
-                    // postal_seq_arr.replace(/\s+/g, " ")
-                    for(i = 0; i < postal_seq_arr.length; i ++){
-                        var order_postal = postal_seq_arr[i];
-                        order_postal = order_postal.replace(/\s+/g, " ")
-                        order_postal = order_postal.replace("\t", " ");
-                        order_postal = order_postal.trim();
-
-                        var order_postal_split = order_postal.split(" ");
-                        order_postal_arr.push(order_postal_split)
-                    }
-
-                    //console.log('capacity_priority-1', capacity_priority);
-                    //console.log('vehicle_type-1', vehicle_type);
-
-                    //- - - - - - export btn - - - - -  - - - - -//
-                    $("#download_button").show();
-                    // - - - - - - Start of Table fo Sorted Results - - - - - - - //
-
-                    $sorted_sequence.show();
-                    $sorted_sequenceTable.show();
-
-                    //$("#sorted_sequence1").show();
-                    $(".hidden_field_legend").show();
-
-                    // Counter for Postal Code Sorted;
-                    var counter = 0;
-                    var split = postal_sequence.split("\n")
-
-                    for( var i=0; i < split.length; i++ ){
-                        var postalSorted = counter++;
-                    }
-
-                    $h2_success.text('Successful!')
-
-                    // Sequence Entered
-                    $ul_sequence.append('<li>Starting Postal Code : '+starting+'</li>');
-                    //$ul_sequence.append('<li>No. of Postal Sequence Entered : '+postalSorted+'</li>');
-                    //$ul_sequence.append('<li>No. of Truck Entered : '+vehicle_priority+'</li>');
-
-                    // Condition for Route by Truck:
-                    if(optionsTruck === true){
-
-                        $p_note.append('Summary Truck Details : <br />');
-
-                        // Summary Table
                         $sorted_sequence.append($ParentTable);
-
-                        // if the Truck is more than 1:
-                        if(parseInt(vehicle_priority) > 1){
-                            // Summary Table
-                            $sorted_sequence.append($ParentTable);
-                            // Append the Thead (title of each col)
-                            $ParentTable.append($tableThead1);
-                            $ParentTable.append($tableTbody);
-
-                            // Col 1
-                            $tableTbody.append($tableTd)
-                            $tableTd.append($tableTd1);
-                            $tableTd1.append($ul_table);
-
-                            // Col 2
-                            $tableTd.append($tableTd2);
-                            // Col 3
-                            $tableTd.append($tableTd3);
-
-                            var new_postal_code;
-                            var counter_nums;
-                            var counter_num_array = [];
-
-                            for(i = 0; i < postal_sequence_new.length; i++){
-                                var postal_seq_vehicle = postal_sequence_new[i];
-                                var postal_code_arr = [];
-
-                                // counts the postal code
-                                for(k = 0; k < postal_seq_vehicle.length; k++){
-                                    var postal_seq_new = postal_seq_vehicle[k]
-                                    var postal_code = postal_seq_new[0];
-
-                                    var counter_num = k + 1;
-
-                                    // Counter to check for repeated postal codes
-                                    postal_code_arr.push(postal_code);
-
-                                    var new_postal_code = unique_postal(postal_code_arr);
-                                    for (c = 0; c < new_postal_code.length; c++){
-                                            var counter_num = c + 1;
-                                        }
-                                }
-                                counter_num_array.push(counter_num);
-                                $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Sorted Postal Code </li>');
-
-                            }
-                            var sum = counter_num_array.reduce(add, 0);
-
-                            // Total Number
-                            //$p_note.append('Total Delivery Routes : '+sum+ ' Proposed Sorted Postal Code <br />');
-                            $tableTd2.append(+sum+ ' Proposed Sorted Postal Code <br />');
-                            $tableTd3.append('Total Delivery Truck : '+vehicle_priority);
-
-                        }
-                        else{
-
-                            // Append the Thead (title of each col)
-                            $ParentTable.append($tableThead0);
-                            $ParentTable.append($tableTbody);
-
-                            $tableTbody.append($tableTd)
-
-                            // Col 1
-                            $tableTd.append($tableTd2);
-                            // Col 2
-                            $tableTd.append($tableTd3);
-
-
-                            var total_num_result;
-                            var total_truck;
-                            for (var a=0; a < latlng_array.length; a++){
-                                var result_sortedPostal = latlng_array[a];
-                                       total_num_result = result_sortedPostal.length;
-
-                            }
-
-                            // Result
-                            $tableTd2.append(+total_num_result+' Proposed Sorted Postal Code');
-                            $tableTd3.append('Total Delivery Truck : '+vehicle_priority);
-
-                        }
-
-                    } // end of if condition - Route by Truck
-
-                    // Condition for Route by Capacity:
-                    if (priority_capacity === true){
-
-                        // Summary Table
-                        $sorted_sequence.append($ParentTable);
-                        // Append the Thead (title of each col)
-                        $ParentTable.append($tableThead);
-
-                        $tableThead.appendTo($ParentTable);
+                        $ParentTable.append($tableThead_comp);
+                        $tableThead_comp.appendTo($ParentTable);
                         $tableTbody.appendTo($ParentTable);
 
                         $tableTbody.append($tableTd);
-
-                        $tableTd1.append($ul_table);
-                        $tableTd2.append($ul_table_truck);
+                        $tableTd1.append($ul_table_truck); //$ul_table
+                        //$tableTd2.append($ul_table_name);
+                        $tableTd2.append($ul_table_delivery);
                         $tableTd1.appendTo($tableTd);
                         $tableTd2.appendTo($tableTd);
+                        $tableTd3.appendTo($tableTd);
+
+                        $h2_success.text('Successful!')
+
+                        $("#download_button").show();
+
+                        // Sequence Entered
+                        //$ul_sequence.append('<li>Starting Postal Code : '+num_comp_val+'</li>');
+                        //$ul_sequence.append('<li>Starting Postal Code : '+postalSorted+'</li>');
+
+    //                    for (i=0; i < name_of_company.length; i++){
+    //                        var company_name = name_of_company[i];
+    //                         $ul_table_name.append("<li> "+ (i + 1) + " : " +company_name+ "</li>");
+    //                    }
+
+                        for (var hq = 0; hq < starting.length; hq++){
+                            var hq_startingPoint = starting[hq];
+                            var company_name = name_of_company[hq];
+                                company_name = company_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
+
+                            $ul_table_truck.append("<li>Company "+(hq + 1) +" - " +company_name+  " w/ Starting Postal Code : "+hq_startingPoint+ " </li>");
+                        }
+
+
+                        // - - - - - - Global Message - - - - - - - //
+                        // Message Layout
+                        $p_note2.text('Breakdown of Proposed Postal Code Routes');
+
+                        // Table Layout
+                        $proposedTable.append("<tr><th colspan='2'>Postal Code</th> <th>Order ID</th><th>Truck Capacity</th><th>Company Name</th></tr>");
 
                         var new_postal_code;
                         var counter_nums;
                         var counter_num_array = [];
 
-                        if (parseInt(vehicle_type.length) > 1){
+                        // Loop the Postal Sequence
+                        for(i = 0; i < postal_sequence_company.length; i++){
+                            var postal_seq_vehicle = postal_sequence_company[i];
 
-                            for (var x=0; x < vehicle_type.length; x ++){
-                               var vehicle_types = vehicle_type[x];
+                            // Truck Counter
+                            $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Company " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
 
-                                var truck_type = vehicle_types[0]
-                                var max_type = vehicle_types[1]
-                                var available_type = vehicle_types[2]
-
-                                $ul_table_truck.append('<li>Delivery Truck No. '+(x+1)+' : '+truck_type+'</li>');
-                            }
-
-                            }else{
-
-                                    for (var i=0; i < vehicle_type.length; i ++){
-                                        var truck_detail = vehicle_type[i];
-                                        truck_type = truck_detail[0];
-
-                                         $ul_table_truck.append('<li>Truck : '+truck_type+'</li>');
-                                    }
-                            }
-
-                            for(i = 0; i < postal_sequence_new.length; i++){
-                                var postal_seq_vehicle = postal_sequence_new[i];
-
+                            for(x = 0; x < postal_seq_vehicle.length; x++ ){
+                                var company_set = postal_seq_vehicle[x];
                                 var postal_code_arr = [];
 
-                                // Sum of Total Load per Trucks
-                                var loadsCount = postal_seq_vehicle.reduce(function(sum, current)
-                                    {
-                                        return sum + current[2];
-                                    }, 0 );
+                                $proposedTable.append("<tr><td colspan='5'><b>Company " + (i + 1) + " - <span class='label label-info'>Truck "+(x + 1)+ "</span></b> : </td></td></tr>" );
 
-                                // counts the postal code
-                                for(k = 0; k < postal_seq_vehicle.length; k++){
-                                    var postal_seq_new = postal_seq_vehicle[k]
-                                    var postal_code = postal_seq_new[0];
+                                var counter_num = x + 1;
 
-                                    //console.log('postal_seq_new-1' ,postal_seq_new);
-                                    var counter_num = k + 1;
+                                for (z = 0; z < company_set.length; z++){
+                                     var company_details = company_set[z];
+
+                                     var postal_code = company_details[0];
+                                     var order_id = company_details[1];
+                                     var capacity_load = company_details[2];
+                                     var company_id = company_details[3];
+                                         company_id = company_id.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
                                     // Counter to check for repeated postal codes
                                     postal_code_arr.push(postal_code);
-                                    var new_postal_code = unique_postal(postal_code_arr);
+                                    var new_postal_code = unique(postal_code_arr);
 
                                     for (c = 0; c < new_postal_code.length; c++){
                                         var counter_num = c + 1;
                                     }
+                                    $proposedTable.append("<tr><td>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td><td>"+company_id+"</td></tr>");
+                                }
+                                // Summary Table
+                                counter_num_array.push(counter_num);
+                                $ul_table_delivery.append('<li>Company '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
+                            }
+
+                        }
+                        var sum = counter_num_array.reduce(add, 0);
+
+                        //$ul_sequence.append('Total Number of Proposed Routes: '+sum+ '  Postal Codes  <br />');
+                        //$ul_sequence.append('Summary Details :<br />');
+
+                        // - - - - - - End of Table fo Sorted Results - - - - - - - //
+
+                        // - - - - - - Start Map Results - - - - - - - //
+                        var postal_seq = postal_sequence;
+                        var postal_seq_arr = postal_seq.split("\n");
+
+                        // Storing the order ID and postal pairs  // current route
+                        var order_postal_arr = [];
+
+                        for(i = 0; i < postal_seq_arr.length; i ++){
+                            var order_postal = postal_seq_arr[i];
+                            order_postal = order_postal.replace(/\s+/g, " ");
+                            order_postal = order_postal.replace("\t", " ");
+                            order_postal = order_postal.trim();
+
+                            var order_postal_split = order_postal.split(" ");
+                            order_postal_arr.push(order_postal_split)
+                        }
+
+                        // - - - - -  Callback Function for map - - - - - - //
+
+                       // generateGMap_company(starting_postal, result_list, order_postal_arr, latlng_array, sort_company);
+                        generateGMap_company(starting, result_list, result_list_list, order_postal_arr, latlng_array_list, sort_company);
+
+                        // Table below map - Summary-Value
+                        $('#visualization_tab_comp').show()
+
+                        //Summary Report for
+                        //generateSummaryReport_comp(total_savings)
+
+                        // Loop the Summary Saving
+                        for(i = 0; i < total_savings.length; i++){
+                            var route_savings = total_savings[i];
+                            console.log('route_savings', route_savings);
+
+                            var current = route_savings[0];
+                            var proposed = route_savings[1];
+                            var savings = route_savings[2];
+
+                            $("#visualization_tab_comp").append("<div class='col-md-4'> <strong>Company "+(i +1)+"</strong><table class='summary_Table'><tr><th>Current Total Distance</th><th>Proposed Total Distance</th><th>Total Savings</tr><tr><td>"+current+" km"+"</td><td>"+proposed+" km"+"</td><td>"+savings+" %"+"</td></tr></table></div>");
+                        }
+                        // $('.modal-body').html(response['html']);
+                        // $('#register-button').css('display', 'none');
+
+                        //send email section
+                        $.post('/email_info',  {
+                            'starting_postal': $('#starting_postal').val(),
+                            'original': $("#postal_sequence").val(),
+                            'generated': $('#sorted_sequence').val()
+                        });
+
+                    } //End of sort_company
+
+                    else{
+
+                        //required fields:
+                        var starting = response.data_result[0].required_fields.starting_postal;
+
+                        var postal_sequence_new = response.data_result[0].required_fields.postal_sequence;
+                        var result_list = response.data_result[0].required_fields.propose_result;
+                        var has_return = response.data_result[0].required_fields.has_return;
+
+                        //GeoCode for LatLng
+                        var latlng_array = response.data_result[0].geo_code_latlng.latlng_array;
+
+                        //Truck Options-1:
+                        var vehicle_priority = response.data_result[0].vehicle_priority.vehicle_num;
+
+                        //Truck Options-2
+                        var capacity_priority = response.data_result[0].capacity_priority.priority_capacity;
+                        var vehicle_type = response.data_result[0].capacity_priority.vehicle_type;
+
+                        //total_summary_saving
+                        var propose_route_value = response.data_result[0].total_summary_saving.propose_distance;
+                        var current_route_value = response.data_result[0].total_summary_saving.current_distance;
+                        var total_savings = response.data_result[0].total_summary_saving.total_savings;
+
+                        // Get the value from unsorted Postal Code
+                        // var postal_seq = $("#postal_sequence").val();
+                        var postal_seq = postal_sequence;
+                        var postal_seq_arr = postal_seq.split("\n");
+
+                        // Storing the order ID and postal pairs  // current route
+                        var order_postal_arr = [];
+
+                        // postal_seq_arr.replace(/\s+/g, " ")
+                        for(i = 0; i < postal_seq_arr.length; i ++){
+                            var order_postal = postal_seq_arr[i];
+                            order_postal = order_postal.replace(/\s+/g, " ")
+                            order_postal = order_postal.replace("\t", " ");
+                            order_postal = order_postal.trim();
+
+                            var order_postal_split = order_postal.split(" ");
+                            order_postal_arr.push(order_postal_split)
+                        }
+
+                        //console.log('capacity_priority-1', capacity_priority);
+                        //console.log('vehicle_type-1', vehicle_type);
+
+                        //- - - - - - export btn - - - - -  - - - - -//
+                        $("#download_button").show();
+                        // - - - - - - Start of Table fo Sorted Results - - - - - - - //
+
+                        $sorted_sequence.show();
+                        $sorted_sequenceTable.show();
+
+                        //$("#sorted_sequence1").show();
+                        $(".hidden_field_legend").show();
+
+                        // Counter for Postal Code Sorted;
+                        var counter = 0;
+                        var split = postal_sequence.split("\n")
+
+                        for( var i=0; i < split.length; i++ ){
+                            var postalSorted = counter++;
+                        }
+
+                        $h2_success.text('Successful!')
+
+                        // Sequence Entered
+                        //$ul_sequence.append('<li>Starting Postal Code : '+starting+'</li>');
+                        //$ul_sequence.append('<li>No. of Postal Sequence Entered : '+postalSorted+'</li>');
+                        //$ul_sequence.append('<li>No. of Truck Entered : '+vehicle_priority+'</li>');
+
+                        // Condition for Route by Truck:
+                        if(optionsTruck === true){
+
+                            //$p_note.append('Summary Details : <br />');
+
+                            // Summary Table
+                            $sorted_sequence.append($ParentTable);
+
+                            // if the Truck is more than 1:
+                            if(parseInt(vehicle_priority) > 1){
+                                // Summary Table
+                                $sorted_sequence.append($ParentTable);
+
+                                // Append the Thead (title of each col)
+                                $ParentTable.append($tableThead0);
+                                $ParentTable.append($tableTbody);
+
+                                $tableTbody.append($tableTd)
+
+                                // Col 1
+                                $tableTd.append($tableTd1);
+                                $tableTd1.append('Starting Postal Code : '+starting);
+                                // Col 2
+                                $tableTd.append($tableTd2);
+                                $tableTd2.append($ul_table);
+
+                                var new_postal_code;
+                                var counter_nums;
+                                var counter_num_array = [];
+
+                                for(i = 0; i < postal_sequence_new.length; i++){
+                                    var postal_seq_vehicle = postal_sequence_new[i];
+                                    var postal_code_arr = [];
+
+                                    // counts the postal code
+                                    for(k = 0; k < postal_seq_vehicle.length; k++){
+                                        var postal_seq_new = postal_seq_vehicle[k]
+                                        var postal_code = postal_seq_new[0];
+
+                                        var counter_num = k + 1;
+
+                                        // Counter to check for repeated postal codes
+                                        postal_code_arr.push(postal_code);
+
+                                        var new_postal_code = unique_postal(postal_code_arr);
+                                        for (c = 0; c < new_postal_code.length; c++){
+                                                var counter_num = c + 1;
+                                            }
+                                    }
+                                    counter_num_array.push(counter_num);
+                                    $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Propose Delivery Routes </li>');
+
+                                }
+                                var sum = counter_num_array.reduce(add, 0);
+
+                            }
+                            else{
+
+                                // Append the Thead (title of each col)
+                                $ParentTable.append($tableThead0);
+                                $ParentTable.append($tableTbody);
+
+                                $tableTbody.append($tableTd)
+
+                                // Col 1
+                                $tableTd.append($tableTd1);
+                                // Col 2
+                                $tableTd.append($tableTd2);
+
+
+                                var total_num_result;
+                                var total_truck;
+                                for (var a=0; a < latlng_array.length; a++){
+                                    var result_sortedPostal = latlng_array[a];
+                                           total_num_result = result_sortedPostal.length;
+
+                                }
+
+                                // Result
+                                $tableTd1.append('Starting Postal Code : '+starting);
+                                $tableTd2.append('Delivery Truck '+vehicle_priority+' : '+total_num_result+' Proposed Delivery Routes');
+
+                            }
+
+                        } // end of if condition - Route by Truck
+
+                        // Condition for Route by Capacity:
+                        if (priority_capacity === true){
+
+                            // Summary Table
+                            $sorted_sequence.append($ParentTable);
+
+                            // Append the Thead (title of each col)
+                            $ParentTable.append($tableThead1);
+                            $ParentTable.append($tableTbody);
+
+                            $tableTbody.append($tableTd)
+
+                            // Col 1
+                            $tableTd.append($tableTd1);
+                            $tableTd1.append('Starting Postal Code : '+starting);
+                            // Col 2
+                            $tableTd.append($tableTd2);
+                            $tableTd2.append($ul_table);
+
+                            // Col 3
+                            $tableTd.append($tableTd3);
+                            $tableTd3.append($ul_table1);
+
+                            var new_postal_code;
+                            var counter_nums;
+                            var counter_num_array = [];
+
+                            /*if (parseInt(vehicle_type.length) > 1){
+
+                                for (var x=0; x < vehicle_type.length; x ++){
+                                   var vehicle_types = vehicle_type[x];
+
+                                    var truck_type = vehicle_types[0];
+                                    var max_type = vehicle_types[1];
+                                    var available_type = vehicle_types[2];
+
+                                    $ul_table_truck.append('<li>Delivery Truck '+(x+1)+' : '+truck_type+'</li>');
+                                }
+
+                                }else{
+
+                                        for (var i=0; i < vehicle_type.length; i ++){
+                                            var truck_detail = vehicle_type[i];
+                                            truck_type = truck_detail[0];
+
+                                             $ul_table_truck.append('<li>Truck : '+truck_type+'</li>');
+                                        }
+                                }
+                                // Truck Loop details
+                                $.each(postal_sequence_new.concat(vehicle_type), function(i, item) {
+                                    console.log(item);
+                                });*/
+
+                                //console.log(truck_name);
+                                 var truck_name = [];
+
+                                    for (var x=0; x < vehicle_type.length; x ++){
+                                        var vehicle_types = vehicle_type[x];
+                                        var truck_type = vehicle_types[0];
+                                        var num_truck = vehicle_types[2];
+
+                                        //$ul_table_truck.append('<li>Delivery Truck '+(x+1)+' : '+truck_type+'</li>');
+                                        //truck_name.push(truck_type);
+                                        $ul_table.append('<li>Delivery Truck Type '+(x+1)+' :  ' +truck_type+' </li>');
+                                    }
+
+                                for(i = 0; i < postal_sequence_new.length; i++){
+                                    var postal_seq_vehicle = postal_sequence_new[i];
+    //                                var truck_type = truck_name[i];
+    //                                var truck_type1 = vehicle_type[i];
+
+                                    var postal_code_arr = [];
+                                    // Sum of Total Load per Trucks
+                                    var loadsCount = postal_seq_vehicle.reduce(function(sum, current){
+                                            return sum + current[2];
+                                        }, 0 );
+
+                                    // counts the postal code
+                                    for(k = 0; k < postal_seq_vehicle.length; k++){
+                                        var postal_seq_new = postal_seq_vehicle[k]
+                                        var postal_code = postal_seq_new[0];
+
+                                        //console.log('postal_seq_new-1' ,postal_seq_new);
+                                        var counter_num = k + 1;
+
+                                        // Counter to check for repeated postal codes
+                                        postal_code_arr.push(postal_code);
+                                        var new_postal_code = unique_postal(postal_code_arr);
+
+                                        for (c = 0; c < new_postal_code.length; c++){
+                                            var counter_num = c + 1;
+                                        }
+                                     }
+
+                                     $ul_table1.append('<li>Delivery Truck '+(i+1)+' :  ' +counter_num+' Proposed Delivery Routes </li>');
+
                                  }
 
-                                // sum all
-                                counter_num_array.push(counter_num);
-                                $ul_table.append('<li>Truck '+(i+1)+' : '+loadsCount+' Loads with '+counter_num+' delivery routes </li>');
-                             }
-                            // Sum all Delivery Postal Code
-                            var sum = counter_num_array.reduce(add, 0);
+                                // Sum all Delivery Postal Code
+                                var sum = counter_num_array.reduce(add, 0);
 
-                            // Total Number
-                            $p_note.append('Summary Truck Details : <br />');
-                            $tableTd.append('<td>'+sum+ ' Proposed Sorted Postal Code</td>');
-                            $tableTd.append('<td>'+vehicle_priority+'</td>');
+                                // Total Number
+                                //$p_note.append('Summary Truck Details : <br />');
+                                //$tableTd.append('<td>'+sum+ ' Proposed Sorted Postal Code</td>');
+                                //$tableTd.append('<td>'+vehicle_priority+'</td>');
 
-                    } // end of if condition - Route by Capacity
+                        } // end of if condition - Route by Capacity
 
-                    // - - - - - - Global Message - - - - - - - //
-                    // Message Layout
-                    $p_note2.text('Breakdown of Proposed Postal Code Routes');
+                        // - - - - - - Global Message - - - - - - - //
+                        // Message Layout
+                        $p_note2.text('Breakdown of Proposed Delivery Routes');
 
-                    // Table Layout
-                    $proposedTable.append("<tr><th colspan='2'>Sorted Postal Code</th> <th>Order ID (s)</th><th>Truck Vol.</th></tr>");
+                        // Table Layout
+                        $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>Truck Capacity</th></tr>");
 
-                    // Counter to check for repeated postal codes
-                    function unique_postal(originalArray){
-                        var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
-                        var i = ar.length;
-                        while(i--){  //Iterate through the array
-                            if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
-                                ar.splice(i,1);  //Remove that element!
-                            }
-                        }
-                        return ar; //Return the new, more unique array
-                    }
-
-                    // Loop the Postal Sequence
-                    for(i = 0; i < postal_sequence_new.length; i++){
-                        var postal_seq_vehicle = postal_sequence_new[i];
-                        var postal_code_arr = [];
-
-                        // Marker Truck Counter
-                        $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck No. " + (i + 1 ) + " <i class='marker_map marker_img"+ (i+ 1) +"'></i></li>");
-
-                        // Summary Table Truck Counter
-                        $proposedTable.append("<tr><td colspan='4'><b>Delivery Truck No. " + (i + 1) + "</b>: </td></td>" );
-
-                        for(k = 0; k < postal_seq_vehicle.length; k++){
-                            var postal_seq_new = postal_seq_vehicle[k]
-
-                            var postal_code = postal_seq_new[0];
-                            var order_id = postal_seq_new[1];
-                            var capacity_load = postal_seq_new[2];
-
-                            var counter_num = k + 1;
-
-                            // Counter to check for repeated postal codes
-                            postal_code_arr.push(postal_code);
-
-                            var new_postal_code = unique_postal(postal_code_arr);
-                            for (c = 0; c < new_postal_code.length; c++){
-                                    var counter_num = c + 1;
+                        // Counter to check for repeated postal codes
+                        function unique_postal(originalArray){
+                            var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
+                            var i = ar.length;
+                            while(i--){  //Iterate through the array
+                                if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
+                                    ar.splice(i,1);  //Remove that element!
                                 }
-                           $proposedTable.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td></tr>");
-
+                            }
+                            return ar; //Return the new, more unique array
                         }
 
+                        // Loop the Postal Sequence
+                        for(i = 0; i < postal_sequence_new.length; i++){
+                            var postal_seq_vehicle = postal_sequence_new[i];
+                            var postal_code_arr = [];
+
+                            // Marker Truck Counter
+                            $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i+ 1) +"'></i></li>");
+
+                            // Summary Table Truck Counter
+                            $proposedTable.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck  " + (i + 1) + "</b>: </td></td>" );
+
+                            for(k = 0; k < postal_seq_vehicle.length; k++){
+                                var postal_seq_new = postal_seq_vehicle[k]
+
+                                var postal_code = postal_seq_new[0];
+                                var order_id = postal_seq_new[1];
+                                var capacity_load = postal_seq_new[2];
+
+                                var counter_num = k + 1;
+
+                                // Counter to check for repeated postal codes
+                                postal_code_arr.push(postal_code);
+
+                                var new_postal_code = unique_postal(postal_code_arr);
+                                for (c = 0; c < new_postal_code.length; c++){
+                                        var counter_num = c + 1;
+                                    }
+                               $proposedTable.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td></tr>");
+
+                            }
+
+                        }
+                        // - - - - - - End of Table fo Sorted Results - - - - - - - //
+
+                        // - - - - - - Start Map Results - - - - - - - //
+
+                        //Visual Map Function
+                        generateGMap(starting, result_list, order_postal_arr, latlng_array);
+
+                        //Summary Report for
+                        //generateSummaryReport(propose_route_val, current_route_val, numOfPostalCode)
+
+                        //visualization_table(current_route_value, propose_route_value);
+                        //Table below map - Summary-Value
+                        $('#visualization_table').show()
+                        $('#currentTotalDist').html(current_route_value.toFixed(2) + ' km');
+                        $('#proposedTotalDist').html(propose_route_value.toFixed(2) + ' km');
+                        $('#totalSavings').html(total_savings.toFixed(2) + '%');
+
+                        // $('.modal-body').html(response['html']);
+                        // $('#register-button').css('display', 'none');
+
+                        //send email section
+                        $.post('/email_info',  {
+                            'starting_postal': $('#starting_postal').val(),
+                            'original': $("#postal_sequence").val(),
+                            'generated': $('#sorted_sequence').val()
+                        });
+
+                    } // end of else her:
+
+                } // end Status == ok
+                else{
+
+                    var errors = response.errors;
+
+                    // if there is an error in process, validation error will show
+                    if(response.errors){
+
+                       errorBox.fadeIn();
+                       errorBox.find('p').html(errors);
+
+                    }else{
+                       errorBox.hide();
                     }
-                    // - - - - - - End of Table fo Sorted Results - - - - - - - //
+                }
+            },
+            error: function (response) {
+                // failed request; give feedback to user
+                $('#progressbar').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
 
-                    // - - - - - - Start Map Results - - - - - - - //
+                // Errors validation
+                var errorBox = $('#message-errors');
 
-                    //Visual Map Function
-                    generateGMap(starting, result_list, order_postal_arr, latlng_array);
+                if (response.responseJSON) {
+                    var title = response.responseJSON['title'];
+                    var message = response.responseJSON['message'];
 
-                    //Summary Report for
-                    //generateSummaryReport(propose_route_val, current_route_val, numOfPostalCode)
+                    errorBox.css('display', 'block');
+                    errorBox.find('strong').html(title);
+                    errorBox.find('span').html(message);
+                }
+            },
+            complete: function () {
 
-                    //visualization_table(current_route_value, propose_route_value);
-                    //Table below map - Summary-Value
-                    $('#visualization_table').show()
-                    $('#currentTotalDist').html(current_route_value.toFixed(2) + ' km');
-                    $('#proposedTotalDist').html(propose_route_value.toFixed(2) + ' km');
-                    $('#totalSavings').html(total_savings.toFixed(2) + '%');
-
-                    // $('.modal-body').html(response['html']);
-                    // $('#register-button').css('display', 'none');
-
-                    //send email section
-                    $.post('/email_info',  {
-                        'starting_postal': $('#starting_postal').val(),
-                        'original': $("#postal_sequence").val(),
-                        'generated': $('#sorted_sequence').val()
-                    });
-
-                } // end of else her:
-
-            } // end Status == ok
-            else{
-                
-                var errors = response.errors;
-                //alert(errors);
-                $('#ajax_errors').show();
-                $('#ajax_errors').html(errors);
+                // register_button.html('Register');
+                // register_button_icon.removeClass('fa-cog fa-spin').addClass('fa-arrow-right');
             }
-        },
-        error: function (response) {
-            // failed request; give feedback to user
-            $('#progressbar').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+        });
+   } //end of validation
 
-            // Errors validation
-            var ajax_errors = $('#ajax-errors');
-
-            if (response.responseJSON) {
-                var title = response.responseJSON['title'];
-                var message = response.responseJSON['message'];
-
-                ajax_errors.css('display', 'block');
-                ajax_errors.find('strong').html(title);
-                ajax_errors.find('span').html(message);
-            }
-        },
-        complete: function () {
-
-//            register_button.html('Register');
-//            register_button_icon.removeClass('fa-cog fa-spin').addClass('fa-arrow-right');
-        }
-    })
 }); //end of function
 
 
@@ -1723,3 +1836,6 @@ function addLine(polygon_line, map) {
 
     });
 }
+
+
+});

@@ -6,8 +6,8 @@
     <div class="container">
 
         <div class="page-header">
-            <h2>Trip Details</h2>
-
+            <h2>User Log Activity</h2>
+            <p class="lead">Route Log Details</p>
         </div>
         <div class="row">
 
@@ -52,7 +52,38 @@
                     <p style="font-size:14px;">The Lat & Long Coordinates of {{ route.starting_point }} : {{ route.origin_destination }} </p>
                  {% endfor %}
 
+                <table class="table table-bordered">
+                    <tr>
+                        <th class="background_color">Truck Nos. </th>
+                        <th>Order IDs</th>
+                        <th>Origin Postal Code</th>
+                        <th class="background_color">Destination Postal Code</th>
+                        <th>Latitude</th>
+                        <th>Longtitude</th>
+                        <th>Route between points</th>
+                        <th>Distance (km)</th>
+                    </tr>
+                     {% for propose in web_proposed %}
+                    <tr>
+                        <td class="background_color">{{ propose.vehicle_id }}</td>
+                        <td>{{ propose.order_id }}</td>
+                        <td>{{ propose.origin_code }}</td>
+                        <td class="background_color">{{ propose.postal_code }}</td>
+                        <td>{{ propose.longVal }}</td>
+                        <td>{{ propose.latVal }}</td>
+                        <td><a href="{{ propose.url_id }}" target="_blank"><span style="font-size:13px;">{{ propose.url_id }}</span></a></td>
+                        <td>{{ propose.distance }}</td>
+                    </tr>
+                     {% endfor %}
+                     {% for route in web_routes %}
+                    <tr>
+                        <td colspan="7" style=" text-align: right;">Proposed Total Distance</td>
+                        <td><strong>{{ route.proposed_total_dist }}</strong></td>
+                    </tr>
+                     {% endfor %}
+                </table>
 
+                <!-- New -->
 
                 <table class="table table-bordered">
                     <tr>

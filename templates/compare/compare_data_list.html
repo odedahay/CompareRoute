@@ -3,25 +3,10 @@
 {% include "commons/navbar.html" %}
 {% block content %}
 
-<style>
-    #progress{
-     width:300px;
-     height:20px;
-     border:1px solid rgba(0,0,0,0.5);
-    }
-    #bar{
-     width:0%;
-     height:20px;
-     background-color:green;
-     -webkit-transition:width 700ms ease;   
-    }
-
-</style>
-
 <div class="container theme-showcase" role="main" id="compare">
     <div class="page-header">
-        <h2>CompareRoute Route Log</h2>
-        <p class="lead">Generated Proposed Route Log Details:</p>
+        <h2>Route Log</h2>
+        <p class="lead">Generated Proposed Route Log Details</p>
         <hr />
         <div class="text-right">
             {% for back in web_routes %}
@@ -182,5 +167,6 @@
 <script src="/js/jquery.progresstimer.js"></script>
 <script src="/js/excel_dl/jquery.btechco.excelexport.js"></script>
 <script src="/js/excel_dl/jquery.base64.js"></script>
+<script src="/js/route/pagination_filter.js"></script>
 
 {% endblock %}
