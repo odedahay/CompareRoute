@@ -60,7 +60,7 @@ $(function() {
 
     // Default Open for Optimizing Truck
     if($('#optionsTruck').prop('checked', true)){ $(".cr_truck").show();}
-
+       refreshBtn_companies.hide();
     // close Btn:
     $("#closeBtn").on('click', function(){
         $(this).parent().remove();
@@ -83,6 +83,8 @@ $(function() {
             // TextBox display
             tableDisplay.not(cr_truck).hide();
             cr_truck.show();
+
+            refreshBtn_companies.hide();
 
             // TextBox Template:
             template_byTruck.show();
@@ -404,7 +406,7 @@ $( '#refresh_btn' ).on( 'click', function() {
 
 
     });
-
+// priority_capacity_comp function
 $(function() {
 
     var $sortCompanies = $("#sort_company");
@@ -517,19 +519,19 @@ function generateFields(name_of_company){
         var $fields_column6 = $('<div class ="hidden_field1"></div>'); // btn Add
 
         var $fields_label01 = $('<label class="control-label font_11" for="starting_postal_'+(i+1)+'"> <span class="name_companies"> Starting Postal: '+company_name +' * </span></label>')
-        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="461051">')
+        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value=""><p class="js_error startingPostal_'+(i+1)+'"></p>')
 
         var $fields_label02 = $('<label class="control-label font_11" for="vehicle_quantity_'+(i+1)+'">Enter No. of Truck * </label>')
-        var $fields_input02 = $('<input type="number" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="1">')
+        var $fields_input02 = $('<input type="text" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value=""><p class="js_error vehicleQuantity_'+(i+1)+'"></p>')
 
         var $fields_label03 = $('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Types of Truck</label>');
-        var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="Truck">');
+        var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value=""><p class="js_error typeTruck_c'+(i+1)+'"></p>');
 
         var $fields_label04 = $('<label class="control-label font_11" for="truck_capacity_c'+(i+1)+'"> Enter Max Truck Capacity * </label>');
-        var $fields_input04 = $('<input type="number" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="10">');
+        var $fields_input04 = $('<input type="text" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value=""><p class="js_error truckCapacity_c'+(i+1)+'"></p>');
 
         var $fields_label05 = $('<label class="control-label font_11" for="num_of_truck_c'+(i+1)+'"> No. of Truck </label>');
-        var $fields_input05 = $('<input type="number" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="1">');
+        var $fields_input05 = $('<input type="text" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value=""><p class="js_error numTruck_c'+(i+1)+'"></p>');
 
         var $fields_button_add = $('<button id="add_button_c'+(i+1)+'" class="btn btn-link btn-sm customBtn_comp" >+ Add New Truck (3 of 1)</button>');
 
@@ -585,7 +587,7 @@ $(function() {
             event.preventDefault();
             var $inputField_span = $('<span></span>');
             var $inputField_row = $('<div class="row"></div>');
-            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc'+counter+'" /><input type="hidden" id="add_truck_cc1" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c1" style="margin-top:5px;" title="Delete"> Remove </button>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc'+counter+'" /><p class="js_error typeTruck_cc'+counter+'"></p></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc'+counter+'" /><p class="js_error truckCapacity_cc'+counter+'"></p></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc'+counter+'" /><p class="js_error numTruck_cc'+counter+'"></p><input type="hidden" id="add_truck_cc1" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c1" style="margin-top:5px;" title="Delete"> Remove </button>');
 
             $inputField_span.append($inputField_row);
             $inputField_row.append($inputFields_col);
@@ -621,7 +623,7 @@ $(function() {
             event.preventDefault();
             var $inputField_span = $('<span></span>');
             var $inputField_row = $('<div class="row"></div>');
-            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc2'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc2'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc2'+counter+'" /><input type="hidden" id="add_truck_cc2" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc2'+counter+'" /><p class="js_error typeTruck_cc2'+counter+'"></p></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc2'+counter+'" /><p class="js_error truckCapacity_cc2'+counter+'"></p></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc2'+counter+'" /><p class="js_error numTruck_cc2'+counter+1+'"></p><input type="hidden" id="add_truck_cc2" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c2" style="margin-top:5px;" title="Delete"> Remove </button>');
 
             $inputField_span.append($inputField_row);
             $inputField_row.append($inputFields_col);
@@ -658,7 +660,7 @@ $(function() {
             event.preventDefault();
             var $inputField_span = $('<span></span>');
             var $inputField_row = $('<div class="row"></div>');
-            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc3'+counter+'" /><input type="hidden" id="add_truck_cc3" value="true"/></div><button class="btn btn-info btn-sm" id="delete_comp_c3" style="margin-top:5px;" title="Delete"> Remove </button>');
+            var $inputFields_col = $('<div class="col-xs-2"><label style="font-size: 12px; padding-top:15px; padding-left:20px; ">Additional Truck : '+(counter + 1)+'</label></div><div class="col-xs-2"><input type="text" class="form-control input" id="type_of_truck_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="truck_capacity_cc3'+counter+'" /></div><div class="col-xs-2 down_15"><input type="number" class="form-control input" id="num_of_truck_cc3'+counter+'" /><input type="hidden" id="add_truck_cc3" value="true"/></div><p class="js_error numTruck_c'+(counter+1)+'"></p><button class="btn btn-info btn-sm" id="delete_comp_c3" style="margin-top:5px;" title="Delete"> Remove </button>');
 
             $inputField_span.append($inputField_row);
             $inputField_row.append($inputFields_col);

@@ -1399,3 +1399,12 @@ p.bubble:before{
     bottom: -16px;
     left: 27px;
 }
+
+p.plainBox{
+    font-size: .95em;
+    position: relative;
+    color:#7f8e92;
+    padding-top:30px;
+    margin:0px;
+}
+

@@ -29,7 +29,7 @@
                     </label>
                     <label class="radio-inline" style="margin-right:10px">
                         <input type="radio" name="optionsRadios" id="sort_company" value="by_companies">
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Consolidate delivery for Multiple Companies
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Consolidate Delivery for Multiple Companies
                     </label>
                     <button type="button" class="btn btn-link sort_company refreshBtn" id="refresh_btn" title="Refresh Button" style="margin-bottom:0px; padding:0;">
                             <i class="fa fa-refresh" aria-hidden="true"></i> Reload </button>
@@ -188,10 +188,13 @@
 
         <div class="row">
             <div class="col-md-6 ">
-                <p class="bubble">
-                    <a class="close close_cust" id="closeBtn" data-dismiss="alert">×</a>
-                    <span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks
-                </p>
+                <p class="plainBox tableDisplay cr_truck"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks</p>
+                <p class="plainBox tableDisplay cr_capacity"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route by Maximizing Truck Capacity</p>
+                <p class="plainBox tableDisplay cr_companies"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Consolidate Delivery for Multiple Companies</p>
+                <!--<p class="bubble">-->
+                    <!--<a class="close close_cust" id="closeBtn" data-dismiss="alert">×</a>-->
+                    <!--<span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks-->
+                <!--</p>-->
 
             </div>
             <div class="col-md-6 space_10">
@@ -242,7 +245,7 @@
                 <div class="row">
                     <div class="col-xs-2 down_15">
                         <label class="control-label font_11" for="starting_postal_cap"> Enter Starting Postal Code * </label>
-                        <input type="text" class="form-control input" id="starting_postal_cap" name="starting_postal_cap" placeholder="e.g. 570282" aria-describedby="helpBlock" value="461051">
+                        <input type="text" class="form-control input" id="starting_postal_cap" name="starting_postal_cap" placeholder="e.g. 570282" aria-describedby="helpBlock" value="">
                         <p class="js_error startingPoint"></p>
                     </div>
                 </div>
@@ -251,18 +254,18 @@
                     <div class="row">
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="type_of_truck"> Enter Types of Truck *</label>
-                             <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="MK100">
+                             <input type="text" class="form-control input" id="type_of_truck" name="type_of_truck" placeholder="e.g. M3 Truck" value="">
                              <p class="js_error typeTruck"></p>
                         </div>
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="truck_capacity"> Enter Max Truck Capacity * </label>
-                            <input type="text" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="15">
+                            <input type="text" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="">
                             <p class="js_error truckCapacity"></p>
 
                         </div>
                         <div class="col-xs-2 down_15">
                             <label class="control-label font_11" for="num_of_truck"> No. of Truck </label>
-                            <input type="text" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" value="4">
+                            <input type="text" class="form-control input" id="num_of_truck" name="num_of_truck" placeholder="e.g. 5" value="">
                              <p class="js_error numTruck"></p>
                         </div>
                     </div>
@@ -286,7 +289,7 @@
 
                         <div class="alert alert-info alert-dismissible" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> </button>
-                          <strong>Note!</strong><br />
+                          <!--<strong>Note!</strong><br />-->
                             For any Delivery Location Details update, please click <i class="fa fa-arrow-right" aria-hidden="true"></i>   " <i class="fa fa-refresh" aria-hidden="true"></i> Reload "  button <br />
 
                         </div>
@@ -302,7 +305,7 @@
                         </div>
                     </div>
                     <div class="col-xs-3" style="padding-top:10px">
-                           <span> Number of Companies (Max 6)</span>  <!--<i class="fa fa-list-ol" aria-hidden="true"></i>-->
+                           <span> Number of Companies (Max 3)</span>  <!--<i class="fa fa-list-ol" aria-hidden="true"></i>-->
                     </div>
                     <div class="col-xs-4">
 

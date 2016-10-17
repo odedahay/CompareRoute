@@ -99,7 +99,9 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
             for propsed_seq_2 in propsed_seq_1:
 
-                print "propsed_seq_2", propsed_seq_2
+                pass
+
+                #print "propsed_seq_2", propsed_seq_2
 
         #  - - - To Be Continue - - - - #
 
