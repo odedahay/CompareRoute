@@ -1,8 +1,3 @@
-/*!
- * Start Bootstrap - Freelancer Bootstrap Theme (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
 
 body {
     overflow-x: hidden;
@@ -147,14 +142,6 @@ header .intro-text .skills {
     color: #333;
 }
 
-/*@media screen and (min-width: 900px){
-  .col-xs-3 {
-        width: 25%;
-    }
-    .col-xs-2 {
-        width: 16%;
-    }
-}*/
 /***INPUT style***/
 .input-lg{
   padding:0 0 0 10px;
@@ -224,17 +211,6 @@ section.success a:active,
 section.success a.active {
     outline: 0;
     color: #2c3e50;
-}
-
-
-@media(max-width:767px) {
-    section {
-        padding: 75px 0;
-    }
-
-    section.first {
-        padding-top: 75px;
-    }
 }
 
 
@@ -345,11 +321,6 @@ h4.service-heading {
     z-index: 2;
 }
 
-@media(min-width:767px) {
-    #portfolio .portfolio-item {
-        margin: 0 0 30px;
-    }
-}
 
 
 .btn-outline {
@@ -578,7 +549,8 @@ div.tableize{
   /*filter:alpha(opacity=80);*/
   position:relative;
   box-sizing:border-box;
-  height:215px;
+ /* height:215px;*/
+  height:180px;
   overflow:auto;
   overflow-y:hidden;
   overflow-x:hidden;
@@ -715,88 +687,6 @@ div.tableize-unhover table.tableize{
     background-color:#59b5fa;
 }
 
-/************ media 768 **************/
-
-
-@media(min-width:768px) {
-    header .container {
-        padding-top: 80px;
-        padding-bottom: 100px;
-    }
-
-    header .intro-text .name {
-        font-size: 4.85em;
-        color: #333;
-    }
-
-    header .intro-text .skills {
-        font-size: 1.75em;
-        color: #333;
-    }
-    .navbar-fixed-top {
-        padding: 25px 0;
-        -webkit-transition: padding .3s;
-        -moz-transition: padding .3s;
-        transition: padding .3s;
-    }
-
-    .navbar-fixed-top .navbar-brand {
-        font-size: 2em;
-        -webkit-transition: all .3s;
-        -moz-transition: all .3s;
-        transition: all .3s;
-        padding: 0 13px 0 0;
-        margin-top: 0;
-    }
-
-    .navbar-fixed-top.navbar-shrink {
-        padding: 10px 0;
-        border-bottom: 1px solid #4170a8;
-
-    }
-
-    .navbar-fixed-top.navbar-shrink .navbar-brand {
-        font-size: 1.5em;
-    }
-    .intro {
-        height: 100%;
-        padding: 0;
-    }
-
-    .intro .intro-body .brand-heading {
-        font-size: 80px;
-        color: #333;
-    }
-
-    .intro .intro-body .intro-text {
-        font-size: 26px;
-        color: #333;
-    }
-    .content-section {
-        padding-top: 250px;
-    }
-    section {
-      padding: 150px 0;
-    }
-    .jumbotron { padding-top: 30px;}
-
-    #login-dp{
-        background-color: inherit;
-        color: #fff;
-    }
-    #login-dp .bottom{
-        background-color: inherit;
-        border-top:0 none;
-    }
-     .col-xs-3 {
-        width: 25%;
-    }
-    .col-xs-2 {
-        width: 18%;
-    }
-}
-
-
 /* Sorted Postal Table */
 #sorted_sequence1 h3{
     padding-top:0;
@@ -904,7 +794,7 @@ table.summary_Table td {
 .tableL{
     margin-bottom:20px;
     border-collapse:collapse;
-    width: 90%;
+    width: 100%; /*90%*/
     margin:20px 0px;
 }
 .tableL > thead{
@@ -1016,77 +906,6 @@ aside.clients p{
 .background_color{
     background-color:#ddd;
 }
-/*
-@media(min-width:420px) {
- 
-    .row {
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-    .container>. navbar-header{
-
-    }
-    .col-xs-4 {
-        width: 30%;
-    }
-    .col-xs-3 {
-        width: 37%;
-        }
-    .col-xs-2 {
-        width: 33%;
-    }
-
-
-    .sorted_sequence_style{
-        width:100%;
-        padding:0;
-        margin:0;
-    }
-    .table.summary_Table{
-        white-space:none;
-    }
-    .well {
-        margin: 0;
-        padding: 0;
-    }
-
-
-}
-
-@media(min-width:320px) {
-    .navbar .navbar-nav {
-        padding-top: 30px;
-    }
- .col-xs-4 {
-        width: 30%;
-    }
-    .col-xs-3 {
-        width: 37%;
-        }
-    .col-xs-2 {
-        width: 33%;
-    }
-    .row {
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-     .img-responsive{
-        margin-top: -10px;
-    }
-    .sorted_sequence_style{
-        width:100%;
-        padding:0;
-        margin:0;
-    }
-    .table.summary_Table{
-        white-space:none;
-    }
-    .well {
-        margin: 0;
-        padding: 0;
-    }
-
-}*/
 
 
 .move-left{ padding-left:20px }
@@ -1325,6 +1144,7 @@ p.js_error{
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    z-index: 10;
 }
 
 p.js_error:after{
@@ -1338,6 +1158,11 @@ p.js_error:after{
     z-index: 1;
     top: -9px;
     left: 65px;
+}
+
+.overlap{
+    position:relative;
+    z-index:0;
 }
 
 /*** Customizing the default Parent Design **********/
@@ -1372,6 +1197,7 @@ p.bubble {
     border-radius: 8px;
     border: #98acb1 solid 1px;
     margin-top:10px;
+
 }
 
 p.bubble:after{
@@ -1408,3 +1234,176 @@ p.plainBox{
     margin:0px;
 }
 
+
+/************ media 768 **************/
+/*
+@media(min-width:767px) {
+
+}*/
+/*@media(max-width:767px) {
+
+}*/
+
+@media(min-width:768px) {
+    section {
+        padding: 75px 0;
+    }
+
+    section.first {
+        padding-top: 75px;
+    }
+
+    #portfolio .portfolio-item {
+        margin: 0 0 30px;
+    }
+
+    header .container {
+        padding-top: 80px;
+        padding-bottom: 100px;
+    }
+
+    header .intro-text .name {
+        font-size: 4.85em;
+        color: #333;
+    }
+
+    header .intro-text .skills {
+        font-size: 1.75em;
+        color: #333;
+    }
+    .navbar-fixed-top {
+        padding: 25px 0;
+        -webkit-transition: padding .3s;
+        -moz-transition: padding .3s;
+        transition: padding .3s;
+    }
+
+    .navbar-fixed-top .navbar-brand {
+        font-size: 2em;
+        -webkit-transition: all .3s;
+        -moz-transition: all .3s;
+        transition: all .3s;
+        padding: 0 13px 0 0;
+        margin-top: 0;
+    }
+
+    .navbar-fixed-top.navbar-shrink {
+        padding: 10px 0;
+        border-bottom: 1px solid #4170a8;
+    }
+    .navbar-fixed-top.navbar-shrink .navbar-brand {
+        font-size: 1.5em;
+    }
+    .intro {
+        height: 100%;
+        padding: 0;
+    }
+
+    .intro .intro-body .brand-heading {
+        font-size: 80px;
+        color: #333;
+    }
+
+    .intro .intro-body .intro-text {
+        font-size: 26px;
+        color: #333;
+    }
+    .content-section {
+        padding-top: 250px;
+    }
+    section {
+      padding: 150px 0;
+    }
+    .jumbotron { padding-top: 30px;}
+
+    #login-dp{
+        background-color: inherit;
+        color: #fff;
+    }
+    #login-dp .bottom{
+        background-color: inherit;
+        border-top:0 none;
+    }
+     .col-xs-3 {
+        width: 25%;
+    }
+    .col-xs-2 {
+        width: 18%;
+    }
+}
+
+/************ media 420 **************/
+
+/*
+@media(min-width:420px) {
+
+    .row {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    .container>. navbar-header{
+
+    }
+    .col-xs-4 {
+        width: 30%;
+    }
+    .col-xs-3 {
+        width: 37%;
+        }
+    .col-xs-2 {
+        width: 33%;
+    }
+
+
+    .sorted_sequence_style{
+        width:100%;
+        padding:0;
+        margin:0;
+    }
+    .table.summary_Table{
+        white-space:none;
+    }
+    .well {
+        margin: 0;
+        padding: 0;
+    }
+
+
+}
+
+/************ media 320 **************/
+/*
+@media(min-width:320px) {
+    .navbar .navbar-nav {
+        padding-top: 30px;
+    }
+ .col-xs-4 {
+        width: 30%;
+    }
+    .col-xs-3 {
+        width: 37%;
+        }
+    .col-xs-2 {
+        width: 33%;
+    }
+    .row {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+     .img-responsive{
+        margin-top: -10px;
+    }
+    .sorted_sequence_style{
+        width:100%;
+        padding:0;
+        margin:0;
+    }
+    .table.summary_Table{
+        white-space:none;
+    }
+    .well {
+        margin: 0;
+        padding: 0;
+    }
+
+}*/

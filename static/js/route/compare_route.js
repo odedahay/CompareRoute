@@ -412,6 +412,15 @@ function truck_capacity_area_comp_1a(type_of_truck, truck_capacity, num_of_truck
     // call function to validate fields
     return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
 }
+// Company Capacity Truck Validation 1 - sub-additional page 1 sub 2
+function truck_capacity_area_comp_1b(type_of_truck, truck_capacity, num_of_truck){
+
+    var errorInput1 = $('.typeTruck_cc2');
+    var errorInput2 = $('.truckCapacity_cc2');
+    var errorInput3 = $('.numTruck_cc2');
+    // call function to validate fields
+    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
+}
 
 // Company Capacity Truck Validation 2
 function truck_capacity_area_comp_2(type_of_truck, truck_capacity, num_of_truck){
@@ -431,27 +440,45 @@ function truck_capacity_area_comp_2a(type_of_truck, truck_capacity, num_of_truck
     // call function to validate fields
     return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
 }
+// Company Capacity Truck Validation 2 - sub-additional page 1 x2
+function truck_capacity_area_comp_2b(type_of_truck, truck_capacity, num_of_truck){
+
+    var errorInput1 = $('.typeTruck_cc22');
+    var errorInput2 = $('.truckCapacity_cc22');
+    var errorInput3 = $('.numTruck_cc22');
+    // call function to validate fields
+    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
+}
+/////////
 // Company Capacity Truck Validation 3
 function truck_capacity_area_comp_3(type_of_truck, truck_capacity, num_of_truck){
 
-    var errorInput1 = $('.typeTruck_cc3');
+    var errorInput1 = $('.typeTruck_c3');
     var errorInput2 = $('.truckCapacity_c3');
     var errorInput3 = $('.numTruck_c3');
     // call function to validate fields
     return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
 }
-/////////
 
-// Company Capacity Truck Validation 2 - sub-additional page 1 x2
+// Company Capacity Truck Validation 3 - sub-additional page 1 x2
 function truck_capacity_area_comp_3a(type_of_truck, truck_capacity, num_of_truck){
 
-    var errorInput1 = $('.typeTruck_cc3');
-    var errorInput2 = $('.truckCapacity_cc3');
-    var errorInput3 = $('.numTruck_cc3');
+    var errorInput1 = $('.typeTruck_cc31');
+    var errorInput2 = $('.truckCapacity_cc31');
+    var errorInput3 = $('.numTruck_cc31');
     // call function to validate fields
     return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
 }
+// Company Capacity Truck Validation 3 - sub-additional page 2 x 2
+function truck_capacity_area_comp_3b(type_of_truck, truck_capacity, num_of_truck){
 
+    var errorInput1 = $('.typeTruck_cc32');
+    var errorInput2 = $('.truckCapacity_cc32');
+    var errorInput3 = $('.numTruck_cc32');
+    // call function to validate fields
+    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
+}
+/////////
 // Company Capacity Truck Body
 function truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck){
 
@@ -597,6 +624,19 @@ $('#routeBtn').click(function () {
     var num_of_truck_cc22 = $("#num_of_truck_cc22").val();
     var num_of_truck_cc23 = $("#num_of_truck_cc23").val();
 
+    // sub fields 3
+    var type_of_truck_cc31 = $("#type_of_truck_cc21").val();
+    var type_of_truck_cc32 = $("#type_of_truck_cc22").val();
+    var type_of_truck_cc33 = $("#type_of_truck_cc23").val();
+
+    var truck_capacity_cc31 = $("#truck_capacity_cc21").val();
+    var truck_capacity_cc32 = $("#truck_capacity_cc22").val();
+    var truck_capacity_cc33 = $("#truck_capacity_cc23").val();
+
+    var num_of_truck_cc31 = $("#num_of_truck_cc21").val();
+    var num_of_truck_cc32 = $("#num_of_truck_cc22").val();
+    var num_of_truck_cc33 = $("#num_of_truck_cc23").val();
+
     // Event Counter
     var add_truck_cc1 = $("#add_truck_cc1").val();
     var add_truck_cc2 = $("#add_truck_cc2").val();
@@ -661,7 +701,6 @@ $('#routeBtn').click(function () {
 
             console.log('Hello', checkTruckLimit);
 
-            // check truckCapacity1 if true
             if(truckCapacity1 !== false && checkTruckLimit === true){
                 truckCapacity_false = true;
             }
@@ -755,43 +794,43 @@ $('#routeBtn').click(function () {
                 var startingValue1 = checkStarting_Point_comp_selector_1(starting_postal_1);
                 var startingValue2 = checkStarting_Point_comp_selector_2(starting_postal_2);
 
-                if(type_of_truck_cc1 !=="" && truck_capacity_cc1 !==""){
+                if(add_truck_cc1 !== true){
+
+                    console.log("Feilds 2");
 
                     var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
                     var company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    var company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
 
                     var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    var company_TruckCapacity2 = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    var company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    var company_TruckCapacity2a = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+
+                    //validate the forms
+                    if(company_TruckCapacity1 === true && company_TruckCapacity1a === true && company_TruckCapacity1b === true ){
+                        var company_TruckCapacity1 = true;
+                    }
+                    if(company_TruckCapacity2 === true && company_TruckCapacity2a === true && company_TruckCapacity2a === true){
+                        var company_TruckCapacity2 = true;
+                    }
+
+                }else{
+
+                     var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                     var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+
 
                 }
-
-                if(type_of_truck_cc21 !=="" && truck_capacity_cc21 !==""){
-
-                    var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    var company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
-//                    var company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
-//
-//                    var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-//                    var company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
-//                    var company_TruckCapacity2b = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
-
-                }
-                else{
-
-                    // Maximized Truck Capacity for two companies
-                    var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-
-                }
-
-
-                if(startingValue1 === true && startingValue2 === true){
-                    var startingValue_comp = true;
-                }
-
-                if(company_TruckCapacity1 === true && company_TruckCapacity2 === true){
+                 // vehicle
+                 if(startingValue1 === true && startingValue2 === true){
+                        var startingValue_comp = true;
+                        }
+                  // truck capacity
+                 if(company_TruckCapacity1 === true && company_TruckCapacity2 === true){
                     var vehicleCount_comp = true;
-                }
+                    }
+
+
             }
             if( parseInt(num_comp_val) === 3 ){
 
@@ -803,11 +842,34 @@ $('#routeBtn').click(function () {
                 var startingValue2 = checkStarting_Point_comp_selector_2(starting_postal_2);
                 var startingValue3 = checkStarting_Point_comp_selector_3(starting_postal_3);
 
-                // Maximized Truck Capacity for two companies
-                var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                var company_TruckCapacity3 = truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                //if(type_of_truck_c3 === ""){
+                if(add_truck_cc3 !== true){
 
+                    console.log("Feilds 3");
+
+                    // Maximized Truck Capacity for two companies
+                    var company_TruckCapacity1 =  truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    var company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    var company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
+
+                    var company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    var company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    var company_TruckCapacity2a = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+
+                    var company_TruckCapacity3 =  truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                    var company_TruckCapacity3a = truck_capacity_area_comp_3a(type_of_truck_cc31, truck_capacity_cc31, num_of_truck_cc31);
+                    var company_TruckCapacity3b = truck_capacity_area_comp_3b(type_of_truck_cc32, truck_capacity_cc32, num_of_truck_cc32);
+
+                }else{
+
+                    console.log("Feilds 1");
+
+                    var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    var company_TruckCapacity3 = truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                }
+
+                
                 //validate the forms
                 if(startingValue1 === true && startingValue2 === true && startingValue3 === true ){
                     var startingValue_comp = true;
@@ -817,24 +879,22 @@ $('#routeBtn').click(function () {
                     var vehicleCount_comp = true;
                 }
             }
-
         }
 
         if(parseInt(num_comp_val) === 1){
 
-            // 1 company is invalid
             var error = "Error! <br /> Please check your entered in Delivery Location Details, at least make two Company Name in 4th Column"
             errorBox.fadeIn();
             errorBox.find('p').html(error);
         }
 
-        //if all true, generate_route = true
+        // if all true, generate_route the key = true
         if(startingValue_comp === true && postalSeqValue_comp === true && vehicleCount_comp === true){
              generate_route = true;
         }
 
     }// end of Company
-
+   console.log('generate_route', generate_route);
    // Check first value of inputs before it process
    if(generate_route === true){
 
@@ -925,6 +985,20 @@ $('#routeBtn').click(function () {
                 num_of_truck_cc22: num_of_truck_cc22,
                 num_of_truck_cc23: num_of_truck_cc23,
 
+                // sub fields 3
+                type_of_truck_cc31: type_of_truck_cc31,
+                type_of_truck_cc32: type_of_truck_cc32,
+                type_of_truck_cc33: type_of_truck_cc33,
+
+                truck_capacity_cc31: truck_capacity_cc31,
+                truck_capacity_cc32: truck_capacity_cc32,
+                truck_capacity_cc33: truck_capacity_cc33,
+
+                num_of_truck_cc31: num_of_truck_cc31,
+                num_of_truck_cc32: num_of_truck_cc32,
+                num_of_truck_cc33: num_of_truck_cc33,
+
+                // events value
                 add_truck_cc1: add_truck_cc1,
                 add_truck_cc2: add_truck_cc2,
                 add_truck_cc3: add_truck_cc3,
@@ -1045,7 +1119,6 @@ $('#routeBtn').click(function () {
                     $sorted_sequenceTable.append($proposedTable);
 
                     // Global Function //
-
                     // Addition
                     function add(a, b) {return a + b;}
 
@@ -1086,9 +1159,6 @@ $('#routeBtn').click(function () {
                             postalSorted = counter++
                         }
 
-                        /*$("#sorted_sequence0_ul").show();
-                        $("#sorted_sequence0_ul_02").show();*/
-                        //$("#sorted_sequence1").show();
 
                         $("#proposedTable").show();
                         $("#proposedTable_company").show();
@@ -1133,8 +1203,6 @@ $('#routeBtn').click(function () {
 
                             $ul_table_truck.append("<li>Company "+(hq + 1) +" - " +company_name+  " - Starting Postal Code : "+hq_startingPoint+ " </li>");
                         }
-
-
                         // - - - - - - Global Message - - - - - - - //
                         // Message Layout
                         $p_note2.text('Breakdown of Proposed Postal Code Routes');
@@ -1149,6 +1217,8 @@ $('#routeBtn').click(function () {
                         // Loop the Postal Sequence
                         for(i = 0; i < postal_sequence_company.length; i++){
                             var postal_seq_vehicle = postal_sequence_company[i];
+
+                            console.log('postal_seq_vehicle', postal_seq_vehicle);
 
                             // Truck Counter
                             $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Company " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
@@ -1177,6 +1247,7 @@ $('#routeBtn').click(function () {
                                     for (c = 0; c < new_postal_code.length; c++){
                                         var counter_num = c + 1;
                                     }
+
                                     $proposedTable.append("<tr><td>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td><td>"+company_id+"</td></tr>");
                                 }
                                 // Summary Table
@@ -1309,11 +1380,6 @@ $('#routeBtn').click(function () {
 
                         $h2_success.text('Successful!')
 
-                        // Sequence Entered
-                        //$ul_sequence.append('<li>Starting Postal Code : '+starting+'</li>');
-                        //$ul_sequence.append('<li>No. of Postal Sequence Entered : '+postalSorted+'</li>');
-                        //$ul_sequence.append('<li>No. of Truck Entered : '+vehicle_priority+'</li>');
-
                         // Condition for Route by Truck:
                         if(optionsTruck === true){
 
@@ -1383,13 +1449,12 @@ $('#routeBtn').click(function () {
                                 // Col 2
                                 $tableTd.append($tableTd2);
 
-
                                 var total_num_result;
                                 var total_truck;
+
                                 for (var a=0; a < latlng_array.length; a++){
                                     var result_sortedPostal = latlng_array[a];
                                            total_num_result = result_sortedPostal.length;
-
                                 }
 
                                 // Result
@@ -1527,9 +1592,17 @@ $('#routeBtn').click(function () {
                             return ar; //Return the new, more unique array
                         }
 
+                        /*for(s = 0; s < result_list.length; s++){
+                            var postal = result_list[s];
+                            console.log('postal_code', postal);
+                        }*/
+
+
                         // Loop the Postal Sequence
                         for(i = 0; i < postal_sequence_new.length; i++){
                             var postal_seq_vehicle = postal_sequence_new[i];
+                            var latlng_value = latlng_array[i];
+
                             var postal_code_arr = [];
 
                             // Marker Truck Counter
@@ -1549,20 +1622,19 @@ $('#routeBtn').click(function () {
 
                                 // Counter to check for repeated postal codes
                                 postal_code_arr.push(postal_code);
-
                                 var new_postal_code = unique_postal(postal_code_arr);
                                 for (c = 0; c < new_postal_code.length; c++){
-                                        var counter_num = c + 1;
+                                        var new_counter_num = c + 1;
                                     }
-                               $proposedTable.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td></tr>");
+                               $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td></tr>");
 
                             }
 
                         }
-                        // - - - - - - End of Table fo Sorted Results - - - - - - - //
 
                         // - - - - - - Start Map Results - - - - - - - //
 
+                        // console.log("this is result_list", result_list);
                         //Visual Map Function
                         generateGMap(starting, result_list, order_postal_arr, latlng_array);
 
@@ -1630,6 +1702,20 @@ $('#routeBtn').click(function () {
 
 }); //end of function
 
+function eliminateDuplicates(arr) {
+  var i,
+      len=arr.length,
+      out=[],
+      obj={};
+
+  for (i=0;i<len;i++) {
+    obj[arr[i]]=0;
+  }
+  for (i in obj) {
+    out.push(i);
+  }
+  return out;
+}
 
 // Generate Google Map according to the sorted postal sequence
 function generateGMap(starting_postal, result_list, order_postal_arr, latlng_array, sort_company){
@@ -1652,9 +1738,12 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
         var vehicle_postal_list = result_list[i];
 
-        for(j = 0; j < vehicle_postal_list.length; j++){
-            vehicle_postal_list[j] = vehicle_postal_list[j].trim();
-        }
+        // for(j = 0; j < vehicle_postal_list.length; j++){
+        //     vehicle_postal_list[j] = vehicle_postal_list[j].trim();
+
+            
+        // }
+        console.log("vehicle_postal_list", vehicle_postal_list);
         // Push into a full list for plotting Markers later
         vehicle_postal_list_full.push(vehicle_postal_list);
     } // End of postal code formatting
@@ -1677,6 +1766,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
     // Colors to differentiate the polygons
     //["red", "blue", "green", "yellow", "black", "orchid", "indigo", "darkcyan", "deeppink", "orange", "lawngreen", "azure", "rose", "magenta", "white"];
     // red - 1, blue - 2, green -3, yellow- 4
+
     var colors = ["#ff0033", "#0267fe", "#02cc35",
                   "#fecc02", "#999999", "#ff00cc",
                   "#cc00ff", "#029967", "#cccc67",  // #cc00cc
@@ -1687,9 +1777,12 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
     // Push into a full list for plotting Markers later
     polygon_coord_full = [];
 
+    var duplicate = eliminateDuplicates(latlng_array);
+    console.log("Duplicate!", duplicate);
+
     for(i = 0; i < latlng_array.length; i++){
         vehicle_latlng = latlng_array[i];
-
+        
         // console.log('vehicle_latlng', vehicle_latlng);
         // Store lat and lng for constructing the polygon
         polygon_coord = []
@@ -1699,6 +1792,10 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
             latlng = vehicle_latlng[j];
             lat = latlng[0];
             lng = latlng[1];
+
+            // console.log(lat);
+            // console.log(lng);
+            
             polygon_coord.push(new google.maps.LatLng(lat, lng));
         }
 
@@ -1855,6 +1952,21 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
                 icon: images[i],
                 zIndex:10,
             });
+            marker.setOptions({'opacity': 0.8})
+
+            ///get array of markers currently in cluster
+            /*var allMarkers = mc.getMarkers();*/
+            //check to see if any of the existing markers match the latlng of the new marker
+            /*if (allMarkers.length != 0) {
+                for (i=0; i < allMarkers.length; i++) {
+                  var existingMarker = allMarkers[i];
+                  var pos = existingMarker.getPosition();
+
+                  if (latlng.equals(pos)) {
+                    text = text + " & " + content[i];
+                  }                   
+                }
+              }*/
 
             var content = "";
 
@@ -1863,6 +1975,8 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
                 var order_postal = order_postal_arr[k];
                 var order_id = order_postal[0];
                 var postal2 = order_postal[1];
+
+                //console.log('Hello', order_postal);
 
                 if(postal == postal2){
                     content += "[" + postal + "]";
@@ -1891,7 +2005,7 @@ function createAndBindPolygon(poly, content, map){
 }
 // Link infowindow to the Markers and binding it to a click event
 function createAndBindMarker(marker, content, map){
-google.maps.event.addListener(marker, 'click', function(event){
+        google.maps.event.addListener(marker, 'click', function(event){
         info_window.setContent(content);
         info_window.setPosition(event.latLng);
         info_window.open(map);

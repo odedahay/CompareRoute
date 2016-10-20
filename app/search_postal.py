@@ -127,7 +127,7 @@ class PostalEdit_Handler(CompareRouteHandler):
         #msg = "Successful"
         #self.render("admin/postal_edit.html", postal_edit=postal_edit)
 
-        self.redirect("/admin-postalcode-search")
+        self.redirect("/admin-postal-search")
 
 
 

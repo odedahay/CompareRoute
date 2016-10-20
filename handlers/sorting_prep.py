@@ -22,9 +22,6 @@ from collections import defaultdict
 
 from model.user_account import UserAccount
 
-# from google.appengine.api import urlfetch
-# from google.appengine.api import taskqueue
-
 # urlfetch.set_default_fetch_deadline(60)
 
 class SortingPrep(webapp2.RequestHandler):
@@ -56,6 +53,7 @@ class SortingPrep(webapp2.RequestHandler):
         # for i in range(0, 5):
         #     starting_postal_1 = self.request.get("starting_postal_{}".format(i))
 
+        # Sort companies default fields
         starting_postal_1 = self.request.get("starting_postal_1")
         starting_postal_2 = self.request.get("starting_postal_2")
         starting_postal_3 = self.request.get("starting_postal_3")
@@ -74,7 +72,7 @@ class SortingPrep(webapp2.RequestHandler):
         # vehicle_capacity = self.request.get("truck_capacity")
         # vehicle_type = self.request.get('vehicle_type')
 
-        # 1
+        # main fields for Truck Capacity in Sort companies
         type_of_truck_c1 = self.request.get("type_of_truck_c1")
         type_of_truck_c2 = self.request.get("type_of_truck_c2")
         type_of_truck_c3 = self.request.get("type_of_truck_c3")
@@ -96,6 +94,7 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_c5 = self.request.get("num_of_truck_c5")
         num_of_truck_c6 = self.request.get("num_of_truck_c6")
 
+        # 1st fields for capacity truck
         type_of_truck_cc1 = self.request.get("type_of_truck_cc1")
         type_of_truck_cc2 = self.request.get("type_of_truck_cc2")
         type_of_truck_cc3 = self.request.get("type_of_truck_cc3")
@@ -108,7 +107,7 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_cc2 = self.request.get("num_of_truck_cc2")
         num_of_truck_cc3 = self.request.get("num_of_truck_cc3")
 
-        # 2
+        # 2nd fields for Capacity Truck
         type_of_truck_cc21 = self.request.get("type_of_truck_cc21")
         type_of_truck_cc22 = self.request.get("type_of_truck_cc22")
         type_of_truck_cc23 = self.request.get("type_of_truck_cc23")
@@ -121,6 +120,20 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_cc22 = self.request.get("num_of_truck_cc22")
         num_of_truck_cc23 = self.request.get("num_of_truck_cc23")
 
+        # 3rd field for Capacity Truck
+        type_of_truck_cc31 = self.request.get("type_of_truck_cc21")
+        type_of_truck_cc32 = self.request.get("type_of_truck_cc22")
+        type_of_truck_cc33 = self.request.get("type_of_truck_cc23")
+
+        truck_capacity_cc31 = self.request.get("truck_capacity_cc21")
+        truck_capacity_cc32 = self.request.get("truck_capacity_cc22")
+        truck_capacity_cc33 = self.request.get("truck_capacity_cc23")
+
+        num_of_truck_cc31 = self.request.get("num_of_truck_cc21")
+        num_of_truck_cc32 = self.request.get("num_of_truck_cc22")
+        num_of_truck_cc33 = self.request.get("num_of_truck_cc23")
+
+        # Events value for boolean
         add_truck_cc1 = self.request.get("add_truck_cc1")
         add_truck_cc2 = self.request.get("add_truck_cc2")
         add_truck_cc3 = self.request.get("add_truck_cc3")
@@ -138,17 +151,17 @@ class SortingPrep(webapp2.RequestHandler):
 
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
 
-        print "starting_postal_1", starting_postal_1
-        print "vehicle_quantity_1", vehicle_quantity_1
-
-        print "type_of_truck_c1", type_of_truck_c1
+        # print "starting_postal_1", starting_postal_1
+        # print "vehicle_quantity_1", vehicle_quantity_1
+        #
+        # print "type_of_truck_c1", type_of_truck_c1
         # Error list for invalid postal codes
         # no_record_postal = []
 
         # Error Variables:
         error_StartingPoint = " Invalid Starting postal code <br />"
-        error_Num_of_truck = "Add more Truck! <br />The number of truck required based on capacity entered "
-        error_valid_msg_truck = "Add more Truck! <br />The number of truck required based on capacity entered "
+        error_Num_of_truck = "Add more Truck! <br />The minimum balance number of delivery truck  "
+        error_valid_msg_truck = "Add more Truck! <br />The minimum balance number of delivery truck is "
 
         response = {}
         errors = []
@@ -591,6 +604,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                         # GeoCode Map
                         latlng_array = map_visible(propose_result)
+
                         latlng_array_list.append(latlng_array)
 
                 # Converting the postal code to total distance
@@ -617,6 +631,8 @@ class SortingPrep(webapp2.RequestHandler):
                         result_list_arr.append(propose_result_company_2)
 
                 # Converting JSON
+                # Send this JSON file to ajax function > compare_route.js
+
                 response['status'] = 'ok'
                 response['sort_company'] = 'true'
                 response['data_result'] = [
@@ -669,7 +685,6 @@ class SortingPrep(webapp2.RequestHandler):
                     # Vehicle Result base of the priority:
                     vehicle_quantity = len(vehicle_postal_list_new_seq)
 
-
                     if len(truck_capacity_grp) == 1:
                         if int(result_num_truck) > int(num_of_truck):
                             errors.extend([error_valid_msg_truck,  result_num_truck])
@@ -688,6 +703,8 @@ class SortingPrep(webapp2.RequestHandler):
 
                 # GeoCode Map
                 latlng_array = map_visible(propose_result)
+
+                print "latlng_array", latlng_array
 
                 # Converting the total percentage saving of distance
                 difference_total = current_route_value - propose_route_value
@@ -772,7 +789,6 @@ def map_visible(propose_result):
 
     return latlng_array
 
-
 # GeoCode Latlng for Summary:
 def Latlng_value_list(propose_result, origin_destination):
 
@@ -796,7 +812,6 @@ def Latlng_value_list(propose_result, origin_destination):
 
     return result_value
 
-
 # GeoCode Latlng
 def postalcode_latlong(postal):
 
@@ -807,9 +822,13 @@ def postalcode_latlong(postal):
 
             # Remove "0" if still no record found
             if postal[0] == "0":
+
+                print "Adding Zero"
                 current_post = postal.lstrip("0")
                 compare_postal = postalRecordDB.check_if_exists(current_post)
+
             else:
+
                 print('NO POSTAL CODE RECORD')
 
                 nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
@@ -820,6 +839,7 @@ def postalcode_latlong(postal):
         laglongSource = []
 
         laglongSource.append(latlong.lat)
+
         laglongSource.append(',')
         laglongSource.append(latlong.long)
         destinations = ''.join(laglongSource)
@@ -1910,7 +1930,6 @@ def result_distance_latlng(propose_result, origin_destination, num_post_code):
         errors.extend(['Exceeding volume in postal code'])
 
         return errors
-
 
 
 def latlong_summary(list):

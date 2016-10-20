@@ -84,28 +84,28 @@
                         <tr>
                             <th width="30%">Postal Code</th>
                             <th>Order ID</th>
-                            <th>Truck Capacity </th>
+                            <th>Cargo Unit </th>
 
                         </tr>
                         <tr>
                             <td>369974</td>
                             <td>Order01</td>
-                            <td>3</td>
+                            <td>1</td>
                         </tr>
                         <tr>
                             <td>760450</td>
                             <td>Order02</td>
-                            <td>3</td>
+                            <td>1</td>
                         </tr>
                         <tr>
                             <td>596740</td>
                             <td>Order03</td>
-                            <td>1</td>
+                            <td>2</td>
                         </tr>
                         <tr>
                             <td>098585</td>
                             <td>Order04</td>
-                            <td>1</td>
+                            <td>2</td>
                         </tr>
                         <tr>
                             <td>049909</td>
@@ -133,7 +133,7 @@
                         <tr>
                             <th>Postal Code</th>
                             <th>Order ID</th>
-                            <th>Truck Capacity </th>
+                            <th>Cargo Unit </th>
                             <th>Company Name</th>
                         </tr>
                         <tr>
@@ -258,7 +258,7 @@
                              <p class="js_error typeTruck"></p>
                         </div>
                         <div class="col-xs-2 down_15">
-                            <label class="control-label font_11" for="truck_capacity"> Enter Max Truck Capacity * </label>
+                            <label class="control-label font_11" for="truck_capacity"> Enter Min. Truck Capacity * </label>
                             <input type="text" class="form-control input" id="truck_capacity" name="truck_capacity" placeholder="e.g. 10" value="">
                             <p class="js_error truckCapacity"></p>
 
@@ -425,7 +425,8 @@
             <div class="row">
                  <div class="col-lg-12">
                     <div id="visualization_table" style="display:none;">
-                        <table id="summaryTable" class="summary_Table" >
+                        <!--<table id="summaryTable" class="summary_Table" >-->
+                        <table id="summaryTable" class="tableL table-bordered">
                             <br />
                             <b>Summary Savings</b>
                             <tr>
