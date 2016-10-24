@@ -4,18 +4,23 @@ from datetime import datetime
 import webapp2
 from handlers import base
 from model.admin_account import postalRecordDB, PostalRecordDB_alert
+
+# Function created:
 import sorting
+import validation_checker
+
+# Library function
 import json
 import urllib
 import urllib2
 import logging
 import re
 import time
-
-from itertools import groupby
-
 import itertools
 import operator
+from itertools import groupby
+
+
 
 from operator import itemgetter
 from collections import defaultdict
@@ -150,13 +155,6 @@ class SortingPrep(webapp2.RequestHandler):
         num_comp_val = self.request.get('num_comp_val')
 
         # - - - - - - - - -  REQUEST - - - - - - - - - - #
-
-        # print "starting_postal_1", starting_postal_1
-        # print "vehicle_quantity_1", vehicle_quantity_1
-        #
-        # print "type_of_truck_c1", type_of_truck_c1
-        # Error list for invalid postal codes
-        # no_record_postal = []
 
         # Error Variables:
         error_StartingPoint = " Invalid Starting postal code <br />"
@@ -296,9 +294,6 @@ class SortingPrep(webapp2.RequestHandler):
 
                 if int(num_comp_val) == 3:
 
-                    # if add_truck_cc == "add_2":
-                    #     pass
-
                     truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
                     truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
                     truck_capacity_list_c3.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
@@ -376,6 +371,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                 # if int(vehicle_quantity) >= 17:
                 #     errors.extend(['Number vehicle maximum 17 only'])
+
         # Counter checking of Postal Code
         num_post_code = 0
 
@@ -406,15 +402,15 @@ class SortingPrep(webapp2.RequestHandler):
             order_id = str(postal_pair_split[1])
             truck_volume = int(postal_pair_split[2])
 
+            # Postal Code Validation entry
+
             # Add "0" in front of five digit postal codes
             if len(postal_code) == 5:
                 postal_code = "0" + postal_code
 
-            # counter_no = 0
-            # if postal_id == None:
-                # counter_no += 1
-                # Find the nearest postal code number in records
-                # errors.extend(["  Please Check ", postal_code, " Postal Code <br />"])
+            # Any Postal Code below 4 will throw error
+            if len(postal_code) <= 4:
+                errors.extend(["  Please Check ", postal_code, ", Postal Code should only be 6 digits <br />"])
 
             # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
             if not str.isdigit(postal_code) or int(postal_code) >= 830000:
@@ -425,16 +421,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                 # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
                 if truck_volume > int(truck_capacity):
-                    print ('Warning! Exceeding Volume')
-                    errors.extend([postal_code, " exceeding volume in Truck Capacity  <br />"])
-
-            # # Route by Companies:
-            # if priority_capacity_comp == "true":
-            #
-            #     # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
-            #     if truck_volume > int(truck_capacity):
-            #         print ('Warning! Exceeding Volume')
-            #         errors.extend([postal_code, " exceeding volume in Truck Capacity  <br />"])
+                    errors.extend([postal_code, " exceeding to the minimum Truck Capacity <br />"])
 
             if sort_company == "true":
 
@@ -495,6 +482,28 @@ class SortingPrep(webapp2.RequestHandler):
                 # Data Distribute through parallel loop according to number of company request
                 if priority_capacity_comp == "true":
 
+                    # Add in dictionary the value of truck capacity
+                    truck_capacity_dict = {
+
+                        "truck_capacity_c1": truck_capacity_c1,
+                        "truck_capacity_cc1": truck_capacity_cc1,
+                        "truck_capacity_cc2": truck_capacity_cc2,
+
+                        "truck_capacity_c2": truck_capacity_c2,
+                        "truck_capacity_cc21": truck_capacity_cc21,
+                        "truck_capacity_cc22": truck_capacity_cc22,
+
+                        "truck_capacity_c3": truck_capacity_c3,
+                        "truck_capacity_cc31": truck_capacity_cc31,
+                        "truck_capacity_cc32": truck_capacity_cc32,
+
+                    }
+
+                    # print "dictionary", int(truck_capacity_dict['truck_capacity_c1'])
+
+                    # A function to check if the company is exceeding:
+                    errors = validation_checker.cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_capacity_dict)
+
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
 
@@ -516,10 +525,26 @@ class SortingPrep(webapp2.RequestHandler):
                         latlng_array = map_visible(propose_result)
                         latlng_array_list.append(latlng_array)
 
+                    # Create function for validation Truck Capacity
+                    # A function to check if the company is exceeding:
+
+                    # # Function for validation
+                    # result_numTruck = validation_checker.minimum_truck_checker_comp(num_comp_val, propose_result_company, starting_postal_list,
+                    #                                                        num_of_truck_c1, num_of_truck_cc1,
+                    #                                                        num_of_truck_c2, num_of_truck_cc21,
+                    #                                                        num_of_truck_c3, num_of_truck_cc31,
+                    #                                                        type_of_truck_c2,type_of_truck_cc1,type_of_truck_cc21,
+                    #                                                        type_of_truck_c1,
+                    #                                                        type_of_truck_c3,
+                    #                                                        add_truck_cc1, add_truck_cc2,add_truck_cc3)
+                    #
+                    # errors.extend(result_numTruck)
+
                     if int(num_comp_val) == 2:
 
                         company_1 = int(len(propose_result_company[0]))
                         company_2 = int(len(propose_result_company[1]))
+
                         # HQ
                         hq_comp_1 = starting_postal_list[0]
                         hq_comp_2 = starting_postal_list[1]
@@ -543,7 +568,8 @@ class SortingPrep(webapp2.RequestHandler):
                                 errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
 
                             if company_2 > int(num_of_truck_c2):
-                                    errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+                                    errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+
 
                     if int(num_comp_val) == 3:
 
@@ -583,6 +609,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                             if company_3 > int(num_of_truck_c3):
                                 errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
+
                 else:
 
                     for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):

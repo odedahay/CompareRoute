@@ -102,8 +102,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
             # Chunk according to Capacity / No of truck
             vehicle_postal_list_new = list(chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
 
-            print "trust_1", vehicle_postal_list_new
-
             # Current Route
             vehicle_current_postal_list = list(chunk_to_sum_no_truck(capacity_list, *truck_capacity_grp, **truck_dictionary))
 
@@ -530,8 +528,6 @@ def truck_details(list):
     max_list = []
     truck_name_list = []
     truck_dictionary = {}
-
-    print('listtode'), list
 
     if len(list) == 2:
 
