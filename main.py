@@ -44,10 +44,12 @@ class APIHandler_reg(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
+
         api_key_for_user = UserAccount.create_api_key(email)
 
         if email:
-            self.render("/api/api2.html", email=email, api_key_for_user=api_key_for_user)
+            self.render("/api/api2.html", email=email, api_key_for_user=api_key_for_user, admin_user=admin_user)
         else:
             self.render("/api/api.html")
 
@@ -78,6 +80,7 @@ class LoginPage(login.LoginHandler, base.BaseHandler):
             self.redirect("/compare")
 
 class Logout(base.BaseHandler):
+
     def get(self):
         self.clearSession()
         self.redirect('/')
@@ -85,6 +88,8 @@ class Logout(base.BaseHandler):
 
 class ResetPassword(resetpass.New_password_Handler, base.BaseHandler):
     def get(self):
+
+        email = self.request.get('email')
 
         user_id = self.request.get("id")
         user_account = UserAccount.get_by_id(int(user_id))
@@ -118,17 +123,22 @@ class ResetPassword(resetpass.New_password_Handler, base.BaseHandler):
 class PostalAdded_arch(postalchecker.Postal_move_Handler, base.BaseHandler):
     def get(self):
 
+        email = self.request.get('email')
+
         postalHistory = PostalRecordDB_history.query().fetch()
 
-        self.render("admin/admin_archive.html", postalHistory=postalHistory)
+        self.render("admin/admin_archive.html", postalHistory=postalHistory, email=email)
 
 class Postal_Search(postalchecker.Postal_move_Handler, base.BaseHandler):
      def get(self):
+
+        email = self.session.get("email")
 
         postal_key = postalRecordDB.check_if_exists('q')
         postal = postalRecordDB.get_all_postalcode(postal_key)
         #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
         tpl_values = {
+            'email': email,
             'postal': postal
         }
         self.render('admin/admin_search_postal.html', **tpl_values)
@@ -137,42 +147,44 @@ class AdminHome_page(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        web_routes = RouteDistance.query().order(-RouteDistance.created_date).fetch()
-        web_temp = []
-        for user in web_routes:
-            web_user_id = user.user_id
-            web_temp.append(str(web_user_id))
 
-        web_id_counts_id = [(k, len(list(g))) for k, g in groupby(sorted(web_temp))]
-        #  - - - - - - - - - - - - - - - API Commands  - - - - - - - - - - - - - - - - - - -
-        api_routes = RouteDistance_api.query().order(-RouteDistance_api.created_date).fetch()
+        if admin_user:
 
-        api_temp = []
+            web_routes = RouteDistance.query().order(-RouteDistance.created_date).fetch()
+            web_temp = []
+            for user in web_routes:
+                web_user_id = user.user_id
+                web_temp.append(str(web_user_id))
 
-        for user in api_routes:
-            user_id = user.user_id
-            api_temp.append(str(user_id))
+            web_id_counts_id = [(k, len(list(g))) for k, g in groupby(sorted(web_temp))]
+            #  - - - - - - - - - - - - - - - API Commands  - - - - - - - - - - - - - - - - - - -
+            api_routes = RouteDistance_api.query().order(-RouteDistance_api.created_date).fetch()
 
-        api_id_counts_id = [(k, len(list(g))) for k, g in groupby(sorted(api_temp))]
+            api_temp = []
 
-        #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - -
-        template_values = {
-            # 'email': email,
-            'web_id_counts_id': web_id_counts_id,
-            'api_id_counts_id': api_id_counts_id,
-            'web_routes': web_routes,
-            'api_routes': api_routes
-        }
-        self.render("admin/admin.html", **template_values)
+            for user in api_routes:
+                user_id = user.user_id
+                api_temp.append(str(user_id))
 
-        # if email:
-        #
-        #     self.render("/compare/compare.html", email=email)
-        #
-        # else:
-        #     self.redirect("/")
+            api_id_counts_id = [(k, len(list(g))) for k, g in groupby(sorted(api_temp))]
 
+            #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - -
+            template_values = {
+                'admin_user': admin_user,
+                'email': email,
+                'web_id_counts_id': web_id_counts_id,
+                'api_id_counts_id': api_id_counts_id,
+                'web_routes': web_routes,
+                'api_routes': api_routes
+            }
+            self.render("admin/admin.html", **template_values)
+
+        else:
+
+            print "Hey! this page is restricted"
+            self.redirect("/compare")
 
 # This class is for groupings
 class AdminHome_page1(base.BaseHandler):
@@ -282,17 +294,16 @@ app = webapp2.WSGIApplication([
       ('/login', LoginPage),
       ('/reset', ResetPassword),
       ('/register', 'app.register.RegisterHandler'),
-      ('/compare', 'app.compare.ComparePage'),
+      ('/compare', 'handlers.compare.ComparePage'),
       ('/compare-data', 'handlers.user_data.User_Data'),
       ('/compare-data-list', 'handlers.user_data.User_Data_list'),
       ('/compare-api', APIHandler_reg),
-      ('/compare-profile', 'handlers.profile.ProfilePage'), #ProfilePage
+      ('/compare-profile', 'handlers.profile.ProfilePage'),
       ("/api", APIHandler),
       ('/recover', 'app.recover_psswrd.PasswordRecover'),
       ('/logout', Logout),
       ('/admin-csv', 'app.csv_upload.MainHandler3'),
       ('/admin-csv-load', 'app.csv_upload.UploadHandler'),
-      # ('/admin/gcsupload', 'app.csv_upload.UploadGCSData'),
       ('/sorting-proposed', 'handlers.sorting_task.TaskRouteHandlerProposed'),
       ('/sorting-proposed-api', 'handlers.sorting_task_api.TaskRouteHandlerProposed_api'),
       ('/account/<user_id:[0-9]+>/confirm/confirmation_code:[a-z0-9]{32}>', 'app.register.ConfirmUser'),
@@ -300,8 +311,8 @@ app = webapp2.WSGIApplication([
       ('/admin-user', AdminHome_page1),
       ('/admin-summary', AdminSummary),
       ('/admin-summary-api', AdminSummary_api),
-      ('/admin-credits', 'app.user_credits.summaryCredits'),
-      ('/admin-credits-edit', 'app.user_credits.summaryCredits_edit'),
+      ('/admin-credits', 'handlers.user_credits.summaryCredits'),
+      ('/admin-credits-edit', 'handlers.user_credits.summaryCredits_edit'),
       ('/summary-details', sortingsum.SummaryBMapHandler),
       ('/admin-csv-taskq', 'app.csv_upload.TaskqHandler'),
       ('/admin-postal', 'handlers.postalchecker.Postal_checkerHandler'),

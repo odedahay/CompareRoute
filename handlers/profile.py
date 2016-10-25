@@ -5,17 +5,19 @@ class ProfilePage(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
         user_account = UserAccount.check_if_exists(email)
 
         if email:
             ws_key = self.session.get("ws_key")
-            self.render("/compare/compare_user_profile.html", email=email, ws_key=ws_key, user_account=user_account)
+            self.render("/compare/compare_user_profile.html", email=email, ws_key=ws_key, user_account=user_account, admin_user=admin_user)
         else:
             self.render("/login/login.html", register_error="Please login!")
 
     def post(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
         ws_key = self.session.get("ws_key")
 
         user_account = UserAccount.check_if_exists(email)
@@ -34,9 +36,11 @@ class ProfilePage(base.BaseHandler):
         #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - -
         template_values = {
             'ws_key': ws_key,
+            'admin_user': admin_user,
             'email': email,
             'user_account': user_account,
         }
+
         if success == False:
             self.render("/compare/compare_user_profile.html", change_password_error=msg, **template_values)
         else:

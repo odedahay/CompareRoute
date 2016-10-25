@@ -165,8 +165,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Current Route
         vehicle_current_postal_list = chunkIt(postal_list, vehicle_quantity)
 
-        #vehicle_postal_list_new_seq = chunkIt(postal_sequence_sorted, vehicle_quantity)
-
         if sort_company == "true":
 
             # Proposed Postal code sequence display in UI:

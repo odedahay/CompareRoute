@@ -7,6 +7,8 @@ from model.user_account import UserAccount
 class summaryCredits(base.BaseHandler):
     def get(self):
 
+        email = self.session.get("email")
+
         userAccounts = UserAccount.query().order().fetch()
         success = self.request.get("success")
         msg = ""
@@ -16,6 +18,7 @@ class summaryCredits(base.BaseHandler):
 
 
         template_values = {
+            'email': email,
             'userAccounts': userAccounts,
             'update_success': msg,
         }
@@ -23,7 +26,10 @@ class summaryCredits(base.BaseHandler):
 
 
 class summaryCredits_edit(base.BaseHandler):
+
     def get(self):
+
+        email = self.session.get("email")
 
         user_id = self.request.get("id")
         user_account = UserAccount.get_by_id(int(user_id))
@@ -33,6 +39,7 @@ class summaryCredits_edit(base.BaseHandler):
         user_accounts = UserAccount.query(UserAccount.email == user_id).get()
 
         template_values_get = {
+            'email': email,
             'user_accounts': user_accounts,
         }
         self.render("admin/admin-credits-edit.html", **template_values_get)

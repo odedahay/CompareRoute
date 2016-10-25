@@ -1,7 +1,8 @@
 {% extends "admin-base.html" %}
 {% block title %}Admin Page - Postal Code{% endblock %}
 {% block content %}
-<div class="container theme-showcase" role="main">
+
+
     <div class="page-header">
         <h2>Postal Code List</h2>
         <p class="lead">Review New Postal Code</p>
@@ -18,10 +19,8 @@
     {% endif %}
     </div>
     <div class="row">
-        <div class="col-md-3">
-            {% include "admin/admin-postal-2ndnav.html" %}
-        </div>
-        <div class="col-md-9">
+
+        <div class="col-md-12">
             <table class="table table-bordered">
                 <tr>
                     <th>Date</th>
@@ -63,6 +62,6 @@
 
     </div>
     <hr />
-</div><!-- container -->
+<!-- container -->
 
 {% endblock %}

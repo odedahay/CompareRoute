@@ -2,7 +2,7 @@
 {% block title %}Admin Page - Summary Route Result{% endblock %}
 {% block content %}
 
-<div class="container">
+
     <div class="page-header">
          <h2>User Credit Control</h2>
         <p class="lead"></p>
@@ -22,8 +22,9 @@
                     <th>User Email</th>
                     <th>API Key</th>
                     <th>API Credits:</th>
+                    <th>Admin</th>
 
-                    <th>API Edit:</th>
+                    <th>Modify</th>
                 </tr>
 
             {% for userAccount in userAccounts %}
@@ -33,6 +34,7 @@
                     <td>{{ userAccount.email }}</td>
                     <td>{{ userAccount.api_key }}</td>
                     <td>{{ userAccount.api_credits }} / 500</td>
+                    <td>{{ userAccount.user_admin }}</td>
 
                     <td>
                         <a href="/admin-credits-edit?id={{ userAccount.key.id() }}" class="btn btn-primary btn-sm" role="button">Edit</a>
@@ -43,7 +45,7 @@
             </table>
         </div>
     </div>
-</div>
+
 
 <a href="#" class="scrollToTop">
     <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>

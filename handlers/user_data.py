@@ -10,6 +10,8 @@ class User_Data(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
+
         # User Records display in /compare_data.html
         user_accounts = UserAccount.check_if_exists(email)
 
@@ -23,6 +25,7 @@ class User_Data(base.BaseHandler):
 
         template_values = {
             'email': email,
+            'admin_user': admin_user,
             'user_profile': user_profile,
             'user_routes_data': user_routes_data,
         }

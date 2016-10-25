@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container theme-showcase" role="main">
+
 	<div class="page-header">
 
 		<h2>Postal Code List</h2>
@@ -22,11 +22,8 @@
 			{% endif %}
 	</div>
 	<div class="row">
-		<div class="col-md-3">
-              {% include "admin/admin-postal-2ndnav.html" %}
-        </div>
 
-		<div class="col-md-9">
+		<div class="col-md-6">
 			<form method="POST" action="/admin-postal-gnew">
 				<label>Postal Code</label>
 				<input class="form-control" type="text" id="postal_code" name="postal_code" required>
@@ -43,7 +40,7 @@
 		</div>
 	</div>
 
-</div><!-- container -->
+<!-- container -->
 
 
 {% endblock %}

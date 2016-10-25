@@ -2,7 +2,7 @@
 {% block title %}Admin Page - Summary Route Result{% endblock %}
 {% block content %}
 
-<div class="container">
+
     <div class="page-header">
         <h2>Update Credit Access</h2>
     </div>
@@ -34,7 +34,13 @@
                 <label>API Credits</label><br />
 				<input class="form-control" type="number" id="api_credits" name="api_credits" value="{{user_accounts.api_credits}}" required>
 				<span id="">&nbsp</span>
-				<br /><br />
+				<br />
+
+				<label>Admin User Access</label><br />
+				<input class="form-control" type="text" id="user_access" name="user_access" value="{{user_accounts.user_admin}}" style="pointer-events: none; border-color:#eee" >
+
+				<br />
+				<br />
 
 				<button type="submit" id="creditAccess_Btn" class="btn btn-primary" disabled="disabled">Save</button>
 
@@ -47,7 +53,7 @@
         </div>
 
     </div>
-</div>
+
 
 <a href="#" class="scrollToTop">
     <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>

@@ -13,12 +13,10 @@ class UserAccount(ndb.Model):
     company = ndb.StringProperty()
     confirmation_code = ndb.StringProperty(required=True)
     confirmation_email = ndb.BooleanProperty(default=False)
+    user_admin = ndb.BooleanProperty(default=False)
     api_key = ndb.StringProperty()
     api_credits = ndb.IntegerProperty(default=50)
 
-    @classmethod
-    def super_user(cls):
-        pass
 
     @classmethod
     def check_if_exists(cls, email):
@@ -203,3 +201,21 @@ class UserAccount(ndb.Model):
                 'title': 'Email is not found',
                 'message': 'Please make sure you use your registered email address'
             }
+
+    @classmethod
+    def is_admin(cls, email):
+        user_id = cls.check_if_exists(email)
+
+        print "user_id", user_id.user_admin
+
+        if user_id:
+
+            # Check if user is admin:
+            if user_id.user_admin == True:
+
+                return True
+            else:
+                # if not, return none:
+                return False
+        else:
+            return None

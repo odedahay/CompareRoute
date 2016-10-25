@@ -88,9 +88,9 @@ class ConfirmUser(CompareRouteHandler):
         user = UserAccount.get_by_id(int(user_id))
 
         if user:
-            if user.confirmation_code == confirmation_code:
-                user.confirmed_email = True
-                user.put()
+            if UserAccount.confirmation_code == confirmation_code:
+                UserAccount.confirmed_email = True
+                UserAccount.put()
 
         self.redirect('/login')
 

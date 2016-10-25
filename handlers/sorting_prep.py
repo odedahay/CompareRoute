@@ -570,7 +570,6 @@ class SortingPrep(webapp2.RequestHandler):
                             if company_2 > int(num_of_truck_c2):
                                     errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
 
-
                     if int(num_comp_val) == 3:
 
                         company_1 = int(len(propose_result_company[0]))

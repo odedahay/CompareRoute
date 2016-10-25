@@ -20,6 +20,8 @@ import csv
 class Postal_checkerHandler(base.BaseHandler):
     def get(self):
 
+        email = self.session.get("email")
+
         postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
         postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
 
@@ -32,6 +34,7 @@ class Postal_checkerHandler(base.BaseHandler):
 
         new_alert_values = {
 
+            'email': email,
             'postalCheckers': postalCheckers,
             'postalHistory': postalHistory,
             'update_postalcode_success': msg,
@@ -42,10 +45,13 @@ class Postal_checkerHandler(base.BaseHandler):
 class Postal_checkerHandler_chk(base.BaseHandler):
     def get(self):
 
+        email = self.session.get("email")
+
         postal = self.request.get("postal")
         # postalCheckers = postalRecordDB.query(postalRecordDB.postal_code == postal).get()
 
         template_values = {
+            'email': email,
             'postal': postal
         }
 
@@ -53,6 +59,8 @@ class Postal_checkerHandler_chk(base.BaseHandler):
 
 class Postal_checkerHandler_chk_edit(base.BaseHandler):
     def get(self):
+
+        email = self.session.get("email")
 
         postal_code = self.request.get("postal")
 
@@ -67,6 +75,7 @@ class Postal_checkerHandler_chk_edit(base.BaseHandler):
 
         #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
         template_values = {
+            'email': email,
             'postal_code': postal_code,
             'latVal': latVal,
             'lngVal': lngVal,

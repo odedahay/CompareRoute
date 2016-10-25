@@ -3,18 +3,14 @@
 
 {% block content %}
 
-<div class="container">
+
     <div class="page-header">
         <h2>Postal Code Search</h2>
         <p class="lead">Search Postal Code in CompareRoute Record</p>
     </div>
     <div class="row">
-        <div class="col-md-3">
 
-            {% include "admin/admin-postal-2ndnav.html" %}
-
-        </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
             <form class="navbar-form navbar-left" role="search" action="/admin-search">
                 <div class="form-group input-group">
                     <input type="text" class="form-control" placeholder="Search Postal Code" value="{{ query }}" name="q">
@@ -52,5 +48,5 @@
             </table>
         </div>
     </div><!-- row -->
-</div><!-- container -->
+<!-- container -->
 {% endblock %}

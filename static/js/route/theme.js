@@ -1,15 +1,18 @@
 
-// Main Navigation
-var url = window.location;
+//Main Navigation
+var url = window.location.pathname;
+//    url = path.replace(/\/$/, "");
+//    url = decodeURIComponent(url);
+
 // Will only work if string in href matches with location
 $('#loggedNav li a[href="'+ url +'"]').parent().addClass('active');
 
-// relative and absolute HREF URL
-$('#loggedNav li a').filter(function() {
-    return this.href == url;
-}).parent().addClass('active');
+//// relative and absolute HREF URL
+//$('#loggedNav li a').filter(function() {
+//    return this.href == url;
+//}).parent().addClass('active');
 
-// relative and absolute HREF URL
+//relative and absolute HREF URL
 $('#admin_nav li a').filter(function() {
     return this.href == url;
 }).parent().addClass('active');
@@ -52,7 +55,6 @@ $('.masterTooltip').hover(function(){
         $('.tooltip')
         .css({ top: mousey, left: mousex })
 });
-
 
 
 // Global Variable of CompareRoute landing page
@@ -542,6 +544,7 @@ function generateFields(name_of_company){
 
         var $fields_column1 = $('<div class ="col-xs-2"></div>');
         var $fields_column2 = $('<div class ="col-xs-2 vehicle_qty_div"></div>');
+
         // priority capacity
         var $fields_column3 = $('<div class ="col-xs-2 hidden_field1"></div>');
         var $fields_column4 = $('<div class ="col-xs-2 hidden_field1"></div>');
