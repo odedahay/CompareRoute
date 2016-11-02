@@ -1,27 +1,19 @@
+import json
 import webapp2
-from handlers import base
+from itertools import groupby
+
+from handlers import base, search_postal
 from handlers import login
+from handlers import postalchecker, postal_mod
 from handlers import profile
 from handlers import resetpass
-from handlers import sortingsum
-from handlers import postalchecker, postal_mod
-from app import search_postal
 from handlers import sorting_task
+from handlers import sortingsum
 from handlers.postalchecker import Postal_checkerHandler
-
-from itertools import groupby
-import json
-
-# - - - lib
-from model.user_account import UserAccount
-# DB for Admin
-from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
-
-# DB for Web App
 from model.admin_account import RouteDistance, CurrentRoute, ProposedRoute
-
-# DB for API
+from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
 from model.admin_account_api import ProposedRoute_api, CurrentRoute_api, RouteDistance_api
+from model.user_account import UserAccount
 
 
 class MainPage(base.BaseHandler):
@@ -129,15 +121,17 @@ class PostalAdded_arch(postalchecker.Postal_move_Handler, base.BaseHandler):
 
         self.render("admin/admin_archive.html", postalHistory=postalHistory, email=email)
 
-class Postal_Search(postalchecker.Postal_move_Handler, base.BaseHandler):
+class Postal_Search(base.BaseHandler):
      def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
         postal_key = postalRecordDB.check_if_exists('q')
         postal = postalRecordDB.get_all_postalcode(postal_key)
         #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
         tpl_values = {
+            'admin_user': admin_user,
             'email': email,
             'postal': postal
         }
@@ -293,7 +287,7 @@ app = webapp2.WSGIApplication([
       ('/', MainPage),
       ('/login', LoginPage),
       ('/reset', ResetPassword),
-      ('/register', 'app.register.RegisterHandler'),
+      ('/register', 'handlers.register.RegisterHandler'),
       ('/compare', 'handlers.compare.ComparePage'),
       ('/compare-data', 'handlers.user_data.User_Data'),
       ('/compare-data-list', 'handlers.user_data.User_Data_list'),
@@ -323,8 +317,8 @@ app = webapp2.WSGIApplication([
       ('/admin-postal-gnew', 'handlers.postal_mod.Add_new_postal'),
       ('/admin-postal-arch', PostalAdded_arch),
       ('/admin-postal-search', Postal_Search),
-      ('/admin-search', 'app.search_postal.SearchPostal'),
-      ('/admin-search-del', 'app.search_postal.PostalDelete_Handler'),
-      ('/admin-search-edit', 'app.search_postal.PostalEdit_Handler')
+      ('/admin-search', 'handlers.search_postal.SearchPostal'),
+      ('/admin-search-del', 'handlers.search_postal.PostalDelete_Handler'),
+      ('/admin-search-edit', 'handlers.search_postal.PostalEdit_Handler')
 
 ], config=base.sessionConfig, debug=True)

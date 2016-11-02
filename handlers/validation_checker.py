@@ -3,12 +3,15 @@ import operator
 
 # Variable for validation:
 error_Num_of_truck = "Add more Truck! <br />The minimum balance number of delivery truck  "
-error_cargo_unit_companies_priority = " has been exceeding to minimum Truck Capacity <br />"
+
 
 response = {}
-errors = []
+
 
 def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_capacity_dict):
+
+    errors = []
+    error_cargo_unit_companies_priority = " has been exceeding to maximum Truck Capacity <br />"
 
     # count the company entered:
     # if two companies
@@ -20,8 +23,6 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
         # separate each company
         company1 = postal_sequence_company[0]
         company2 = postal_sequence_company[1]
-
-        print ('company1'), company1
 
         # Iterate each cargo unit
         # check if there is more than minimum value of cargo unit
@@ -38,7 +39,7 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
             company_id2 = company_grp_2[3]
 
             # if there is more the minimum value throw an error:
-            print "error_cargo1", cargo_unit1 > int(truck_capacity_c1)
+            # print "error_cargo1", cargo_unit1 > int(truck_capacity_c1)
 
             if cargo_unit1 > int(truck_capacity_c1):
                 errors.extend([company_id1, ", ", postal_code1, error_cargo_unit_companies_priority])
@@ -49,7 +50,7 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
         return errors
 
     # if three companies
-    if int(num_comp_val) == 3:
+    elif int(num_comp_val) == 3:
 
         truck_capacity_c1 = truck_capacity_dict['truck_capacity_c1']
         truck_capacity_c2 = truck_capacity_dict['truck_capacity_c2']
@@ -92,7 +93,7 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
         return errors
 
     # if three companies
-    if int(num_comp_val) == 4:
+    elif int(num_comp_val) == 4:
 
         truck_capacity_c1 = truck_capacity_dict['truck_capacity_c1']
         truck_capacity_c2 = truck_capacity_dict['truck_capacity_c2']
@@ -145,7 +146,7 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
         return errors
 
     # if three companies
-    if int(num_comp_val) == 5:
+    elif int(num_comp_val) == 5:
 
         truck_capacity_c1 = truck_capacity_dict['truck_capacity_c1']
         truck_capacity_c2 = truck_capacity_dict['truck_capacity_c2']
@@ -206,122 +207,127 @@ def cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_c
                 errors.extend([company_id5, " ", postal_code5, error_cargo_unit_companies_priority])
 
         return errors
+    # else:
+    #
+    #
+    #     return True
 
-def minimum_truck_checker_comp(num_comp_val, propose_result_company, starting_postal_list,
-                                                                           num_of_truck_c1, num_of_truck_cc1,
-                                                                           num_of_truck_c2, num_of_truck_cc21,
-                                                                           num_of_truck_c3, num_of_truck_cc31,
-                                                                           type_of_truck_c2,type_of_truck_cc1,type_of_truck_cc21,
-                                                                           type_of_truck_c1,
-                                                                           type_of_truck_c3,
-                                                                           add_truck_cc1, add_truck_cc2,add_truck_cc3):
 
-    # add_truck_dict = {
-                    #     "add_truck_cc1": add_truck_cc1,
-                    #     "add_truck_cc2": add_truck_cc2,
-                    #     "add_truck_cc3": add_truck_cc3,
-                    # }
-                    #
-                    # num_of_truck_dict = {
-                    #
-                    #     "num_of_truck_c1": num_of_truck_c1,
-                    #     "num_of_truck_cc1": num_of_truck_cc1,
-                    #     "num_of_truck_cc2": num_of_truck_cc2,
-                    #     "num_of_truck_cc3": num_of_truck_cc3,
-                    #
-                    #     "num_of_truck_c2": num_of_truck_c2,
-                    #     "num_of_truck_cc21": num_of_truck_cc21,
-                    #     "num_of_truck_cc22": num_of_truck_cc22,
-                    #     "num_of_truck_cc23": num_of_truck_cc23,
-                    #
-                    #     "num_of_truck_c3": num_of_truck_c3,
-                    #     "num_of_truck_cc31": num_of_truck_cc31,
-                    #     "num_of_truck_cc32": num_of_truck_cc32,
-                    #     "num_of_truck_cc33": num_of_truck_cc33,
-                    #
-                    # }
-
-                    # type_of_truck_dict = {
-                    #     "type_of_truck_cc1": type_of_truck_cc1,
-                    #     "type_of_truck_cc2": type_of_truck_cc2,
-                    #     "type_of_truck_cc3": type_of_truck_cc3,
-                    # }
-
-    if int(num_comp_val) == 2:
-
-        # type_of_truck_cc1 = type_of_truck_dict['type_of_truck_cc1']
-        #
-        # num_of_truck_c1 = num_of_truck_dict['num_of_truck_c1']
-        # num_of_truck_cc1 = num_of_truck_dict['num_of_truck_cc1']
-        # num_of_truck_c2 = num_of_truck_dict['num_of_truck_c2']
-
-        company_1 = int(len(propose_result_company[0]))
-        company_2 = int(len(propose_result_company[1]))
-
-        # HQ
-        hq_comp_1 = starting_postal_list[0]
-        hq_comp_2 = starting_postal_list[1]
-
-        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
-
-            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck, type_of_truck_cc1, " : ", company_1, "<br />"])
-
-        if add_truck_cc1 == "true" and add_truck_cc2 == "true":
-
-            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
-
-            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
-
-        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true":
-
-            if company_1 > int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
-
-            if company_2 > int(num_of_truck_c2):
-                    errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
-
-        return errors
-
-    if int(num_comp_val) == 3:
-
-        company_1 = int(len(propose_result_company[0]))
-        company_2 = int(len(propose_result_company[1]))
-        company_3 = int(len(propose_result_company[2]))
-
-        # HQ
-        hq_comp_1 = starting_postal_list[0]
-        hq_comp_2 = starting_postal_list[1]
-        hq_comp_3 = starting_postal_list[2]
-
-        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
-
-            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck,
-                     type_of_truck_cc1, " : ", company_1, "<br />"])
-
-        if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-
-            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
-
-            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
-
-            if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", num_of_truck_cc31, " is ", company_3, "<br />"])
-
-        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-
-            if company_1 > int(num_of_truck_c1):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
-
-            if company_2 > int(num_of_truck_c2):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
-
-            if company_3 > int(num_of_truck_c3):
-                errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
-
-        return errors
+# def minimum_truck_checker_comp(num_comp_val, propose_result_company, starting_postal_list,
+#                                                                            num_of_truck_c1, num_of_truck_cc1,
+#                                                                            num_of_truck_c2, num_of_truck_cc21,
+#                                                                            num_of_truck_c3, num_of_truck_cc31,
+#                                                                            type_of_truck_c2,type_of_truck_cc1,type_of_truck_cc21,
+#                                                                            type_of_truck_c1,
+#                                                                            type_of_truck_c3,
+#                                                                            add_truck_cc1, add_truck_cc2,add_truck_cc3):
+#
+#     # add_truck_dict = {
+#                     #     "add_truck_cc1": add_truck_cc1,
+#                     #     "add_truck_cc2": add_truck_cc2,
+#                     #     "add_truck_cc3": add_truck_cc3,
+#                     # }
+#                     #
+#                     # num_of_truck_dict = {
+#                     #
+#                     #     "num_of_truck_c1": num_of_truck_c1,
+#                     #     "num_of_truck_cc1": num_of_truck_cc1,
+#                     #     "num_of_truck_cc2": num_of_truck_cc2,
+#                     #     "num_of_truck_cc3": num_of_truck_cc3,
+#                     #
+#                     #     "num_of_truck_c2": num_of_truck_c2,
+#                     #     "num_of_truck_cc21": num_of_truck_cc21,
+#                     #     "num_of_truck_cc22": num_of_truck_cc22,
+#                     #     "num_of_truck_cc23": num_of_truck_cc23,
+#                     #
+#                     #     "num_of_truck_c3": num_of_truck_c3,
+#                     #     "num_of_truck_cc31": num_of_truck_cc31,
+#                     #     "num_of_truck_cc32": num_of_truck_cc32,
+#                     #     "num_of_truck_cc33": num_of_truck_cc33,
+#                     #
+#                     # }
+#
+#                     # type_of_truck_dict = {
+#                     #     "type_of_truck_cc1": type_of_truck_cc1,
+#                     #     "type_of_truck_cc2": type_of_truck_cc2,
+#                     #     "type_of_truck_cc3": type_of_truck_cc3,
+#                     # }
+#
+#     if int(num_comp_val) == 2:
+#
+#         # type_of_truck_cc1 = type_of_truck_dict['type_of_truck_cc1']
+#         #
+#         # num_of_truck_c1 = num_of_truck_dict['num_of_truck_c1']
+#         # num_of_truck_cc1 = num_of_truck_dict['num_of_truck_cc1']
+#         # num_of_truck_c2 = num_of_truck_dict['num_of_truck_c2']
+#
+#         company_1 = int(len(propose_result_company[0]))
+#         company_2 = int(len(propose_result_company[1]))
+#
+#         # HQ
+#         hq_comp_1 = starting_postal_list[0]
+#         hq_comp_2 = starting_postal_list[1]
+#
+#         if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+#
+#             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck, type_of_truck_cc1, " : ", company_1, "<br />"])
+#
+#         if add_truck_cc1 == "true" and add_truck_cc2 == "true":
+#
+#             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
+#
+#             if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
+#
+#         if not add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+#
+#             if company_1 > int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
+#
+#             if company_2 > int(num_of_truck_c2):
+#                     errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+#
+#         return errors
+#
+#     if int(num_comp_val) == 3:
+#
+#         company_1 = int(len(propose_result_company[0]))
+#         company_2 = int(len(propose_result_company[1]))
+#         company_3 = int(len(propose_result_company[2]))
+#
+#         # HQ
+#         hq_comp_1 = starting_postal_list[0]
+#         hq_comp_2 = starting_postal_list[1]
+#         hq_comp_3 = starting_postal_list[2]
+#
+#         if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+#
+#             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck,
+#                      type_of_truck_cc1, " : ", company_1, "<br />"])
+#
+#         if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+#
+#             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
+#
+#             if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
+#
+#             if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", num_of_truck_cc31, " is ", company_3, "<br />"])
+#
+#         if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+#
+#             if company_1 > int(num_of_truck_c1):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
+#
+#             if company_2 > int(num_of_truck_c2):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+#
+#             if company_3 > int(num_of_truck_c3):
+#                 errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
+#
+#         return errors

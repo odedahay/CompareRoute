@@ -27,7 +27,8 @@ a:focus,
 a:active,
 a.active {
     outline: 0;
-    color: #18bc9c;
+    /*color: #18bc9c;*/
+    color: #5080be;
 }
 
 h1,
@@ -83,22 +84,22 @@ hr.star-primary:after {
     background-color: #fff;
 }
 .loadsmall{
- font-size: 11px; 
+ font-size: 11px;
 }
 .img-centered {
     margin: 0 auto;
 }
 
-.navbar-default .navbar-nav>.active>a, 
-.navbar-default .navbar-nav>.active>a:hover, 
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:hover,
 .navbar-default .navbar-nav>.active>a:focus{
   border-radius: 5px;
   background-color: #000000;
   /*padding-right: 4px;*/
 }
-.navbar-default .navbar-nav>li>a:hover, 
+.navbar-default .navbar-nav>li>a:hover,
 .navbar-default .navbar-nav>li>a:focus{
-color: #000000;  
+color: #000000;
 }
 .navbar-default{
     background-color: #5080be;
@@ -156,14 +157,11 @@ header .intro-text .skills {
   padding:0 0 0 10px;
 }
 
-
-
-
 .navbar {
     text-transform: none;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    /*font-weight: 500;*/
-    font-size: 16px;
+    font-weight: 300;
+    font-size: 1em;
 }
 
 .navbar a:focus {
@@ -184,8 +182,12 @@ header .intro-text .skills {
 }
 
 .page-header {
-    padding-top: 20px;
-    padding-bottom:-10px;
+    padding-top: 0px;
+    padding-bottom:0px;
+}
+
+.userPage {
+    padding-top: 30px;
 }
 
 
@@ -243,7 +245,7 @@ section h2.section-heading {
     font-size: 40px;
     margin-top: 0;
     margin-bottom: 55px;
-} 
+}
 h4.service-heading {
     margin: 25px 0;
     text-transform: none;
@@ -662,7 +664,7 @@ div.tableize-unhover table.tableize{
     background-color:rgba(255,255,255,.8);
 }
 #login-dp .help-block{
-    font-size:12px    
+    font-size:12px
 }
 #login-dp .bottom{
     background-color:rgba(255,255,255,.8);
@@ -671,7 +673,7 @@ div.tableize-unhover table.tableize{
     padding:14px;
 }
 #login-dp .social-buttons{
-    margin:12px 0    
+    margin:12px 0
 }
 #login-dp .social-buttons a{
     width: 49%;
@@ -685,7 +687,7 @@ div.tableize-unhover table.tableize{
 }
 .btn-fb:hover{
     color: #fff;
-    background-color:#496ebc 
+    background-color:#496ebc
 }
 .btn-tw{
     color: #fff;
@@ -744,7 +746,7 @@ table.proposed_table{
 }
 table.proposed_table tr th{
     background-color:#c6c6c6;
-} 
+}
 table.proposed_table th {
     border-bottom:1px solid #ddd;
     padding:10px;
@@ -764,15 +766,18 @@ table.summary_Table{
   margin-bottom:30px;
 }
 table.summary_Table tr th{
-    background-color:#c6c6c6;
-} 
+    /*background-color:#c6c6c6;*/
+    background-color:#ddd;
+}
 table.summary_Table th {
     border-bottom:1px solid #ddd;
     padding:10px;
+    font-size: .90em;
 }
 table.summary_Table td {
   padding:10px;
   border:1px solid #DDD;
+  font-size: .90em;
 }
 
 /* Making Center */
@@ -881,7 +886,7 @@ h2.form-signin-heading {
 .vehicleBox{
 
  width: 200px;
- padding-right:0px; 
+ padding-right:0px;
 }
 
 .returnBox{
@@ -1195,8 +1200,6 @@ p.js_error:after{
 /*** Tool Tip styles **********/
 
 
-
-
 /*** Bubble note in landing page **********/
 
 p.bubble {
@@ -1248,15 +1251,14 @@ p.plainBox{
     margin:0px;
 }
 
+/*** Add new Truck Button ***/
+
+.newTruckBtn {
+    color: #c6c6c6;
+    /*text-decoration: none !important;*/
+}
 
 /************ media 768 **************/
-/*
-@media(min-width:767px) {
-
-}*/
-/*@media(max-width:767px) {
-
-}*/
 
 @media(min-width:768px) {
 
@@ -1353,10 +1355,23 @@ p.plainBox{
 }
 
 /************ media 420 **************/
+@media (min-width: 768px){
+    .radio-inline+.radio-inline{
+       margin-left: 0px;
+       margin-bottom:8px;
+      /* padding:5px 0;*/
+    }
+}
 
+
+
+/*@media(min-width:480px) {
+
+    .col-xs-2{
+        width:100%;
+    }
+}*/
 /*
-@media(min-width:420px) {
-
     .row {
         margin-left: 5px;
         margin-right: 5px;
@@ -1514,8 +1529,12 @@ body {
     color: #4e4e4e;
 
 }
+.sidebar ul li a:hover {
+  background-color: #999;
+  color: #fff;
+}
 .sidebar ul li a.active {
-  background-color: #eeeeee;
+  background-color: #cccccc;
 }
 .sidebar .arrow {
   float: right;
@@ -1871,3 +1890,123 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+/* Customise Styles */
+.list-group-item:last-child {
+  font-size: .90em;
+}
+
+/* Making Left */
+.tableDiv{
+  overflow-x:auto;
+}
+.tableAdmin{
+    margin-bottom:20px;
+    border-collapse:collapse;
+    margin:0px 0px;
+    width: 100%;
+}
+.tableAdmin>thead>tr>th,
+.tableAdmin>tbody>tr>td{
+    text-align: left;
+    vertical-align: top;
+    padding: 6px;
+    font-size: .90em;
+}
+
+.tableAdmin > thead{
+    /*border-bottom: 1px solid #ccc;*/
+}
+
+.tableAdmin tr th{
+   vertical-align: middle;;
+   background-color:#eee;
+   padding:6px;
+   font-weight: 500;
+   font-size: .90em;
+}
+
+/*** Validation / Error Styles **********/
+
+
+
+span.js_tooltips{
+
+    display:none;
+    font-size:.85em;
+    color: #fff;
+    text-align:center;
+    position: absolute;
+    margin-top: 4px;
+    width: 100%;
+    padding: 4px;
+    background: #4e7fbe;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    z-index: 10;
+    bottom: 125%;
+    left: 0%;
+
+}
+
+span.js_tooltips:after{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4e7fbe transparent transparent transparent;
+}
+
+.tooltipMenu{
+    position:relative;
+    z-index:0;
+}
+
+/***************/
+
+
+/*
+*//* Tool Tips Styles *//*
+.tooltipMenu {
+    position: relative;
+    z-index:0;
+    *//*display: inline-block;
+    border-bottom: 1px dotted black;*//*
+}
+*//* Tooltip container *//*
+    .tooltipMenu .tooltiptext {
+    visibility: visible;
+    width: 120px;
+    background-color: #4e7fbe;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltipMenu .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4e7fbe transparent transparent transparent;
+}*/
+
+/*.tooltipMenu:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}*/

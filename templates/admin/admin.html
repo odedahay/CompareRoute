@@ -24,13 +24,14 @@
 
           <!-- Tab panes -->
           <div class="tab-content">
+
               <div role="tabpanel" class="tab-pane active" id="home">
                 <div class="row">
                    <h3></h3>
                    <!--<h3>Web App Users</h3>-->
                 </div>
                 <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-md-4">
                         <ul class="list-group">
                             {% for key, val in web_id_counts_id %}
                                <a href="/admin-user?user_id={{key}}">
@@ -41,8 +42,8 @@
                             {% endfor %}
                         </ul>
                     </div>
-                    <div class="col-xs-9">
-                        <table class="table table-bordered">
+                    <div class="col-md-8">
+                        <table class="tableAdmin table-bordered">
                         <tr>
                             <th>User id</th>
                             <th>Created date</th>
@@ -85,7 +86,7 @@
                     <!--<h3>API App Users</h3>-->
                 </div>
                 <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-md-4">
                         <ul class="list-group">
                             {% for key, val in api_id_counts_id %}
                                <a href="/admin-user?user_id={{key}}">
@@ -96,8 +97,8 @@
                             {% endfor %}
                         </ul>
                     </div>
-                    <div class="col-xs-9">
-                        <table class="table table-bordered">
+                    <div class="col-md-8">
+                        <table class="tableAdmin table-bordered">
                         <tr>
                             <th>User id</th>
                             <th>Created date</th>

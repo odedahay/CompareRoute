@@ -1,9 +1,10 @@
 from framework.request_handler import CompareRouteHandler
+from handlers import base
 from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
 from google.appengine.api import search
 
 
-class SearchPostal(CompareRouteHandler):
+class SearchPostal(base.BaseHandler):
     def get(self):
 
         query = self.request.get('q')
@@ -45,7 +46,7 @@ class SearchPostal(CompareRouteHandler):
                 }
             self.render('admin/search.html', **tpl_values)
 
-class PostalDelete_Handler(CompareRouteHandler):
+class PostalDelete_Handler(base.BaseHandler):
 
     def get(self):
 
@@ -104,7 +105,7 @@ class PostalDelete_Handler(CompareRouteHandler):
 
             return status
 
-class PostalEdit_Handler(CompareRouteHandler):
+class PostalEdit_Handler(base.BaseHandler):
     def get(self):
         postal_code = self.request.get("postal_code")
         postal_edit = postalRecordDB.query(postalRecordDB.postal_code == postal_code).get()

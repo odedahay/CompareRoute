@@ -34,6 +34,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         has_return = self.request.get('has_return')
         num_user_load = self.request.get('num_user_load')
         priority_capacity = self.request.get('priority_capacity')
+
         #num_of_vehicles = self.request.get('num_of_vehicles')
 
         proposedPostlal = self.request.get('proposedPostlal')
@@ -95,13 +96,14 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         proposedPostlal_seq = proposedPostlal_seq.split("_")
 
         for propsed_seq_1 in proposedPostlal_seq:
-            propsed_seq_1 = propsed_seq_1.split("-")
+            #propsed_seq_1 = propsed_seq_1.split("-")
+            pass
 
-            for propsed_seq_2 in propsed_seq_1:
-
-                pass
-
-                #print "propsed_seq_2", propsed_seq_2
+            # print "propsed_seq_1", propsed_seq_1
+            #
+            # for propsed_seq_2 in propsed_seq_1:
+            #
+            #     pass
 
         #  - - - To Be Continue - - - - #
 

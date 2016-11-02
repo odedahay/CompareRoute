@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container">
+
     <div class="page-header">
         <div class="row">
             <h2>Postal Code - List</h2>
@@ -14,10 +14,8 @@
         <h3>Postal Code Record</h3>
     </div>
     <div class="row">
-        <div class="col-md-3">
-            {% include "admin/admin-postal-2ndnav.html" %}
-        </div>
-        <div class="col-md-9">
+
+        <div class="col-md-12">
             <form class="" style="width:300px; margin-bottom:30px;" role="search" action="/admin-search">
                 <div class="form-group input-group">
                     <input type="text" class="form-control" placeholder="Search Postal Code" value="{{ query }}" name="q">
@@ -35,12 +33,12 @@
                 <p style="color:red">{{ errormsg }}</p>
             {% endif %}
             <br />
-            <table class="table table-bordered">
+            <table class="tableAdmin table-bordered">
                 <tr>
                     <th>Postal Code</th>
                     <th>Latitude</th>
                     <th>Longtitude</th>
-                    <th>Modify</th>
+                    <th style="text-align: center;">Modify</th>
                 </tr>
                  {% for record in results %}
                 <tr>
@@ -62,6 +60,6 @@
             </table>
         </div>
     </div>
-</div><!-- container -->
+<!-- container -->
 
 {% endblock %}

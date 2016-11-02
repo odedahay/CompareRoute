@@ -258,6 +258,7 @@ class SortingPrep(webapp2.RequestHandler):
         if sort_company == "true":
 
             if priority_capacity_comp == "true":
+
                 # Store all HQ postal code and Vehicle count accordingly
                 if int(num_comp_val) == 2:
 
@@ -499,15 +500,17 @@ class SortingPrep(webapp2.RequestHandler):
 
                     }
 
-                    # print "dictionary", int(truck_capacity_dict['truck_capacity_c1'])
+                    # Check if the company is exceeding:
+                    errors_result = validation_checker.cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_capacity_dict)
 
-                    # A function to check if the company is exceeding:
-                    errors = validation_checker.cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_capacity_dict)
+                    if errors_result != "":
+                        # Convert the variable to error list
+                        errors = errors_result
 
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
 
-                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
                             starting_post,
                             company_sequence,
                             vehicle_quantity,
@@ -540,80 +543,82 @@ class SortingPrep(webapp2.RequestHandler):
                     #
                     # errors.extend(result_numTruck)
 
+                    # Check if they have two company
                     if int(num_comp_val) == 2:
 
                         company_1 = int(len(propose_result_company[0]))
                         company_2 = int(len(propose_result_company[1]))
 
-                        # HQ
-                        hq_comp_1 = starting_postal_list[0]
-                        hq_comp_2 = starting_postal_list[1]
-
-                        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+                        if add_truck_cc1_2 and not add_truck_cc2:
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck, type_of_truck_cc1, " : ", company_1, "<br />"])
 
-                        if add_truck_cc1 == "true" and add_truck_cc2 == "true":
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc1, " is ", (company_1 - int(num_of_truck_c1)), "<br />"])
+
+                        elif add_truck_cc1 and add_truck_cc2:
 
                             if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
+
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc1, " is ", (company_1 - int(num_of_truck_c1)), "<br />"])
 
                             if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
 
-                        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc21, " is ", (company_1 - int(num_of_truck_c2)), "<br />"])
+                        else:
 
-                            if company_1 > int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
+                            # if the First Field have only entered value
+                            if int(company_1) > int(num_of_truck_c1):
 
-                            if company_2 > int(num_of_truck_c2):
-                                    errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_c1, " is ", company_1, "<br />"])
 
-                    if int(num_comp_val) == 3:
+                            if int(company_2) > int(num_of_truck_c2):
 
-                        company_1 = int(len(propose_result_company[0]))
-                        company_2 = int(len(propose_result_company[1]))
-                        company_3 = int(len(propose_result_company[2]))
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_c2, " is ", company_2, "<br />"])
 
-                        # HQ
-                        hq_comp_1 = starting_postal_list[0]
-                        hq_comp_2 = starting_postal_list[1]
-                        hq_comp_3 = starting_postal_list[2]
-
-                        if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
-
-                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck,
-                                     type_of_truck_cc1, " : ", company_1, "<br />"])
-
-                        if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-
-                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
-
-                            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
-
-                            if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", num_of_truck_cc31, " is ", company_3, "<br />"])
-
-                        if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-
-                            if company_1 > int(num_of_truck_c1):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
-
-                            if company_2 > int(num_of_truck_c2):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
-
-                            if company_3 > int(num_of_truck_c3):
-                                errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
+                    # if int(num_comp_val) == 3:
+                    #
+                    #     company_1 = int(len(propose_result_company[0]))
+                    #     company_2 = int(len(propose_result_company[1]))
+                    #     company_3 = int(len(propose_result_company[2]))
+                    #
+                    #     # HQ
+                    #     hq_comp_1 = starting_postal_list[0]
+                    #     hq_comp_2 = starting_postal_list[1]
+                    #     hq_comp_3 = starting_postal_list[2]
+                    #
+                    #     if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+                    #
+                    #         if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                    #             errors.extend([error_Num_of_truck,
+                    #                  type_of_truck_cc1, " : ", company_1, "<br />"])
+                    #
+                    #     if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+                    #
+                    #         if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
+                    #
+                    #         if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
+                    #
+                    #         if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", num_of_truck_cc31, " is ", company_3, "<br />"])
+                    #
+                    #     if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
+                    #
+                    #         if company_1 > int(num_of_truck_c1):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
+                    #
+                    #         if company_2 > int(num_of_truck_c2):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
+                    #
+                    #         if company_3 > int(num_of_truck_c3):
+                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
 
                 else:
 
                     for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):
 
-                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
                             starting_post,
                             company_sequence,
                             vehicle_quantity,
@@ -693,7 +698,7 @@ class SortingPrep(webapp2.RequestHandler):
                 # - - - - - - - - - This is for Non-company sorting - - - - - - #
                 """ Route By Truck and Route by Capacity """
 
-                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq = sorting.sort_by_postals_chunck(
+                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
                     int(vehicle_quantity),
@@ -730,7 +735,7 @@ class SortingPrep(webapp2.RequestHandler):
                 # GeoCode Map
                 latlng_array = map_visible(propose_result)
 
-                print "latlng_array", latlng_array
+                # print "latlng_array", latlng_array
 
                 # Converting the total percentage saving of distance
                 difference_total = current_route_value - propose_route_value
@@ -754,8 +759,9 @@ class SortingPrep(webapp2.RequestHandler):
                                 },
                             "capacity_priority": {
                                 "priority_capacity": priority_capacity,
-                                "vehicle_type": truck_capacity_grp,
-                                # "vehicle_capacity": vehicle_capacity,
+                                "vehicle_type": grp_truck,
+                               #"vehicle_type": truck_capacity_grp,
+                               # "vehicle_capacity": vehicle_capacity,
                                 },
                             "total_summary_saving": {
                                 "propose_distance": propose_route_value,

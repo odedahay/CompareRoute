@@ -3,17 +3,30 @@
 
 {% block content %}
 
-    <div class="container">
 
         <div class="page-header">
             <h2>User Log Activity</h2>
             <p class="lead">Route Log Details</p>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-right">
+                    {% for back in web_routes %}
+                        <span>
+                            <a href="/admin-user?user_id={{back.user_id}}" class="btn btn-info btn-sm">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back</a>
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <br />
         <div class="row">
 
-            <div class="col-lg-12">
+            <div class="col-md-12">
             {% for route_web in web_routes %}
-                    <table class="table table-bordered">
+                    <table class="tableAdmin table-bordered">
                         <tr>
                             <th>User ID </th>
                             <th>Starting Postal Code </th>
@@ -35,24 +48,16 @@
 
             </div>
         </div>
+
         <div class="row">
-            <div class="col-lg-12">
-                <div class="text-right">
-                    <br />
-                    {% for back in web_routes %}<span><a href="/admin-user?user_id={{back.user_id}}" class="btn btn-info btn-sm">
-                    <i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back</a></span>{% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
+            <div class="col-md-12">
                 <h3>Proposed Route</h3>
 
                  {% for route in routes %}
                     <p style="font-size:14px;">The Lat & Long Coordinates of {{ route.starting_point }} : {{ route.origin_destination }} </p>
                  {% endfor %}
 
-                <table class="table table-bordered">
+                <table class="tableAdmin table-bordered">
                     <tr>
                         <th class="background_color">Truck Nos. </th>
                         <th>Order IDs</th>
@@ -85,42 +90,13 @@
 
                 <!-- New -->
 
-                <table class="table table-bordered">
-                    <tr>
-                        <th class="background_color">Truck No. </th>
-                        <th>Order IDs</th>
-                        <th>Origin Postal Code</th>
-                        <th class="background_color">Destination Postal Code</th>
-                        <th>Latitude</th>
-                        <th>Longtitude</th>
-                        <th>Route between points</th>
-                        <th>Distance (km)</th>
-                    </tr>
-                     {% for propose in web_proposed %}
-                    <tr>
-                        <td class="background_color">{{ propose.vehicle_id }}</td>
-                        <td>{{ propose.order_id }}</td>
-                        <td>{{ propose.origin_code }}</td>
-                        <td class="background_color">{{ propose.postal_code }}</td>
-                        <td>{{ propose.longVal }}</td>
-                        <td>{{ propose.latVal }}</td>
-                        <td><a href="{{ propose.url_id }}" target="_blank"><span style="font-size:13px;">{{ propose.url_id }}</span></a></td>
-                        <td>{{ propose.distance }}</td>
-                    </tr>
-                     {% endfor %}
-                     {% for route in web_routes %}
-                    <tr>
-                        <td colspan="7" style=" text-align: right;">Proposed Total Distance</td>
-                        <td><strong>{{ route.proposed_total_dist }}</strong></td>
-                    </tr>
-                     {% endfor %}
-                </table>
+
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <h3>Current Route</h3>
-                <table class="table table-bordered">
+                <table class="tableAdmin table-bordered">
                     <tr>
                         <th class="background_color">Truck No.</th>
                          <th>Order IDs</th>
@@ -153,8 +129,7 @@
                 </table>
             </div>
         </div>
-
-    </div><!-- container -->
+<!-- container -->
     <hr />
     <a href="#" class="scrollToTop">
         <i class="fa fa-caret-square-o-up" aria-hidden="true"></i>

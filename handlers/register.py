@@ -1,64 +1,96 @@
-import webapp2
+from framework.request_handler import CompareRouteHandler
 from model.user_account import UserAccount
-from encryption import EncryptionHandler
+from google.appengine.api import mail
+from os import environ
+import re
 
-class RegisterHandler(webapp2.RequestHandler):
-    
-    def registerUser(self, email, password):
-        # Trim out whitespaces
-        email = email.lower().strip()
-        
-        # Status for the registration
-        status = []
-        success = True # Must be true for my if-else logic
-        msg = ""
-        
-        # Validate the email to ensure it contains one "@" and ends with ".com"
-        if email.count("@") != 1 or email[-4:] != ".com":
-            success = False
-            msg = "Invalid email"
-        
-        # Validate the password for length of 8
-        if len(password) < 6:
-            success = False
-            if msg:
-                msg += "/password"
+
+class RegisterHandler(CompareRouteHandler):
+
+    @classmethod
+    def send_email(cls, to, user_id, confirmation_code):
+        email_object = mail.EmailMessage(
+            sender='noreply@compare-route-3.appspotmail.com',
+            subject='Confirm your Compare Route account',
+            to=to
+        )
+        email_parameters = {
+            'domain': 'http://localhost:8080' if environ['SERVER_SOFTWARE'].startswith(
+                'Development') else 'http://compare-route-3.appspot.com',
+            'user_id': user_id,
+            'confirmation_code': confirmation_code
+        }
+
+        html_from_template = cls.jinja_environment.get_template('email/confirmation_email.html').render(email_parameters)
+
+        email_object.html = html_from_template
+        email_object.send()
+
+    def post(self):
+        name = self.request.get('name')
+        email = self.request.get('email')
+        company = self.request.get('company')
+        password = self.request.get('password')
+
+        status = 200
+
+        # JSON Validation for Forms:
+        if name and email and company and password:
+            email_validation_pattern = "(^[a-zA-Z0-9_.+]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+
+            if re.match(email_validation_pattern, email):
+                user = UserAccount.add_new_user(name, email, company, password)
+                # print user
+
+                if user['created']:
+                    html = self.jinja_environment.get_template('commons/register_success.html').render()
+                    json_response = {
+                        'html': html
+                    }
+                    self.send_email(to=email, user_id=user['user_id'], confirmation_code=user['confirmation_code'])
+                else:
+                    status = 400
+                    json_response = user
+
             else:
-                msg = "Invalid password"
-        
-        # If success is false, return the status
-        # Else, check if the user exists
-        if success == False:
-            status.append(success)
-            status.append(msg)
-            return status
+                status = 400
+                json_response = {
+                    'created': False,
+                    'title': 'The email is not valid',
+                    'message': 'Please enter a valid email address'
+                }
+
         else:
-            # If there is an existing user with the same email in the DataStore, send an error message
-            # Else, register the user
-            userRecord = UserAccount.query(UserAccount.email == email).fetch()
+            status = 400
+            json_response = {}
 
-            if len(userRecord) != 0:
-                success = False
-                msg = "Email already exists!"
-                status.append(success)
-                status.append(msg)
-                return status
-            else:
-                # Generate the password hash and web service Key
-                enc = EncryptionHandler()
-                password_hash = enc.createPasswordHash(password)
-                ws_key = enc.createWebServiceKey(password_hash)
-                
-                # Create user object and insert into Datastore
-                user = UserAccount()
-                user.email = email
-                user.password = password_hash
-                user.ws_key = ws_key
-                user.put()
-                
-                # Return the status
-                success = True
-                msg = "Registration successful!"
-                status.append(success)
-                status.append(msg)
-                return status
+            if not name:
+                json_response.update({
+                    'title': 'The name field is required',
+                    'message': 'Please fill in your name in order to continue'
+                })
+            if not email:
+                json_response.update({
+                    'title': 'You have not sent us an email',
+                    'message': 'Please send us a valid email address, thanks!'
+                })
+            if not password:
+                json_response.update({
+                    'title': 'Please type in a password',
+                    'message': 'Please fill in your password in order to continue'
+                })
+
+        self.json_response(status_code=status, **json_response)
+
+
+class ConfirmUser(CompareRouteHandler):
+    def get(self, user_id, confirmation_code):
+        user = UserAccount.get_by_id(int(user_id))
+
+        if user:
+            if UserAccount.confirmation_code == confirmation_code:
+                UserAccount.confirmed_email = True
+                UserAccount.put()
+
+        self.redirect('/login')
+
