@@ -804,8 +804,9 @@ table.proposed_table td {
   padding:10px;
   border:1px solid #DDD;
 }
-/* This Summary Table */
 
+
+/* This Summary Table */
 table.summary_Table{
   overflow:auto;
   text-align:left;
@@ -1137,8 +1138,6 @@ ul.tabs li.current{
 .cr_companies{}
 
 .scrollToTop{
-	/*width:100px;*/
-	/*height:130px;*/
 	padding:4px;
 	margin:0;
 	text-align:center;
@@ -1151,7 +1150,7 @@ ul.tabs li.current{
 	right:40px;
 	display:none;
 	-webkit-border-radius: 36px 12px;
-	/*background: url('arrow_up.png') no-repeat 0px 20px;*/
+
 }
 .scrollToTop:hover{
 	text-decoration:none;
@@ -1519,6 +1518,11 @@ body {
 .sidebar{
     background-color:#ececec;
 }*/
+/*This is Logo for Admin*/
+.admin-logo-placement{
+    margin-bottom: 0px;
+    padding:12px 0 0 12px;
+}
 
 .navbar-top-links {
   margin-right: 0;

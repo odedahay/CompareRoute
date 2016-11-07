@@ -9,7 +9,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/admin">Admin Page</a>
+            <a class="navbar-brand" href="/admin">CompareRoute Admin Page</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -18,9 +18,6 @@
             <div class="navbar-right">
 
                 <ul class="nav navbar-nav" id="admin_nav">
-
-                    <!-- <li><a href="" style="color:#fff"><i class="fa fa-user"></i> {{ email }}</a></li>
-                     <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>-->
 
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -44,17 +41,29 @@
 
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse">
+
+            <div class="admin-logo-placement">
+                <img class="img-responsive" src="img/logo/compare-route.png" alt="" width="220">
+            </div>
+
             <ul class="nav" id="side-menu">
                 <li class="sidebar-search">
-                    <div class="input-group custom-search-form">
-                        <input type="text" class="form-control" placeholder="Search...">
-                        <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
-                    </div>
-                    <!-- /input-group -->
+                    Search Postal Code
+                     <form class=""  role="search" action="/admin-search">
+                        <div class="input-group custom-search-form">
+
+                            <!--the search input-->
+                            <input type="text" class="form-control" placeholder="Postal Code only..." value="{{ query }}" name="q">
+
+                            <!--the submit button-->
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+
+                        </div>
+                     </form>
                 </li>
 
                  <li><a href="/admin"><i class="fa fa-table"></i> User Log Activity</a></li>
@@ -62,29 +71,16 @@
                 <li>
                     <a href="/admin-postal"><i class="fa fa-list"></i> Postal Code List<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li>
-                                <a href="/admin-postal">New Postal Code Alert</a>
-                            </li>
-                            <li>
-                                <a href="/admin-postal-search">Search Postal Code</a>
-                            </li>
-                            <li>
-                                <a href="/admin-postal-gnew">Add New Postal Code</a>
-                            </li>
-                             <li>
-                                <a href="/admin-postal-arch">Postal Record Alert - Archive</a>
-                            </li>
+                            <li><a href="/admin-postal">New Postal Code Alert</a></li>
+                            <!--<li><a href="/admin-postal-search">Search Postal Code</a></li>-->
+                            <li><a href="/admin-postal-gnew">Add New Postal Code</a></li>
+                            <li><a href="/admin-postal-arch">Postal Record Alert - Archive</a></li>
                         </ul>
                         <!-- /.nav-second-level -->
                 </li>
                 <li>
                     <a href="/admin-credits"><i class="fa fa-sliders" aria-hidden="true"></i> User Credit Control</a>
                 </li>
-                <!--<li>-->
-                    <!--<a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>-->
-                <!--</li>-->
-
-
 
             </ul>
         </div>

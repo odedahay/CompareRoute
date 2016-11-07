@@ -129,13 +129,17 @@ class Postal_Search(base.BaseHandler):
 
         postal_key = postalRecordDB.check_if_exists('q')
         postal = postalRecordDB.get_all_postalcode(postal_key)
+
         #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
+
         tpl_values = {
             'admin_user': admin_user,
             'email': email,
             'postal': postal
         }
-        self.render('admin/admin_search_postal.html', **tpl_values)
+
+        #self.render('admin/admin_search_postal.html', **tpl_values)
+        self.render('admin/admin.html', **tpl_values)
 
 class AdminHome_page(base.BaseHandler):
     def get(self):

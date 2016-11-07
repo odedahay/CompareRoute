@@ -19,10 +19,18 @@
 		<div class="row">
 
 			<div class="col-xs-6">
+				{% if update_postalcode_error %}
+					<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
+					<p style="text-align: center">{{update_postalcode_error}}</p>
+					</div>
+
+					{% elif msg %}
+					<div id="ajax-errors" class="alert alert-success" role="alert"  style="width: 300px">
+					<p style="text-align: center">{{msg}}</p>
+					</div>
+					{% endif %}
 
 				{% for record in results %}
-
-
 				<br />
 				<form method="POST" action="/admin-search-del">
 
@@ -39,22 +47,14 @@
 					<input class="form-control" type="text" id="long_val" name="long_val" value="{{ record.long }}">
 
 
-					{% endfor %}
+
 					<br />
 					<br />
 
-					{% if update_postalcode_error %}
-					<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
-					<p style="text-align: center">{{update_postalcode_error}}</p>
-					</div>
 
-					{% elif msg %}
-					<div id="ajax-errors" class="alert alert-success" role="alert"  style="width: 300px">
-					<p style="text-align: center">{{msg}}</p>
-					</div>
-					{% endif %}
 					<button type="submit" id="move_postal_code" class="btn btn-primary">Delete</button>
-					<a href="/admin-postal-search" class="btn btn-info"><i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
+					<a href="/admin-search?q={{record.postal_code}}" class="btn btn-info"><i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
+					{% endfor %}
 				</form>
 
 			</div>

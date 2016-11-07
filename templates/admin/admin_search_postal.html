@@ -7,6 +7,7 @@
         <h2>Postal Code Search</h2>
         <p class="lead">Search Postal Code in CompareRoute Record</p>
     </div>
+
     <div class="row">
 
         <div class="col-md-12">
@@ -14,13 +15,13 @@
                 <div class="form-group input-group">
                     <input type="text" class="form-control" placeholder="Search Postal Code" value="{{ query }}" name="q">
 
-                     {% if errormsg %}
+                    {% if errormsg %}
 
-                    <div id="ajax-errors" class="alert alert-success" role="alert">
+                    <div class="alert alert-success" role="alert">
                         <p style="text-align: center">{{ login_status }}</p>
                     </div>
                     {% elif register_error %}
-                    <div id="ajax-errors" class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert">
                         <p style="text-align: center">{{ register_error }}</p>
                     </div>
 

@@ -1,59 +1,73 @@
 from framework.request_handler import CompareRouteHandler
 from handlers import base
-from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
-from google.appengine.api import search
+from model.admin_account import postalRecordDB
+from model.user_account import UserAccount
 
 
 class SearchPostal(base.BaseHandler):
     def get(self):
 
-        query = self.request.get('q')
-        compare_postal = postalRecordDB.check_if_exists(query)
-        msg = ""
+        email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        if compare_postal == None:
-            # if query != '':
-            #     notfound = "Search not found"
+        if admin_user:
+            query = self.request.get('q')
 
-            errormsg = "No postal record found"
-            self.render('admin/search.html', errormsg=errormsg)
+            compare_postal = postalRecordDB.check_if_exists(query)
+            errormsg = ""
+
+            if query == '':
+                errormsg += "Search not found"
+                self.render('admin/search.html', errormsg=errormsg)
+
+            elif compare_postal == None:
+
+                errormsg += query+" has no Postal Code record"
+                self.render('admin/search.html', errormsg=errormsg)
+
+            else:
+
+                postal_records = postalRecordDB.get_by_id(compare_postal)
+                results = postalRecordDB.query(postalRecordDB.postal_code >= postal_records.postal_code).order().fetch(10)
+
+                #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - - - - -
+                tpl_values = {
+                        'admin_user': admin_user,
+                        'email': email,
+                        'query': query,
+                        'results': results
+                    }
+                self.render('admin/search.html', **tpl_values)
+
         else:
-            # index = search.Index('postal')
-            # snippet = 'snippet("%s", latitude, 140)' % query
 
-            # options = search.QueryOptions(
-            #         returned_expressions=[
-            #             search.FieldExpression(name='snippet', expression=snippet)
-            #         ]
-            #     )
-            # results = index.search(
-            #     query=search.Query(
-            #         query_string=query,
-            #         options=options,
-            #     )
-            # )
-
-            # noresult
-            # docs = []
-            # if results:
-            #     docs = results.results
-            postal_records = postalRecordDB.get_by_id(compare_postal)
-            results = postalRecordDB.query(postalRecordDB.postal_code >= postal_records.postal_code).order().fetch(10)
-            #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - - - - -
-            tpl_values = {
-                    'query': query,
-                    'results': results
-                }
-            self.render('admin/search.html', **tpl_values)
+            # if not admin access
+            self.redirect("/compare")
 
 class PostalDelete_Handler(base.BaseHandler):
 
     def get(self):
 
-        postal_code = self.request.get("postal_code")
-        results = postalRecordDB.query(postalRecordDB.postal_code == postal_code).order().fetch(1)
+        email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        self.render("admin/postal_delete.html", results=results)
+        if admin_user:
+
+            postal_code = self.request.get("postal_code")
+            results = postalRecordDB.query(postalRecordDB.postal_code == postal_code).order().fetch(1)
+
+            tpl_values = {
+                'admin_user': admin_user,
+                'email': email,
+                'results': results
+            }
+
+            self.render("admin/admin_postal_delete.html", **tpl_values)
+
+        else:
+
+            # if not admin access
+            self.redirect("/compare")
 
     def post(self):
 
@@ -69,10 +83,12 @@ class PostalDelete_Handler(base.BaseHandler):
         msg = del_postalcode[1]
 
         if success == False:
-            self.render('admin/postal_delete.html', update_postalcode_erro=msg)
+
+            self.render('admin/admin_postal_delete.html', update_postalcode_erro=msg)
+
         else:
-            self.redirect("/admin-postal-search?title='%s' "%msg)
-            # self.render('admin/postal_delete.html', update_postalcode_success=msg)
+
+            self.redirect("/admin-search?title='%s' "%msg)
 
     def postalcode_db(self, postal_code):
 
@@ -83,7 +99,7 @@ class PostalDelete_Handler(base.BaseHandler):
 
         if not postal_code:
             success = False
-            msg = "Please check the Postal code"
+            msg += "Please check the Postal code"
             status.append(success)
             status.append(msg)
 
@@ -99,7 +115,7 @@ class PostalDelete_Handler(base.BaseHandler):
             delete_data.key.delete()
 
             success = True
-            msg = "Successful"
+            msg += "Successful"
             status.append(success)
             status.append(msg)
 
@@ -107,10 +123,21 @@ class PostalDelete_Handler(base.BaseHandler):
 
 class PostalEdit_Handler(base.BaseHandler):
     def get(self):
-        postal_code = self.request.get("postal_code")
-        postal_edit = postalRecordDB.query(postalRecordDB.postal_code == postal_code).get()
 
-        self.render("admin/postal_edit.html", postal_edit=postal_edit)
+        email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
+
+        if admin_user:
+
+            postal_code = self.request.get("postal_code")
+            postal_edit = postalRecordDB.query(postalRecordDB.postal_code == postal_code).get()
+
+            self.render("admin/admin_postal_edit.html", postal_edit=postal_edit, postal_code=postal_code, email=email, admin_user=admin_user)
+
+        else:
+
+            # if not admin access
+            self.redirect("/compare")
 
     def post(self):
 
@@ -125,10 +152,10 @@ class PostalEdit_Handler(base.BaseHandler):
         postal_edit.long = long_val
         postal_edit.put()
 
-        #msg = "Successful"
-        #self.render("admin/postal_edit.html", postal_edit=postal_edit)
+        # Return to search page:
+        self.redirect("/admin-search?q="+postal_code)
 
-        self.redirect("/admin-postal-search")
+
 
 
 
