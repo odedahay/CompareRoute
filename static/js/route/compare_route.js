@@ -5,536 +5,12 @@ if (typeof jQuery === "undefined") {
     throw new Error("jQuery progress timer requires jQuery");
 }
 
-// scroll up and down
-function scrollToAnchor(aid){
-    var aTag = $("a[name='"+ aid +"']");
-    $("html,body").animate({scrollTop: aTag.offset().top}, 1000);
-}
-
 
 // validation for Route by Trucks:
 var errorBox = $('#message-errors');
 
-
 //buttons
 var btn_generateRoute = $("#routeBtn");
-
-//forms
-
-// Validate HQ point
-// Route by Truck
-function checkStarting_Point(starting_postal){
-
-    var errorInput = $('.startingPoint');
-    var errorMessage;
-
-    // create regex to validate if numbers onlyåå
-    var reg = /^[0-9]+$/;
-
-    if(starting_postal === 'undefined'  || starting_postal === ''){
-
-        errorMessage = "*Postal Code required!";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else if( (starting_postal.length) < 5 || (starting_postal.length) > 6 ){
-
-        //console.log(errorMessage);
-        errorMessage = "*Postal Code should only be 6 digits";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else if (!reg.test(starting_postal)){
-
-        errorMessage = "*Postal Code should be numbers only";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else{
-
-        errorInput.hide();
-        return true;
-
-    }
-} // end
-
-// validation function for Postal Sequence
-function postalSequence_area(postal_sequence){
-    var errorInput = $(".postalSeq");
-    var errorMessage;
-
-    if(postal_sequence === ""){
-
-        errorMessage = "*Please, Enter your Delivery Location Details!";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return;
-
-    }else{
-
-        errorInput.hide();
-        return true;
-    }
-}
-// Function for sub 2 fields
-function truck_capacity_limit_2(num_of_truck, num_of_truck_1){
-     var errorNumTruck2 = $(".numTruck_1");
-     var limitTruck = parseInt(num_of_truck) + parseInt(num_of_truck_1);
-
-
-     return truck_capacity_limit_body(errorNumTruck2, limitTruck);
-}
-
-// Function for sub 3 fields
-function truck_capacity_limit_3(num_of_truck, num_of_truck_1, num_of_truck_2){
-
-     var errorNumTruck2 = $(".numTruck_2");
-     var limitTruck = parseInt(num_of_truck) + parseInt(num_of_truck_1) + parseInt(num_of_truck_2);
-
-     //console.log('limitTruck', limitTruck);
-
-     return truck_capacity_limit_body(errorNumTruck2, limitTruck);
-}
-
-// Body function of truck_capacity_limit_*
-function truck_capacity_limit_body(errorNumTruck2, limitTruck){
-
-    errorNumTruck2.hide();
-
-    //check the fields if empty
-    // parseInt(num_of_truck) > 15
-    if(parseInt(limitTruck) > 15 ){
-
-        errorMessage = "*Total maximum of 15 Truck valid only";
-        errorNumTruck2.fadeIn();
-        errorNumTruck2.html(errorMessage);
-
-        return false;
-    }
-    else{
-        errorNumTruck2.hide();
-        return true;
-    }
-}
-
-// validation for truck capacity
-function truck_capacity_area(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck");
-    var errorInput2 = $(".truckCapacity");
-    var errorInput3 = $(".numTruck");
-
-    var errorMessage;
-     // create regex to validate if numbers onlyåå
-    var reg = /^[0-9]+$/;
-
-    errorInput1.hide();
-    errorInput2.hide();
-    errorInput3.hide();
-
-    //check the fields if empty
-    if(type_of_truck === ""){
-
-        errorMessage = "*Please Enter Type of Truck!";
-        errorInput1.fadeIn();
-        errorInput1.html(errorMessage);
-
-        return false;
-    }
-    else if( truck_capacity === "" || parseInt(truck_capacity) <= 0 || !reg.test(truck_capacity) ){
-
-        errorMessage = "*Please Enter Valid Truck Capacity";
-        errorInput2.fadeIn();
-        errorInput2.html(errorMessage);
-
-        return false;
-    }
-    else if( num_of_truck === "" || parseInt(num_of_truck) <= 0  || !reg.test(num_of_truck) ){
-
-        errorMessage = "*Please Enter Valid Number of Truck";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-    }
-    else if(  parseInt(num_of_truck) > 15 ){
-
-        errorMessage = "*Maximum of 15 Truck valid only";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-
-    }
-    else{
-
-        errorInput1.hide();
-        errorInput2.hide();
-        errorInput3.hide();
-        return true;
-    }
-
-}
-
-// validation for truck capacity second field
-function truck_capacity_area_1(type_of_truck_1, truck_capacity_1, num_of_truck_1){
-
-    var errorInput1 = $(".typeTruck_1");
-    var errorInput2 = $(".truckCapacity_1");
-    var errorInput3 = $(".numTruck_1");
-
-    var errorMessage;
-    var reg = /^[0-9]+$/;
-
-     errorInput1.hide();
-     errorInput2.hide();
-     errorInput3.hide();
-
-    //check the fields if empty
-    if(type_of_truck_1 === ""){
-
-        errorMessage = "*Please Enter Types of Truck!";
-        errorInput1.fadeIn();
-        errorInput1.html(errorMessage);
-
-        return false;
-
-    }
-    else if( truck_capacity_1 === "" || parseInt(truck_capacity_1) <= 0 || !reg.test(truck_capacity_1) ){
-
-        errorMessage = "*Please Enter Valid Truck Capacity ";
-        errorInput2.fadeIn();
-        errorInput2.html(errorMessage);
-
-        return false;
-    }
-    else if( num_of_truck_1 === "" || parseInt(num_of_truck_1) <= 0 || !reg.test(num_of_truck_1) ){
-
-        errorMessage = "*Please Enter valid Number of Truck";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-    }
-    else{
-        errorInput1.hide();
-        errorInput2.hide();
-        errorInput3.hide();
-        return true;
-    }
-}
-
-// validation for truck capacity third field
-function truck_capacity_area_2(type_of_truck_2, truck_capacity_2, num_of_truck_2){
-
-    var errorInput1 = $(".typeTruck_2");
-    var errorInput2 = $(".truckCapacity_2");
-    var errorInput3 = $(".numTruck_2");
-
-    var errorMessage;
-    var reg = /^[0-9]+$/;
-
-     errorInput1.hide();
-     errorInput2.hide();
-     errorInput3.hide();
-
-    //check the fields if empty
-    if(type_of_truck_2 === ""){
-
-        errorMessage = "*Please Enter Types of Truck!";
-        errorInput1.fadeIn();
-        errorInput1.html(errorMessage);
-
-        return false;
-
-    }
-    else if( truck_capacity_2 === "" || parseInt(truck_capacity_2) <= 0 || !reg.test(truck_capacity_2) ){
-
-        errorMessage = "*Please Enter Valid Truck Capacity ";
-        errorInput2.fadeIn();
-        errorInput2.html(errorMessage);
-
-        return false;
-    }
-    else if( num_of_truck_2 === ""|| parseInt(num_of_truck_2) <= 0 || !reg.test(num_of_truck_2) ){
-
-        errorMessage = "*Please Enter valid Number of Truck";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-    }
-    else{
-        errorInput1.hide();
-        errorInput2.hide();
-        errorInput3.hide();
-        return true;
-    }
-}
-
-// Route by Companies:
-// Starting Point Validation 1
-function checkStarting_Point_comp_selector_1(starting_postal){
-    var errorInput = $(".startingPostal_1");
-    return checkStarting_Point_comp_body(errorInput, starting_postal);
-}
-// Starting Point Validation 2
-function checkStarting_Point_comp_selector_2(starting_postal){
-    var errorInput = $(".startingPostal_2");
-    return checkStarting_Point_comp_body(errorInput, starting_postal);
-}
-// Starting Point Validation 3
-function checkStarting_Point_comp_selector_3(starting_postal){
-    var errorInput = $(".startingPostal_3");
-    return checkStarting_Point_comp_body(errorInput, starting_postal);
-}
-// main body of checkStarting_Point_comp_selector
-function checkStarting_Point_comp_body(errorInput, starting_postal){
-
-    var errorMessage;
-
-    // create regex to validate if numbers onlyåå
-    var reg = /^[0-9]+$/;
-
-    if(starting_postal === "undefined"  || starting_postal === ""){
-
-        errorMessage = "*Postal Code required!";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else if( (starting_postal.length) < 5 || (starting_postal.length) > 6 ){
-
-        //console.log(errorMessage);
-        errorMessage = "*Postal Code should only be 6 digits";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else if (!reg.test(starting_postal)){
-
-        errorMessage = "*Postal Code should be numbers only";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else{
-
-        errorInput.hide();
-        return true;
-
-    }
-} // end
-
-//////////////////////////////
-// Vehicle Count Validation 1
-function checkVehicle_comp_selector_1(vehicle_quantity){
-    var errorInput = $(".vehicleQuantity_1");
-    return vehicleCount_comp_body(errorInput, vehicle_quantity);
-}
-// Vehicle Count Validation 2
-function checkVehicle_comp_selector_2(vehicle_quantity){
-    var errorInput = $(".vehicleQuantity_2");
-    return vehicleCount_comp_body(errorInput, vehicle_quantity);
-}
-// Vehicle Count Validation 3
-function checkVehicle_comp_selector_3(vehicle_quantity){
-    var errorInput = $(".vehicleQuantity_3");
-    return vehicleCount_comp_body(errorInput, vehicle_quantity);
-}
-// main body of checkStarting_Point_comp_selector
-function vehicleCount_comp_body(errorInput, vehicle_quantity){
-
-    var errorMessage;
-
-    // create regex to validate if numbers onlyåå
-    var reg = /^[0-9]+$/;
-
-    if(vehicle_quantity === "undefined"  || vehicle_quantity === ""){
-
-        errorMessage = "*Please Enter Number of Truck!";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    //(vehicle_quantity.length) <= 0 || (vehicle_quantity.length) > 15
-    }else if(vehicle_quantity === "" || parseInt(vehicle_quantity) <= 0 || !reg.test(vehicle_quantity) ){
-
-        errorMessage = "*Please Enter Valid Number of Truck!";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }else if(  parseInt(vehicle_quantity) > 15 ){
-
-        errorMessage = "*Maximum of 15 Truck valid only";
-        errorInput.fadeIn();
-        errorInput.html(errorMessage);
-
-        return false;
-
-    }
-    else{
-
-        errorInput.hide();
-        return true;
-
-    }
-} // end
-
-//////////////////////////////
-// Company Capacity Truck Validation 1
-function truck_capacity_area_comp_1(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_c1");
-    var errorInput2 = $(".truckCapacity_c1");
-    var errorInput3 = $(".numTruck_c1");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-// Company Capacity Truck Validation 1 - sub-additional page 1 sub 2
-function truck_capacity_area_comp_1a(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc1");
-    var errorInput2 = $(".truckCapacity_cc1");
-    var errorInput3 = $(".numTruck_cc1");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-// Company Capacity Truck Validation 1 - sub-additional page 1 sub 2
-function truck_capacity_area_comp_1b(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc2");
-    var errorInput2 = $(".truckCapacity_cc2");
-    var errorInput3 = $(".numTruck_cc2");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-
-// Company Capacity Truck Validation 2
-function truck_capacity_area_comp_2(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_c2");
-    var errorInput2 = $(".truckCapacity_c2");
-    var errorInput3 = $(".numTruck_c2");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-// Company Capacity Truck Validation 2 - sub-additional page 1 x2
-function truck_capacity_area_comp_2a(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc21");
-    var errorInput2 = $(".truckCapacity_cc21");
-    var errorInput3 = $(".numTruck_cc21");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-// Company Capacity Truck Validation 2 - sub-additional page 1 x2
-function truck_capacity_area_comp_2b(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc22");
-    var errorInput2 = $(".truckCapacity_cc22");
-    var errorInput3 = $(".numTruck_cc22");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-/////////
-// Company Capacity Truck Validation 3
-function truck_capacity_area_comp_3(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_c3");
-    var errorInput2 = $(".truckCapacity_c3");
-    var errorInput3 = $(".numTruck_c3");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-
-// Company Capacity Truck Validation 3 - sub-additional page 1 x2
-function truck_capacity_area_comp_3a(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc31");
-    var errorInput2 = $(".truckCapacity_cc31");
-    var errorInput3 = $(".numTruck_cc31");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-// Company Capacity Truck Validation 3 - sub-additional page 2 x 2
-function truck_capacity_area_comp_3b(type_of_truck, truck_capacity, num_of_truck){
-
-    var errorInput1 = $(".typeTruck_cc32");
-    var errorInput2 = $(".truckCapacity_cc32");
-    var errorInput3 = $(".numTruck_cc32");
-    // call function to validate fields
-    return truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck);
-}
-/////////
-// Company Capacity Truck Body
-function truck_capacity_area_body_comp(errorInput1, errorInput2, errorInput3, type_of_truck, truck_capacity, num_of_truck){
-
-    var errorMessage;
-     // create regex to validate if numbers onlyåå
-    var reg = /^[0-9]+$/;
-
-    errorInput1.hide();
-    errorInput2.hide();
-    errorInput3.hide();
-
-    //check the fields if empty
-    if(type_of_truck === ""){
-
-        errorMessage = "*Please Enter Type of Truck!";
-        errorInput1.fadeIn();
-        errorInput1.html(errorMessage);
-
-        return false;
-
-    }
-    else if( truck_capacity === "" || parseInt(truck_capacity) <= 0 || !reg.test(truck_capacity) ){
-
-        errorMessage = "*Please Enter Valid Truck Capacity";
-        errorInput2.fadeIn();
-        errorInput2.html(errorMessage);
-
-        return false;
-    }
-    else if( num_of_truck === "" || parseInt(num_of_truck) <= 0  || !reg.test(num_of_truck) ){
-
-        errorMessage = "*Please Enter Valid Number of Truck";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-    }
-    else if(  parseInt(num_of_truck) > 15 ){
-
-        errorMessage = "*Maximum of 15 Truck valid only";
-        errorInput3.fadeIn();
-        errorInput3.html(errorMessage);
-
-        return false;
-
-    }
-    else{
-
-        errorInput1.hide();
-        errorInput2.hide();
-        errorInput3.hide();
-        return true;
-    }
-
-}
 
 // ---- //
 
@@ -626,22 +102,27 @@ $('#routeBtn').click(function () {
     var num_of_truck_cc23 = $("#num_of_truck_cc23").val();
 
     // sub fields 3
-    var type_of_truck_cc31 = $("#type_of_truck_cc21").val();
-    var type_of_truck_cc32 = $("#type_of_truck_cc22").val();
-    var type_of_truck_cc33 = $("#type_of_truck_cc23").val();
+    var type_of_truck_cc31 = $("#type_of_truck_cc31").val();
+    var type_of_truck_cc32 = $("#type_of_truck_cc32").val();
+    var type_of_truck_cc33 = $("#type_of_truck_cc33").val();
 
-    var truck_capacity_cc31 = $("#truck_capacity_cc21").val();
-    var truck_capacity_cc32 = $("#truck_capacity_cc22").val();
-    var truck_capacity_cc33 = $("#truck_capacity_cc23").val();
+    var truck_capacity_cc31 = $("#truck_capacity_cc31").val();
+    var truck_capacity_cc32 = $("#truck_capacity_cc32").val();
+    var truck_capacity_cc33 = $("#truck_capacity_cc33").val();
 
-    var num_of_truck_cc31 = $("#num_of_truck_cc21").val();
-    var num_of_truck_cc32 = $("#num_of_truck_cc22").val();
-    var num_of_truck_cc33 = $("#num_of_truck_cc23").val();
+    var num_of_truck_cc31 = $("#num_of_truck_cc31").val();
+    var num_of_truck_cc32 = $("#num_of_truck_cc32").val();
+    var num_of_truck_cc33 = $("#num_of_truck_cc33").val();
 
-    // Event Counter
-    var add_truck_cc1 = $("#add_truck_cc1").val();
-    var add_truck_cc2 = $("#add_truck_cc2").val();
-    var add_truck_cc3 = $("#add_truck_cc3").val();
+    // field truck counter
+    var add_truck_cc1_1 = $("#add_truck_cc1_1").val();
+    var add_truck_cc1_2 = $("#add_truck_cc1_2").val();
+
+    var add_truck_cc2_1 = $("#add_truck_cc2_1").val();
+    var add_truck_cc2_2 = $("#add_truck_cc2_2").val();
+
+    var add_truck_cc3_1 = $("#add_truck_cc3_1").val();
+    var add_truck_cc3_2 = $("#add_truck_cc3_2").val();
 
     var count_truck1 = $("#add_truck_capacity_1").val();
     var count_truck2 = $("#add_truck_capacity_2").val();
@@ -656,12 +137,14 @@ $('#routeBtn').click(function () {
     var priority_capacity_comp = $("#priority_capacity_comp")[0].checked;
     var num_comp_val = $("#num_comp_val").val();
 
-    $('#prog').progressbar({ value: 0 });
+    //$('#prog').progressbar({ value: 0 });
 
+    // Calling function to another js file:
 
     // Declare variable will for event
     var generate_route = false;
     var truckCapacity_false = false;
+
     // company boolean
     var vehicleCount_comp = false;
 
@@ -691,7 +174,7 @@ $('#routeBtn').click(function () {
         var postalSeqValue = postalSequence_area(postal_sequence);
 
         // I set num_truck for event to know if they additional fields
-       // if( parseInt(count_truck1) === truckCount ){
+
         if( parseInt(truckCount) === 1 ){
 
              // Validate the two Truck forms
@@ -741,6 +224,10 @@ $('#routeBtn').click(function () {
     // Check if for sort Companies only
     if(sort_company === true){
 
+        var vehicleCount_comp = false;
+        var startingValue_comp = false;
+        var postalSeqValue_comp = false;
+
         if( parseInt(num_comp_val) === 2 ){
 
             var postalSeqValue_comp = postalSequence_area(postal_sequence);
@@ -752,16 +239,16 @@ $('#routeBtn').click(function () {
             var vehicleCount2 = checkVehicle_comp_selector_2(vehicle_quantity_2);
 
             if(startingValue1 === true && startingValue2 === true){
-                var startingValue_comp = true;
+                startingValue_comp = true;
             }
             if(vehicleCount1 === true && vehicleCount2 === true){
-                var vehicleCount_comp = true;
+                vehicleCount_comp = true;
             }
         }
 
         if( parseInt(num_comp_val) === 3 ){
 
-            var postalSeqValue_comp = postalSequence_area(postal_sequence);
+            postalSeqValue_comp = postalSequence_area(postal_sequence);
 
             var startingValue1 = checkStarting_Point_comp_selector_1(starting_postal_1);
             var startingValue2 = checkStarting_Point_comp_selector_2(starting_postal_2);
@@ -773,18 +260,34 @@ $('#routeBtn').click(function () {
 
             //validate the forms
             if(startingValue1 === true && startingValue2 === true && startingValue3 === true ){
-                var startingValue_comp = true;
+                startingValue_comp = true;
             }
             if(vehicleCount1 === true && vehicleCount2 === true && vehicleCount3 === true){
-                var vehicleCount_comp = true;
+                 vehicleCount_comp = true;
             }
         }
 
         ////////// Enable if Consider Maximizing Truck Capacity is checked //////////
         if( priority_capacity_comp === true ){
 
-            // Count number of company entered
+            //num_comp_val_vallidation();
+
+            // Count the number of company entered by user > for 2 company
             if( parseInt(num_comp_val) === 2 ){
+
+                // validator to check if there is no error
+                var company_TruckCapacity_check_1 = true
+                var company_TruckCapacity_check_2 = true
+
+                // Truck field 1
+                var company_TruckCapacity1;
+                var company_TruckCapacity1a;
+                var company_TruckCapacity1b;
+
+                // Truck field 2
+                var company_TruckCapacity2;
+                var company_TruckCapacity2a;
+                var company_TruckCapacity2b;
 
                 // validate the entered delivery Location details
                 var postalSeqValue_comp = postalSequence_area(postal_sequence);
@@ -793,45 +296,80 @@ $('#routeBtn').click(function () {
                 var startingValue1 = checkStarting_Point_comp_selector_1(starting_postal_1);
                 var startingValue2 = checkStarting_Point_comp_selector_2(starting_postal_2);
 
-                if(add_truck_cc1 !== true){
+                // vehicle
+                if(startingValue1 === true && startingValue2 === true){
+                   startingValue_comp = true;
+                 }
 
-                    console.log("Feilds 2");
+                // truck 1 field > add 2nd truck field
+                if(add_truck_cc1_1 && !add_truck_cc1_2){
 
-                    var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    var company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
-                    var company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
+                    company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
 
-                    var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    var company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
-                    var company_TruckCapacity2a = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+                    company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
+                }
+                // truck 1 field > add 3rd truck field
+                else if (add_truck_cc1_1 && add_truck_cc1_2){
 
-                    //validate the forms
-                    if(company_TruckCapacity1 === true && company_TruckCapacity1a === true && company_TruckCapacity1b === true ){
-                        var company_TruckCapacity1 = true;
-                    }
-                    if(company_TruckCapacity2 === true && company_TruckCapacity2a === true && company_TruckCapacity2a === true){
-                        var company_TruckCapacity2 = true;
-                    }
+                    company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
 
-                }else{
+                    company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
 
-                     var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                     var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-
+                    company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
+                    if (!company_TruckCapacity1b){ company_TruckCapacity_check_1 = false}
 
                 }
-                 // vehicle
-                 if(startingValue1 === true && startingValue2 === true){
-                        var startingValue_comp = true;
-                        }
-                  // truck capacity
-                 if(company_TruckCapacity1 === true && company_TruckCapacity2 === true){
-                    var vehicleCount_comp = true;
-                    }
+                // truck 1 field only
+                else{
 
+                     company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                     if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
+
+                }
+                ///////////////////////////////////////
+                // truck 2 field > add 2nd truck field
+                if(add_truck_cc2_1 && !add_truck_cc2_2){
+
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
+                    company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    if (!company_TruckCapacity2a){ company_TruckCapacity_check_2 = false }
+                }
+                // truck 2 field > add 3rd truck field
+                else if (add_truck_cc2_1 && add_truck_cc2_2){
+
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
+                    company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    if (!company_TruckCapacity2a){ company_TruckCapacity_check_2 = false }
+
+                    var company_TruckCapacity2b = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+                    if (!company_TruckCapacity2b){ company_TruckCapacity_check_2 = false}
+
+                }
+                // truck 2 field only
+                else{
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
+                }
+
+                // truck capacity
+                if(company_TruckCapacity_check_1 && company_TruckCapacity_check_2){ vehicleCount_comp = true; }
 
             }
             if( parseInt(num_comp_val) === 3 ){
+
+                // validator to check if there is no error
+                var company_TruckCapacity_check_1 = true
+                var company_TruckCapacity_check_2 = true
+                var company_TruckCapacity_check_3 = true
 
                 // validate the entered delivery Location details
                 var postalSeqValue_comp = postalSequence_area(postal_sequence);
@@ -841,51 +379,130 @@ $('#routeBtn').click(function () {
                 var startingValue2 = checkStarting_Point_comp_selector_2(starting_postal_2);
                 var startingValue3 = checkStarting_Point_comp_selector_3(starting_postal_3);
 
-                //if(type_of_truck_c3 === ""){
-                if(add_truck_cc3 !== true){
+                // Truck field 1
+                var company_TruckCapacity1;
+                var company_TruckCapacity1a;
+                var company_TruckCapacity1b;
 
-                    console.log("Feilds 3");
+                // Truck field 2
+                var company_TruckCapacity2;
+                var company_TruckCapacity2a;
+                var company_TruckCapacity2b;
 
-                    // Maximized Truck Capacity for two companies
-                    var company_TruckCapacity1 =  truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    var company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
-                    var company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
+                // Truck field 3
+                var company_TruckCapacity3;
+                var company_TruckCapacity3a;
+                var company_TruckCapacity3b;
 
-                    var company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    var company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
-                    var company_TruckCapacity2a = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+                var type_of_truck_c3;
 
-                    var company_TruckCapacity3 =  truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
-                    var company_TruckCapacity3a = truck_capacity_area_comp_3a(type_of_truck_cc31, truck_capacity_cc31, num_of_truck_cc31);
-                    var company_TruckCapacity3b = truck_capacity_area_comp_3b(type_of_truck_cc32, truck_capacity_cc32, num_of_truck_cc32);
+                // truck 1 field > add 2nd truck field
+                if(add_truck_cc1_1 && !add_truck_cc1_2){
 
-                }else{
+                    company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
 
-                    console.log("Feilds 1");
+                    company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
+                }
+                // truck 1 field > add 3rd truck field
+                else if (add_truck_cc1_1 && add_truck_cc1_2){
 
-                    var company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    var company_TruckCapacity2 = truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    var company_TruckCapacity3 = truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                    company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
+
+                    company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
+
+                    company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
+                    if (!company_TruckCapacity1b){ company_TruckCapacity_check_1 = false}
+
+                }
+                // truck 1 field only
+                else{
+
+                     company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
+                     if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
+
+                }
+                ///////////////////////////////////////
+                // truck 2 field > add 2nd truck field
+                if(add_truck_cc2_1 && !add_truck_cc2_2){
+
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
+                    company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    if (!company_TruckCapacity2a){ company_TruckCapacity_check_2 = false }
+                }
+                // truck 2 field > add 3rd truck field
+                else if (add_truck_cc2_1 && add_truck_cc2_2){
+
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
+                    company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
+                    if (!company_TruckCapacity2a){ company_TruckCapacity_check_2 = false }
+
+                    var company_TruckCapacity2b = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
+                    if (!company_TruckCapacity2b){ company_TruckCapacity_check_2 = false}
+
+                }
+                // truck 2 field only
+                else{
+                    company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+
                 }
 
+                // truck 3 field > add 3rd truck field
+                if(add_truck_cc3_1 && !add_truck_cc3_2){
 
+                    company_TruckCapacity3 =  truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                    if (!company_TruckCapacity3){ company_TruckCapacity_check_3 = false}
+
+                    company_TruckCapacity3a = truck_capacity_area_comp_3a(type_of_truck_cc31, truck_capacity_cc31, num_of_truck_cc31);
+                    if (!company_TruckCapacity3a){ company_TruckCapacity_check_3 = false }
+                }
+                // truck 2 field > add 3rd truck field
+                else if (add_truck_cc3_1 && add_truck_cc3_2){
+
+                    company_TruckCapacity3 = truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                    if (!company_TruckCapacity3){ company_TruckCapacity_check_3 = false}
+
+                    company_TruckCapacity3a = truck_capacity_area_comp_3a(type_of_truck_cc31, truck_capacity_cc31, num_of_truck_cc31);
+                    if (!company_TruckCapacity3a){ company_TruckCapacity_check_3 = false }
+
+                    company_TruckCapacity3b = truck_capacity_area_comp_3b(type_of_truck_cc32, truck_capacity_cc32, num_of_truck_cc32);
+                    if (!company_TruckCapacity3b){ company_TruckCapacity_check_3 = false}
+
+                }
+                // truck 2 field only
+                else{
+                    company_TruckCapacity3 =  truck_capacity_area_comp_3(type_of_truck_c3, truck_capacity_c3, num_of_truck_c3);
+                    if (!company_TruckCapacity3){ company_TruckCapacity_check_3 = false}
+
+                }
+                /////////
                 //validate the forms
                 if(startingValue1 === true && startingValue2 === true && startingValue3 === true ){
-                    var startingValue_comp = true;
+                    startingValue_comp = true;
                 }
 
-                if(company_TruckCapacity1 === true && company_TruckCapacity2 === true && company_TruckCapacity3 === true){
-                    var vehicleCount_comp = true;
+                // Gather all truck results:
+                if(company_TruckCapacity_check_1 && company_TruckCapacity_check_2 && company_TruckCapacity_check_3){
+                    vehicleCount_comp = true;
                 }
             }
         }
 
         if(parseInt(num_comp_val) === 1){
 
-            var error = "Error! <br /> Please check your entered in Delivery Location Details, at least make two Company Name in 4th Column";
+            var error = "Error! <br /> Please check the 4th column of your entered Delivery Location Details";
             errorBox.fadeIn();
             errorBox.find('p').html(error);
         }
+
 
         // if all true, generate_route the key = true
         if(startingValue_comp === true && postalSeqValue_comp === true && vehicleCount_comp === true){
@@ -893,6 +510,8 @@ $('#routeBtn').click(function () {
         }
 
     }// end of Company
+
+   console.log("generate_route", generate_route);
 
    // Check first value of inputs before it process
    if(generate_route === true){
@@ -998,9 +617,15 @@ $('#routeBtn').click(function () {
                 num_of_truck_cc33: num_of_truck_cc33,
 
                 // events value
-                add_truck_cc1: add_truck_cc1,
-                add_truck_cc2: add_truck_cc2,
-                add_truck_cc3: add_truck_cc3,
+                add_truck_cc1_1: add_truck_cc1_1,
+                add_truck_cc1_2: add_truck_cc1_2,
+                
+                add_truck_cc2_1: add_truck_cc2_1,
+                add_truck_cc2_2: add_truck_cc2_2,
+
+                add_truck_cc3_1: add_truck_cc3_1,
+                add_truck_cc3_2: add_truck_cc3_2,
+
                 postal_sequence: postal_sequence,
                 email: email,
                 has_return: has_return,
@@ -1147,6 +772,7 @@ $('#routeBtn').click(function () {
                         var result_list_list = response.data_result[0].required_fields.propose_results;
                         var name_of_company = response.data_result[0].required_fields.name_of_companies;
                         var has_return = response.data_result[0].required_fields.has_return;
+                        var name_of_company = response.data_result[0].required_fields.name_of_companies;
 
                         //GeoCode for LatLng
                         var latlng_array_list = response.data_result[0].geo_code_latlng.latlng_array;
@@ -1202,20 +828,30 @@ $('#routeBtn').click(function () {
 
                         $("#download_button").show();
 
+                        if (priority_capacity_comp === true){
+
+
+
+                        }
+                        else{
+
+
+                        }// end of else for non-priority-comp
+
 
                         for (var hq = 0; hq < starting.length; hq++){
                             var hq_startingPoint = starting[hq];
                             var company_name = name_of_company[hq];
                                 company_name = company_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
-                            $ul_table_truck.append("<li>Company "+(hq + 1) +" - " +company_name+  " - Starting Postal Code : "+hq_startingPoint+ " </li>");
+                            $ul_table_truck.append("<li>( "+(hq + 1) +" ) Starting Postal Code - " +company_name+  " : "+hq_startingPoint+ " </li>");
                         }
                         // - - - - - - Global Message - - - - - - - //
                         // Message Layout
                         $p_note2.text('Breakdown of Proposed Postal Code Routes');
 
                         // Table Layout
-                        $proposedTable.append("<tr><th colspan='2'>Postal Code</th> <th>Order ID</th><th>Truck Capacity</th><th>Company Name</th></tr>");
+                        $proposedTable.append("<tr><th colspan='2'>Postal Code</th> <th>Order ID</th><th>Cargo Unit</th><th>Company Name</th></tr>");
 
                         var new_postal_code;
                         var counter_nums;
@@ -1224,17 +860,17 @@ $('#routeBtn').click(function () {
                         // Loop the Postal Sequence
                         for(i = 0; i < postal_sequence_company.length; i++){
                             var postal_seq_vehicle = postal_sequence_company[i];
-
-                            console.log('postal_seq_vehicle', postal_seq_vehicle);
+                            var name_of_companies = name_of_company[i];
+                                name_of_companies = name_of_companies.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
                             // Truck Counter
-                            $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Company " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
+                            $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> "+name_of_companies+" " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
 
                             for(x = 0; x < postal_seq_vehicle.length; x++ ){
                                 var company_set = postal_seq_vehicle[x];
                                 var postal_code_arr = [];
 
-                                $proposedTable.append("<tr><td colspan='5'><b>Company " + (i + 1) + " - <span class='label label-info'>Truck "+(x + 1)+ "</span></b> : </td></td></tr>" );
+                                $proposedTable.append("<tr><td colspan='5'><b> ( " + (i + 1) + " )  "+name_of_companies+"  - <span class='label label-info'>Truck "+(x + 1)+ "</span></b> </td></td></tr>" );
 
                                 var counter_num = x + 1;
 
@@ -1254,19 +890,15 @@ $('#routeBtn').click(function () {
                                     for (c = 0; c < new_postal_code.length; c++){
                                         var counter_num = c + 1;
                                     }
-
                                     $proposedTable.append("<tr><td>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td><td>"+company_id+"</td></tr>");
                                 }
+
                                 // Summary Table
                                 counter_num_array.push(counter_num);
-                                $ul_table_delivery.append('<li>Company '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
+                                $ul_table_delivery.append('<li>'+name_of_companies+' '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
                             }
-
                         }
                         var sum = counter_num_array.reduce(add, 0);
-
-                        //$ul_sequence.append('Total Number of Proposed Routes: '+sum+ '  Postal Codes  <br />');
-                        //$ul_sequence.append('Summary Details :<br />');
 
                         // - - - - - - End of Table fo Sorted Results - - - - - - - //
 
@@ -1288,29 +920,23 @@ $('#routeBtn').click(function () {
                         }
 
                         // - - - - -  Callback Function for map - - - - - - //
-
-                       // generateGMap_company(starting_postal, result_list, order_postal_arr, latlng_array, sort_company);
+                        // generateGMap_company(starting_postal, result_list, order_postal_arr, latlng_array, sort_company);
                         generateGMap_company(starting, result_list, result_list_list, order_postal_arr, latlng_array_list, sort_company);
 
                         // Table below map - Summary-Value
                         $('#visualization_tab_comp').show();
 
-                        //Summary Report for
-                        //generateSummaryReport_comp(total_savings)
-
                         // Loop the Summary Saving
                         for(i = 0; i < total_savings.length; i++){
                             var route_savings = total_savings[i];
-                            console.log('route_savings', route_savings);
+                            var name_of_companies = name_of_company[i];
 
                             var current = route_savings[0];
                             var proposed = route_savings[1];
                             var savings = route_savings[2];
 
-                            $("#visualization_tab_comp").append("<div class='col-md-4'> <strong>Company "+(i +1)+"</strong><table class='summary_Table'><tr><th>Current Total Distance</th><th>Proposed Total Distance</th><th>Total Savings</tr><tr><td>"+current+" km"+"</td><td>"+proposed+" km"+"</td><td>"+savings+" %"+"</td></tr></table></div>");
+                            $("#visualization_tab_comp").append("<div class='col-md-4'> <strong>"+name_of_companies+" "+(i +1)+"</strong><table class='summary_Table'><tr><th>Current Total Distance</th><th>Proposed Total Distance</th><th>Total Savings</tr><tr><td>"+current+" km"+"</td><td>"+proposed+" km"+"</td><td>"+savings+" %"+"</td></tr></table></div>");
                         }
-                        // $('.modal-body').html(response['html']);
-                        // $('#register-button').css('display', 'none');
 
                         //send email section
                         $.post('/email_info',  {
@@ -1346,7 +972,6 @@ $('#routeBtn').click(function () {
                         var total_savings = response.data_result[0].total_summary_saving.total_savings;
 
                         // Get the value from unsorted Postal Code
-                        // var postal_seq = $("#postal_sequence").val();
                         var postal_seq = postal_sequence;
                         var postal_seq_arr = postal_seq.split("\n");
 
@@ -1435,7 +1060,7 @@ $('#routeBtn').click(function () {
                                             }
                                     }
                                     counter_num_array.push(counter_num);
-                                    $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Propose Delivery Routes </li>');
+                                    $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
 
                                 }
                                 var sum = counter_num_array.reduce(add, 0);
@@ -2120,12 +1745,10 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
     for(s = 0; s < result_list_list.length; s++){
         var result_list2 = result_list_list[s];
 
-        console.log('result_list2', result_list2);
-
         company_count++;
 
         for(i = 0; i < polygon_array.length; i++){
-            console.log('count: ',company_count);
+            /*console.log('count: ',company_count);*/
 
             var content = "Truck " + (i + 1) + "</b></br>";
             // Iterate through the postal codes to find the relevant order ID

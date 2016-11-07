@@ -17,7 +17,6 @@ p.small {
     font-size: 16px;
 }
 
-
 .navbar-default .navbar-nav>li>a.active2{
     color: #18bc9c;
 }
@@ -90,6 +89,64 @@ hr.star-primary:after {
     margin: 0 auto;
 }
 
+/* Dropdown menu */
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus{
+    background:none;
+    color: #333;
+}
+.navbar-nav > li {
+ position: relative;
+}
+
+.navbar-nav > li > .dropdown-menu{
+
+    font-size: .95em;
+    padding-top: 10px;
+    padding-bottom:10px;
+    margin-top: -10px;
+    width:100%;
+}
+.navbar-right {
+   margin-right:15px;
+}
+.navbar-right li > a{
+    padding-left: 8px;
+    color: #333;
+}
+
+
+.navbar-nav > li > .dropdown-menu:after{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 10px 9px;
+    border-color: #fff transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    top: -9px;
+    left: 45%;
+}
+
+.navbar-nav > li > .dropdown-menu:before{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 10px 9px;
+    border-color: #fff transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    top: -9px;
+    left: 45%;
+}
+
+
+
+/* main menu  style */
+
 .navbar-default .navbar-nav>.active>a,
 .navbar-default .navbar-nav>.active>a:hover,
 .navbar-default .navbar-nav>.active>a:focus{
@@ -99,15 +156,11 @@ hr.star-primary:after {
 }
 .navbar-default .navbar-nav>li>a:hover,
 .navbar-default .navbar-nav>li>a:focus{
-color: #000000;
+    color: #000000;
 }
 .navbar-default{
     background-color: #5080be;
     border-bottom: 1px solid #333;
-}
-
-.navbar-right li > a{
-    padding-left: 3px;
 }
 
 
@@ -332,8 +385,6 @@ h4.service-heading {
     z-index: 2;
 }
 
-
-
 .btn-outline {
     margin-top: 15px;
     border: solid 2px #fff;
@@ -557,10 +608,8 @@ table.table{
 
 
 div.tableize{
-  /*filter:alpha(opacity=80);*/
   position:relative;
   box-sizing:border-box;
- /* height:215px;*/
   height:180px;
   overflow:auto;
   overflow-y:hidden;
@@ -1250,6 +1299,8 @@ p.plainBox{
     padding-top:30px;
     margin:0px;
 }
+
+
 
 /*** Add new Truck Button ***/
 

@@ -98,6 +98,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
             # Chunk the Postal code according to minimum truck capacity
             # Define and assign variables for truck
+
+            print ("truck_capacity_grp"), truck_capacity_grp
             truck_dictionary = truck_details(truck_capacity_grp)
 
             # Chunk according to Capacity / No of truck
@@ -204,8 +206,12 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                     result_postal_seq.append([postal, orderId, capacity, campany_id])
                     result_postal.append([postal, capacity])
 
+        print "truck_capacity_grp-11", truck_capacity_grp
+
         # Define and assign variables for truck
         truck_dictionary_comp = truck_details(truck_capacity_grp)
+
+        print "truck_dictionary_comp-11", truck_dictionary_comp
 
         # Chunk according to Capacity / No of truck
         vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
@@ -323,34 +329,34 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # User Count
     if api_user == "true":
         print "Data are from API User"
-        taskqueue.add(url='/sorting-proposed-api',
-                      params=({'compare_id': compare_id,
-                               'starting_address': starting_address,
-                               # 'origin_destination': origin_destination,
-                               'proposedPostlal': proposedPostlal,
-                               'currentdPostlal': currentdPostlal,
-                               'has_return': has_return,
-                               'email': email,
-                               'num_of_vehicle': vehicle_quantity,
-                               #'vehicle_capacity': vehicle_capacity,
-                               'num_user_load': num_user_load
-                               }))
+        # taskqueue.add(url='/sorting-proposed-api',
+        #               params=({'compare_id': compare_id,
+        #                        'starting_address': starting_address,
+        #                        # 'origin_destination': origin_destination,
+        #                        'proposedPostlal': proposedPostlal,
+        #                        'currentdPostlal': currentdPostlal,
+        #                        'has_return': has_return,
+        #                        'email': email,
+        #                        'num_of_vehicle': vehicle_quantity,
+        #                        #'vehicle_capacity': vehicle_capacity,
+        #                        'num_user_load': num_user_load
+        #                        }))
     else:
         print ('Route task added to the queue.')
-        taskqueue.add(url='/sorting-proposed',
-                      params=({'compare_id': compare_id,
-                               'starting_address': starting_address,
-                               'proposedPostlal': proposedPostlal,
-                               'currentdPostlal': currentdPostlal,
-                               'proposedPostlal_sequence': proposedPostlal_sequence,
-                               'has_return': has_return,
-                               'email': email,
-                               'num_of_vehicle': vehicle_quantity,
-                               'priority_capacity': priority_capacity,
-                               #'vehicle_capacity': vehicle_capacity,
-                               'num_user_load': num_user_load,
-
-                               }))
+        # taskqueue.add(url='/sorting-proposed',
+        #               params=({'compare_id': compare_id,
+        #                        'starting_address': starting_address,
+        #                        'proposedPostlal': proposedPostlal,
+        #                        'currentdPostlal': currentdPostlal,
+        #                        'proposedPostlal_sequence': proposedPostlal_sequence,
+        #                        'has_return': has_return,
+        #                        'email': email,
+        #                        'num_of_vehicle': vehicle_quantity,
+        #                        'priority_capacity': priority_capacity,
+        #                        #'vehicle_capacity': vehicle_capacity,
+        #                        'num_user_load': num_user_load,
+        #
+        #                        }))
 
     # Return the result again to "Sorting_prep.py"
     return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq, grp_truck
@@ -499,7 +505,66 @@ def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
     # company have 3 truck available : 3 x 3 = 9
     # group_truck = target_1 * max_1
 
-    if len(list) == 2:
+    print "listtttt", list
+    if len(list) == 3:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+        target_3 = params['target_3']
+
+        # No. of Truck
+        max_1 = params['max_1']
+        max_2 = params['max_2']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck_1 = target_1 * max_1
+        group_truck_2 = target_2 * max_2
+
+        for x in range(len(iterable)):
+            chunk_seq = iterable[x]
+
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            comp = chunk_seq[3]
+
+            chunk_sum += item
+
+            if len(array) <= group_truck_1:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
+
+            elif len(array) <= group_truck_2:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
+            else:
+
+                if chunk_sum > target_3:
+
+                    yield chunk
+                    chunk = [[key, order, item, comp]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, comp])
+
+            array.append(chunk)
+
+    elif len(list) == 2:
 
         print "Hello"
         # Enter Max Truck Capacity *
@@ -544,7 +609,6 @@ def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
                     chunk.append([key, order, item, comp])
 
             array.append(chunk)
-
 
     else:
 

@@ -24,7 +24,7 @@
                         <li><a href="/compare"><i class="fa fa-map-marker"></i> Compare</a></li>
                         <li><a href="/compare-data"><i class="fa fa-folder-open" aria-hidden="true"></i> Route Log</a></li>
                         <li><a href="/compare-api"><i class="fa fa-code" aria-hidden="true"></i> API</a></li>
-                        <li><a href="/compare-profile"><i class="fa fa-file" aria-hidden="true"></i> Profile</a></li>
+
 					{% else %}
 				        <li class="page-scroll">
 				        	<a href="#page-top">Home</a>
@@ -42,15 +42,27 @@
 	              	{% endif %}
 				</ul>
 				{% if email %}
+                    <input type="hidden" name="email_value" id="email_value" value="{{ email }}">
 	                <ul class="nav navbar-nav navbar-right">
 
-                        <li><a href="/compare-profile" style="color:#fff"><i class="fa fa-user"></i> {{ email }}</a></li>
-                        <input type="hidden" name="email_value" id="email_value" value="{{ email }}">
+                        <!--<li><a href="#" style="color:#fff"><i class="fa fa-user"></i> {{ email }}</a></li>-->
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user"></i> {{ email }}
+                            <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if admin_user %}
+                                    <li><a href="/admin"><i class="fa fa-dashboard fa-fw"></i> Admin</a></li>
 
-                        {% if admin_user %}
-                            <li><a href="/admin"><i class="fa fa-dashboard fa-fw"></i> Admin</a></li>
-                        {% endif %}
-                        <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                 <li><a href="/compare-profile"><i class="fa fa-file" aria-hidden="true"></i> Profile</a></li>
+
+                                 {% endif %}
+                                    <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            </ul>
+                        </li>
+
+
 	                </ul>
 
                 {% else %}

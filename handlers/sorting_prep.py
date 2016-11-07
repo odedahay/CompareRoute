@@ -138,10 +138,15 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_cc32 = self.request.get("num_of_truck_cc22")
         num_of_truck_cc33 = self.request.get("num_of_truck_cc23")
 
-        # Events value for boolean
-        add_truck_cc1 = self.request.get("add_truck_cc1")
-        add_truck_cc2 = self.request.get("add_truck_cc2")
-        add_truck_cc3 = self.request.get("add_truck_cc3")
+        # Field truck counter
+        add_truck_cc1_1 = self.request.get("add_truck_cc1_1")
+        add_truck_cc1_2 = self.request.get("add_truck_cc1_2")
+
+        add_truck_cc2_1 = self.request.get("add_truck_cc2_1")
+        add_truck_cc2_2 = self.request.get("add_truck_cc2_2")
+
+        add_truck_cc3_1 = self.request.get("add_truck_cc3_1")
+        add_truck_cc3_2 = self.request.get("add_truck_cc3_2")
 
         postal_sequence = self.request.get("postal_sequence")
         email = self.request.get("email")
@@ -198,14 +203,22 @@ class SortingPrep(webapp2.RequestHandler):
         truck_capacity_list_c4 = []
         truck_capacity_list_c5 = []
         truck_capacity_list_c6 = []
-        # sub truck
+
+        # Field 1 sub truck
         truck_capacity_list_cc1 = []
+        truck_capacity_list_cc2 = []
+
+        # Field 2 sub truck
+        truck_capacity_list_cc21 = []
+        truck_capacity_list_cc22 = []
+
+        # Field 3rd sub truck
+        truck_capacity_list_cc31 = []
+        truck_capacity_list_cc32 = []
+
         truck_capacity_list_cc1_grp = []
         truck_capacity_list_cc2_grp = []
         truck_capacity_list_cc3_grp = []
-
-        truck_capacity_list_cc21 = []
-        truck_capacity_list_cc22 = []
 
         truck_capacity_list_cc21_grp = []
         truck_capacity_list_cc23_grp = []
@@ -262,73 +275,137 @@ class SortingPrep(webapp2.RequestHandler):
                 # Store all HQ postal code and Vehicle count accordingly
                 if int(num_comp_val) == 2:
 
-                    if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
+                    # truck 1 field > add 2nd truck field
+                    if add_truck_cc1_1 and not add_truck_cc1_2:
 
                         truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
                         truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
 
                         truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1])
 
-                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
-                        truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_c2])
-
-                    elif add_truck_cc1 == "true" and add_truck_cc2 == "true":
+                    #  truck 1 field > add 3rd truck field
+                    elif add_truck_cc1_1 and add_truck_cc1_2:
 
                         truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
                         truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
+                        truck_capacity_list_cc2.extend([str(type_of_truck_cc2), int(truck_capacity_cc2), int(num_of_truck_cc2)])
 
-                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1])
-
-                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
-                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
-
-                        truck_capacity_list_cc21_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21])
-
-                        truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_cc21_grp])
+                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1, truck_capacity_list_cc2])
 
                     else:
 
                         truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
-                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                        truck_capacity_list_cc1_grp = truck_capacity_list_c1
 
-                        truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2])
+                    #######
+                    # field 2
+
+                    if add_truck_cc2_1 and not add_truck_cc2_2:
+
+                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
+
+                        truck_capacity_list_cc2_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21])
+
+                    #  truck 2 field > add 3rd truck field
+                    elif add_truck_cc2_1 and add_truck_cc2_2:
+
+                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
+                        truck_capacity_list_cc22.extend([str(type_of_truck_cc22), int(truck_capacity_cc22), int(num_of_truck_cc22)])
+
+                        truck_capacity_list_cc2_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21, truck_capacity_list_cc22])
+
+                    else:
+                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                        truck_capacity_list_cc2_grp = truck_capacity_list_c2
+
+                    # Grouping Section
+                    truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_cc2_grp])
 
                 if int(num_comp_val) == 3:
 
-                    truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
-                    truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
-                    truck_capacity_list_c3.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                    # truck 1 field > add 2nd truck field
+                    if add_truck_cc1_1 and not add_truck_cc1_2:
 
-                    truck_capacity_grp_comp1.extend([truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3])
+                        truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
+                        truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
 
-                if int(num_comp_val) == 4:
-                    truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
-                    truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
-                    truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
-                    truck_capacity_list_c4.extend([str(type_of_truck_c4), int(truck_capacity_c4), int(num_of_truck_c4)])
-                    truck_capacity_grp_c.extend([truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3,
-                                                 truck_capacity_list_c4])
+                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1])
 
-                if int(num_comp_val) == 5:
-                    truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
-                    truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
-                    truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
-                    truck_capacity_list_c4.extend([str(type_of_truck_c4), int(truck_capacity_c4), int(num_of_truck_c4)])
-                    truck_capacity_list_c5.extend([str(type_of_truck_c5), int(truck_capacity_c5), int(num_of_truck_c5)])
-                    truck_capacity_grp_c.extend(
-                        [truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3, truck_capacity_list_c4,
-                         truck_capacity_list_c5])
+                    #  truck 1 field > add 3rd truck field
+                    elif add_truck_cc1_1 and add_truck_cc1_2:
 
-                if int(num_comp_val) == 6:
-                    truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
-                    truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
-                    truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
-                    truck_capacity_list_c4.extend([str(type_of_truck_c4), int(truck_capacity_c4), int(num_of_truck_c4)])
-                    truck_capacity_list_c5.extend([str(type_of_truck_c5), int(truck_capacity_c5), int(num_of_truck_c5)])
-                    truck_capacity_list_c6.extend([str(type_of_truck_c6), int(truck_capacity_c6), int(num_of_truck_c6)])
-                    truck_capacity_grp_c.extend(
-                        [truck_capacity_list_c1, truck_capacity_list_c2, truck_capacity_list_c3, truck_capacity_list_c4,
-                         truck_capacity_list_c5, truck_capacity_list_c6])
+                        truck_capacity_list_c1.extend([str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)])
+                        truck_capacity_list_cc1.extend([str(type_of_truck_cc1), int(truck_capacity_cc1), int(num_of_truck_cc1)])
+                        truck_capacity_list_cc2.extend([str(type_of_truck_cc2), int(truck_capacity_cc2), int(num_of_truck_cc2)])
+
+                        truck_capacity_list_cc1_grp.extend([truck_capacity_list_c1, truck_capacity_list_cc1, truck_capacity_list_cc2])
+
+                    else:
+
+                        truck_capacity_list_c1.extend([[str(type_of_truck_c1), int(truck_capacity_c1), int(num_of_truck_c1)]])
+                        truck_capacity_list_cc1_grp = truck_capacity_list_c1
+
+                    #######
+                    # 2nd input field
+
+                    if add_truck_cc2_1 and not add_truck_cc2_2:
+
+                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
+
+                        truck_capacity_list_cc2_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21])
+
+                    #  truck 2 field > add 3rd truck field
+                    elif add_truck_cc2_1 and add_truck_cc2_2:
+
+                        truck_capacity_list_c2.extend([str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)])
+                        truck_capacity_list_cc21.extend([str(type_of_truck_cc21), int(truck_capacity_cc21), int(num_of_truck_cc21)])
+                        truck_capacity_list_cc22.extend([str(type_of_truck_cc22), int(truck_capacity_cc22), int(num_of_truck_cc22)])
+
+                        truck_capacity_list_cc2_grp.extend([truck_capacity_list_c2, truck_capacity_list_cc21, truck_capacity_list_cc22])
+
+                    else:
+                        truck_capacity_list_c2.extend([[str(type_of_truck_c2), int(truck_capacity_c2), int(num_of_truck_c2)]])
+                        truck_capacity_list_cc2_grp = truck_capacity_list_c2
+
+                     #######
+                    # 3rd input field
+
+                    if add_truck_cc3_1 and not add_truck_cc3_2:
+
+                        truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
+                        truck_capacity_list_cc31.extend([str(type_of_truck_cc31), int(truck_capacity_cc31), int(num_of_truck_cc31)])
+
+                        truck_capacity_list_cc3_grp.extend([truck_capacity_list_c3, truck_capacity_list_cc31])
+
+                    #  truck 2 field > add 3rd truck field
+                    elif add_truck_cc3_1 and add_truck_cc3_2:
+
+                        truck_capacity_list_c3.extend([str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)])
+                        truck_capacity_list_cc31.extend([str(type_of_truck_cc31), int(truck_capacity_cc31), int(num_of_truck_cc31)])
+                        truck_capacity_list_cc32.extend([str(type_of_truck_cc32), int(truck_capacity_cc32), int(num_of_truck_cc32)])
+
+                        truck_capacity_list_cc3_grp.extend([truck_capacity_list_c3, truck_capacity_list_cc31, truck_capacity_list_cc32])
+
+                    else:
+                        truck_capacity_list_c3.extend([[str(type_of_truck_c3), int(truck_capacity_c3), int(num_of_truck_c3)]])
+                        truck_capacity_list_cc3_grp = truck_capacity_list_c3
+
+                    # Grouping Section
+                    truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_cc2_grp, truck_capacity_list_cc3_grp])
+
+                    print "truck_capacity_grp_comp1", truck_capacity_grp_comp1
+
+                # if int(num_comp_val) == 4:
+
+                #
+                # if int(num_comp_val) == 5:
+
+                #
+                # if int(num_comp_val) == 6:
+
 
             # Store Postal code and Vehicle
             starting_postal_list.append(str(starting_postal_1))
@@ -504,6 +581,7 @@ class SortingPrep(webapp2.RequestHandler):
                     errors_result = validation_checker.cargo_unit_checker_for_comp(num_comp_val, postal_sequence_company, **truck_capacity_dict)
 
                     if errors_result != "":
+
                         # Convert the variable to error list
                         errors = errors_result
 
@@ -549,70 +627,91 @@ class SortingPrep(webapp2.RequestHandler):
                         company_1 = int(len(propose_result_company[0]))
                         company_2 = int(len(propose_result_company[1]))
 
-                        if add_truck_cc1_2 and not add_truck_cc2:
+                        # 2nd fields Opend and 1 field for 2nd company
+                        if add_truck_cc1_1 and not add_truck_cc1_2:
 
-                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-
+                            if company_1 > int(num_of_truck_c1) + int(num_of_truck_cc1):
                                 errors.extend([error_Num_of_truck, " for ", type_of_truck_cc1, " is ", (company_1 - int(num_of_truck_c1)), "<br />"])
 
-                        elif add_truck_cc1 and add_truck_cc2:
+                        elif add_truck_cc1_1 and add_truck_cc1_2:
 
-                            if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
+                            if company_1 > (int(num_of_truck_c1) + int(num_of_truck_cc1) + int(num_of_truck_cc2)):
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc2, " is ", company_1 - (int(num_of_truck_c1) + int(num_of_truck_cc1)), "<br />"])
 
-                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc1, " is ", (company_1 - int(num_of_truck_c1)), "<br />"])
-
-                            if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-
-                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc21, " is ", (company_1 - int(num_of_truck_c2)), "<br />"])
                         else:
-
                             # if the First Field have only entered value
                             if int(company_1) > int(num_of_truck_c1):
-
                                 errors.extend([error_Num_of_truck, " for ",  type_of_truck_c1, " is ", company_1, "<br />"])
 
-                            if int(company_2) > int(num_of_truck_c2):
+                        # 2nd Fields
 
+                        if add_truck_cc2_1 and not add_truck_cc2_2:
+
+                            if company_2 > int(num_of_truck_c2) + int(num_of_truck_cc21):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_cc21, " is ", (company_1 - int(num_of_truck_c2)), "<br />"])
+
+                        elif add_truck_cc2_1 and add_truck_cc2_2:
+
+                            if company_2 > int(num_of_truck_c2) + int(num_of_truck_cc21) + int(num_of_truck_cc22):
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc2, " is ", company_1 - (int(num_of_truck_c2) + int(num_of_truck_cc21)), "<br />"])
+                        else:
+
+                            if int(company_2) > int(num_of_truck_c2):
                                 errors.extend([error_Num_of_truck, " for ",  type_of_truck_c2, " is ", company_2, "<br />"])
 
-                    # if int(num_comp_val) == 3:
-                    #
-                    #     company_1 = int(len(propose_result_company[0]))
-                    #     company_2 = int(len(propose_result_company[1]))
-                    #     company_3 = int(len(propose_result_company[2]))
-                    #
-                    #     # HQ
-                    #     hq_comp_1 = starting_postal_list[0]
-                    #     hq_comp_2 = starting_postal_list[1]
-                    #     hq_comp_3 = starting_postal_list[2]
-                    #
-                    #     if add_truck_cc1 == "true" and not add_truck_cc2 == "true":
-                    #
-                    #         if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                    #             errors.extend([error_Num_of_truck,
-                    #                  type_of_truck_cc1, " : ", company_1, "<br />"])
-                    #
-                    #     if add_truck_cc1 == "true" and add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-                    #
-                    #         if company_1 > int(num_of_truck_cc1) + int(num_of_truck_c1):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_cc1, " is ", company_1, "<br />"])
-                    #
-                    #         if company_2 > int(num_of_truck_cc21) + int(num_of_truck_c2):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_cc21, " is ", company_2, "<br />"])
-                    #
-                    #         if company_3 > int(num_of_truck_cc31) + int(num_of_truck_c2):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", num_of_truck_cc31, " is ", company_3, "<br />"])
-                    #
-                    #     if not add_truck_cc1 == "true" and not add_truck_cc2 == "true" and not add_truck_cc3 == "true":
-                    #
-                    #         if company_1 > int(num_of_truck_c1):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_1, ", Type Truck: ", type_of_truck_c1, " is ", company_1, "<br />"])
-                    #
-                    #         if company_2 > int(num_of_truck_c2):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_2, ", Type Truck: ", type_of_truck_c2, " is ", company_2, "<br />"])
-                    #
-                    #         if company_3 > int(num_of_truck_c3):
-                    #             errors.extend([error_Num_of_truck, " for ", hq_comp_3, ", Type Truck: ", type_of_truck_c3, " is ", company_3, "<br />"])
+                    if int(num_comp_val) == 3:
+
+                        company_1 = int(len(propose_result_company[0]))
+                        company_2 = int(len(propose_result_company[1]))
+                        company_3 = int(len(propose_result_company[2]))
+
+                        # 2nd fields Opend and 1 field for 2nd company
+                        if add_truck_cc1_1 and not add_truck_cc1_2:
+
+                            if company_1 > int(num_of_truck_c1) + int(num_of_truck_cc1):
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc1, " is ", (company_1 - int(num_of_truck_c1)), "<br />"])
+
+                        elif add_truck_cc1_1 and add_truck_cc1_2:
+
+                            if company_1 > (int(num_of_truck_c1) + int(num_of_truck_cc1) + int(num_of_truck_cc2)):
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc2, " is ", company_1 - (int(num_of_truck_c1) + int(num_of_truck_cc1)), "<br />"])
+
+                        else:
+                            # if the First Field have only entered value
+                            if int(company_1) > int(num_of_truck_c1):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_c1, " is ", company_1, "<br />"])
+
+                        # 2nd Fields
+
+                        if add_truck_cc2_1 and not add_truck_cc2_2:
+
+                            if company_2 > int(num_of_truck_c2) + int(num_of_truck_cc21):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_cc21, " is ", (company_1 - int(num_of_truck_c2)), "<br />"])
+
+                        elif add_truck_cc2_1 and add_truck_cc2_2:
+
+                            if company_2 > int(num_of_truck_c2) + int(num_of_truck_cc21) + int(num_of_truck_cc22):
+                                errors.extend([error_Num_of_truck, " for ", type_of_truck_cc2, " is ", company_1 - (int(num_of_truck_c2) + int(num_of_truck_cc21)), "<br />"])
+                        else:
+
+                            if int(company_2) > int(num_of_truck_c2):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_c2, " is ", company_2, "<br />"])
+
+                        # 3rd Fields
+                        if add_truck_cc3_1 and not add_truck_cc3_2:
+
+                            if company_3 > int(num_of_truck_c3) + int(num_of_truck_cc31):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_cc31, " is ", (company_3 - int(num_of_truck_c3)), "<br />"])
+
+                        elif add_truck_cc3_1 and add_truck_cc3_2:
+
+                            if company_3 > int(num_of_truck_c3) + int(num_of_truck_cc31) + int(num_of_truck_cc32):
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_cc32, " is ", company_3 - (int(num_of_truck_c3) + int(num_of_truck_cc31)), "<br />"])
+                        else:
+
+                            if int(company_3) > int(num_of_truck_c3):
+
+                                errors.extend([error_Num_of_truck, " for ",  type_of_truck_c3, " is ", company_3, "<br />"])
 
                 else:
 
