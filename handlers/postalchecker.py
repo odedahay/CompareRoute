@@ -182,7 +182,7 @@ class Postal_move_Handler(CompareRouteHandler):
 
         if not postal_code:
             success = False
-            msg = "Please check the Postal code"
+            msg += "Please check the Postal code"
             status.append(success)
             status.append(msg)
 
@@ -197,7 +197,7 @@ class Postal_move_Handler(CompareRouteHandler):
             delete_data.key.delete()
 
             success = True
-            msg = "Successful"
+            msg += "Successful"
             status.append(success)
             status.append(msg)
 

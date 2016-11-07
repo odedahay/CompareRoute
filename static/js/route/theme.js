@@ -613,19 +613,19 @@ function generateFields(name_of_company){
         var $fields_column6 = $('<div class ="hidden_field1"></div>'); // btn Add
 
         var $fields_label01 = $('<label class="control-label font_11" for="starting_postal_'+(i+1)+'"> <span class="name_companies"> Starting Postal: '+company_name +' * </span></label>')
-        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="461051"><p class="js_error startingPostal_'+(i+1)+'"></p>')
+        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="" ><p class="js_error startingPostal_'+(i+1)+'"></p>')
 
         var $fields_label02 = $('<label class="control-label font_11" for="vehicle_quantity_'+(i+1)+'">Enter No. of Truck * </label>')
-        var $fields_input02 = $('<input type="text" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value=""><p class="js_error vehicleQuantity_'+(i+1)+'"></p>')
+        var $fields_input02 = $('<input type="text" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="" ><p class="js_error vehicleQuantity_'+(i+1)+'"></p>')
 
         var $fields_label03 = $('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Types of Truck</label>');
-        var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="AAA"><p class="js_error typeTruck_c'+(i+1)+'"></p>');
+        var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="" ><p class="js_error typeTruck_c'+(i+1)+'"></p>');
 
         var $fields_label04 = $('<label class="control-label font_11" for="truck_capacity_c'+(i+1)+'"> Enter Min. Truck Capacity * </label>');
-        var $fields_input04 = $('<input type="text" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="14"><p class="js_error truckCapacity_c'+(i+1)+'"></p>');
+        var $fields_input04 = $('<input type="text" class="form-control input down_15" id="truck_capacity_c'+(i+1)+'" name="truck_capacity_c'+(i+1)+'" placeholder="e.g. 10" value="" ><p class="js_error truckCapacity_c'+(i+1)+'"></p>');
 
         var $fields_label05 = $('<label class="control-label font_11" for="num_of_truck_c'+(i+1)+'"> No. of Truck </label>');
-        var $fields_input05 = $('<input type="text" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value="1"><p class="js_error numTruck_c'+(i+1)+'"></p>');
+        var $fields_input05 = $('<input type="text" class="form-control input down_15" id="num_of_truck_c'+(i+1)+'" name="num_of_truck_c'+(i+1)+'" placeholder="e.g. 5" value=""><p class="js_error numTruck_c'+(i+1)+'"></p>');
 
         var $fields_button_add = $('<button id="add_button_c'+(i+1)+'" class="btn btn-link btn-sm customBtn_comp" >+ Add New Truck </button>');
 

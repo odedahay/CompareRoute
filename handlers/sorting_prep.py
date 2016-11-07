@@ -163,8 +163,8 @@ class SortingPrep(webapp2.RequestHandler):
 
         # Error Variables:
         error_StartingPoint = " Invalid Starting postal code <br />"
-        error_Num_of_truck = "Add more Truck! <br />The minimum balance number of delivery truck  "
-        error_valid_msg_truck = "Add more Truck! <br />The minimum balance number of delivery truck is "
+        error_Num_of_truck = "Add more Truck! <br />The minimum balance number for delivery truck  "
+        error_valid_msg_truck = "Add more Truck! <br />The minimum balance number for delivery truck "
 
         response = {}
         errors = []
@@ -815,17 +815,22 @@ class SortingPrep(webapp2.RequestHandler):
                     # Vehicle Result base of the priority:
                     vehicle_quantity = len(vehicle_postal_list_new_seq)
 
+                    # if add_truck_capacity_1:
+                    #     print "hello--111"
+
+                    print "truck_capacity_grp", truck_capacity_grp
+
                     if len(truck_capacity_grp) == 1:
                         if int(result_num_truck) > int(num_of_truck):
-                            errors.extend([error_valid_msg_truck,  result_num_truck])
+                            errors.extend([error_valid_msg_truck,  type_of_truck, " is ", result_num_truck])
 
                     elif len(truck_capacity_grp) == 2:
                         if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
-                            errors.extend([error_valid_msg_truck,  result_num_truck])
+                            errors.extend([error_valid_msg_truck,  type_of_truck_1, " is ", int(result_num_truck) - int(num_of_truck)])
 
                     elif len(truck_capacity_grp) == 3:
                         if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
-                            errors.extend([error_valid_msg_truck, result_num_truck])
+                            errors.extend([error_valid_msg_truck, type_of_truck_2, " is ", int(result_num_truck) - ( int(num_of_truck) + int(num_of_truck_1) )])
 
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)

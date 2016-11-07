@@ -46,7 +46,7 @@ class Add_new_postal(base.BaseHandler):
 
             else:
                 success = True
-                msg = "New Postal Code successful added"
+                msg = "Successful added"
 
         if success == False:
 

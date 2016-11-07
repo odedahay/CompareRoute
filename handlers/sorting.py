@@ -113,11 +113,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
             "for 2 = {'max_1': 2, 'max_2': 2, 'truck_1': 'MK100', 'truck_2': 'MK200', 'target_2': 7, 'target_1': 8}"
 
-            print "vehicle_postal_list_new", vehicle_postal_list_new
-
-            print "truck_dictionary", truck_dictionary
-            print "vehicle_postal_list_new_seq", vehicle_postal_list_new_seq
-
             list_truck = []
 
 
@@ -206,12 +201,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                     result_postal_seq.append([postal, orderId, capacity, campany_id])
                     result_postal.append([postal, capacity])
 
-        print "truck_capacity_grp-11", truck_capacity_grp
-
         # Define and assign variables for truck
         truck_dictionary_comp = truck_details(truck_capacity_grp)
-
-        print "truck_dictionary_comp-11", truck_dictionary_comp
 
         # Chunk according to Capacity / No of truck
         vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
@@ -504,8 +495,6 @@ def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
     # e.g: Each truck has a capacity of 3 (box),
     # company have 3 truck available : 3 x 3 = 9
     # group_truck = target_1 * max_1
-
-    print "listtttt", list
     if len(list) == 3:
 
         # Enter Max Truck Capacity *
