@@ -1,4 +1,3 @@
-import webapp2
 from handlers import base
 from model.user_account import UserAccount
 
@@ -43,12 +42,10 @@ class User_Data_list(base.BaseHandler):
         compare_id = self.request.get("compare_id")
 
         web_current = CurrentRoute.query(CurrentRoute.compare_id == compare_id).order(
-            CurrentRoute.vehicle_id,
-            CurrentRoute.order_id).fetch()
+            CurrentRoute.vehicle_id, CurrentRoute.rank_id).fetch()
 
         web_proposed = ProposedRoute.query(ProposedRoute.compare_id == compare_id).order(
-            ProposedRoute.vehicle_id,
-            ProposedRoute.order_id).fetch()
+            ProposedRoute.vehicle_id, ProposedRoute.rank_id).fetch()
 
         web_routes = RouteDistance.query(RouteDistance.compare_id == compare_id).order(
             -RouteDistance.created_date).fetch()

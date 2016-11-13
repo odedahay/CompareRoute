@@ -12,8 +12,6 @@ var errorBox = $('#message-errors');
 //buttons
 var btn_generateRoute = $("#routeBtn");
 
-// ---- //
-
 // Click --> Generate Button
 $('#routeBtn').click(function () {
 
@@ -305,22 +303,22 @@ $('#routeBtn').click(function () {
                 if(add_truck_cc1_1 && !add_truck_cc1_2){
 
                     company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false }
 
                     company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
-                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false }
                 }
                 // truck 1 field > add 3rd truck field
                 else if (add_truck_cc1_1 && add_truck_cc1_2){
 
                     company_TruckCapacity1 = truck_capacity_area_comp_1(type_of_truck_c1, truck_capacity_c1, num_of_truck_c1);
-                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false}
+                    if (!company_TruckCapacity1){ company_TruckCapacity_check_1 = false }
 
                     company_TruckCapacity1a = truck_capacity_area_comp_1a(type_of_truck_cc1, truck_capacity_cc1, num_of_truck_cc1);
-                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false}
+                    if (!company_TruckCapacity1a){ company_TruckCapacity_check_1 = false }
 
                     company_TruckCapacity1b = truck_capacity_area_comp_1b(type_of_truck_cc2, truck_capacity_cc2, num_of_truck_cc2);
-                    if (!company_TruckCapacity1b){ company_TruckCapacity_check_1 = false}
+                    if (!company_TruckCapacity1b){ company_TruckCapacity_check_1 = false }
 
                 }
                 // truck 1 field only
@@ -344,19 +342,19 @@ $('#routeBtn').click(function () {
                 else if (add_truck_cc2_1 && add_truck_cc2_2){
 
                     company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false }
 
                     company_TruckCapacity2a = truck_capacity_area_comp_2a(type_of_truck_cc21, truck_capacity_cc21, num_of_truck_cc21);
                     if (!company_TruckCapacity2a){ company_TruckCapacity_check_2 = false }
 
                     var company_TruckCapacity2b = truck_capacity_area_comp_2b(type_of_truck_cc22, truck_capacity_cc22, num_of_truck_cc22);
-                    if (!company_TruckCapacity2b){ company_TruckCapacity_check_2 = false}
+                    if (!company_TruckCapacity2b){ company_TruckCapacity_check_2 = false }
 
                 }
                 // truck 2 field only
                 else{
                     company_TruckCapacity2 =  truck_capacity_area_comp_2(type_of_truck_c2, truck_capacity_c2, num_of_truck_c2);
-                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false}
+                    if (!company_TruckCapacity2){ company_TruckCapacity_check_2 = false }
 
                 }
 
@@ -498,7 +496,7 @@ $('#routeBtn').click(function () {
 
         if(parseInt(num_comp_val) === 1){
 
-            var error = "Error! <br /> Please check the 4th column of your entered Delivery Location Details";
+            var error = "Error! <br /> Please check the 4th column of your entered Delivery Location Details, make sure two companies or more is entered";
             errorBox.fadeIn();
             errorBox.find('p').html(error);
         }
@@ -751,6 +749,7 @@ $('#routeBtn').click(function () {
                     function unique_postal(originalArray){
                         var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
                         var i = ar.length;
+
                         while(i--){  //Iterate through the array
                             if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
                                 ar.splice(i,1);  //Remove that element!

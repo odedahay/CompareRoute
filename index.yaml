@@ -13,6 +13,12 @@ indexes:
 - kind: CurrentRoute
   properties:
   - name: compare_id
+  - name: vehicle_id
+  - name: rank_id
+
+- kind: CurrentRoute
+  properties:
+  - name: compare_id
   - name: order_id
 
 - kind: CurrentRoute
@@ -72,6 +78,12 @@ indexes:
   - name: compare_id
   - name: vehicle_id
   - name: order_id
+
+- kind: ProposedRoute
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: rank_id
 
 - kind: ProposedRoute_api
   properties:

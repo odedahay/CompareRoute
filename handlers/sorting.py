@@ -99,7 +99,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
             # Chunk the Postal code according to minimum truck capacity
             # Define and assign variables for truck
 
-            print ("truck_capacity_grp"), truck_capacity_grp
             truck_dictionary = truck_details(truck_capacity_grp)
 
             # Chunk according to Capacity / No of truck
@@ -210,8 +209,11 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Current Route
         vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
 
-        # for Postal Seq
+        # for proposed postal Sequence
         vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
+
+        # for current postal sequence:
+        current_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(postal_sequence_list, *truck_capacity_grp, **truck_dictionary_comp))
 
     else:
 
@@ -229,10 +231,13 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Current Route
         vehicle_current_postal_list = chunkIt(postal_list, vehicle_quantity)
 
+        result_postal_orders2 = []
+        current_postal_orders = []
+
         if sort_company == "true":
 
             # Proposed Postal code sequence display in UI:
-            result_postal_orders2 = []
+            # result_postal_orders2 = []
 
             for new_list in vehicle_postal_list_new:
                 new_list_chuncked = new_list
@@ -258,8 +263,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         else:
 
             # Proposed Postal code sequence display in UI:
-            result_postal_orders2 = []
-
             for new_list in vehicle_postal_list_new:
                 new_list_chuncked = new_list
 
@@ -280,8 +283,30 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
                 result_postal_orders2.append(result_postal_orders1)
 
+            # Proposed Postal code sequence display in UI:
+            for current_list in vehicle_current_postal_list:
+                current_list_chuncked = current_list
+
+                current_postal = []
+
+                for current_chunck in current_list_chuncked:
+                    current_chuncked = current_chunck
+
+                    for x in range(len(postal_sequence_list)):
+                        old_postal_sequence = postal_sequence_list[x]
+
+                        postal_old = old_postal_sequence[0]
+                        order_id = old_postal_sequence[1]
+                        capacity_load = old_postal_sequence[2]
+
+                        if current_chuncked == postal_old:
+                           current_postal.append([current_chuncked, order_id, capacity_load])
+
+                current_postal_orders.append(current_postal)
+
         # Propose Route w/ OrderID & Load Capacity display in UI
         vehicle_postal_list_new_seq = result_postal_orders2
+        vehicle_postal_list_orig_seq = current_postal_orders
 
         # vehicle_capacity = 0
 
@@ -295,6 +320,9 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
             vehicle_postal_list_return_curent.append(starting_address)
 
         for vehicle_postal_list_return_seq in vehicle_postal_list_new_seq:
+            vehicle_postal_list_return_seq.append(starting_address_seq)
+
+        for vehicle_postal_list_return_seq in vehicle_postal_list_orig_seq:
             vehicle_postal_list_return_seq.append(starting_address_seq)
 
     origin_destination = startingpoint_latlong(starting_address)
@@ -311,9 +339,32 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     currentdPostlal = convert_to_string(vehicle_current_postal_list)
 
     # Converting to string of this Sequence data
-    proposedPostlal_sequence = convert_to_string_seq(vehicle_postal_list_new_seq)
+    proposed_order_array = []
+    current_order_array = []
 
-    # print ("vehicle_postal_list_new_seq"), vehicle_postal_list_new_seq
+    # Propose Sequence
+    for index in range(len(vehicle_postal_list_new_seq)):
+        updated_postal_seq = vehicle_postal_list_new_seq[index]
+
+        order_array_inner = []
+        for order_list in updated_postal_seq:
+            order_array_inner.append(order_list[1])
+
+        proposed_order_array.append(order_array_inner)
+
+    # Current Sequence
+    for index in range(len(vehicle_postal_list_orig_seq)):
+        current_postal_seq = vehicle_postal_list_orig_seq[index]
+
+        order_array_inner = []
+        for order_list in current_postal_seq:
+            order_array_inner.append(order_list[1])
+
+        current_order_array.append(order_array_inner)
+
+    # Order IDs List
+    proposed_order_grp = convert_to_string(proposed_order_array)
+    current_order_grp = convert_to_string(current_order_array)
 
     num_user_load = "true"
 
@@ -334,20 +385,22 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         #                        }))
     else:
         print ('Route task added to the queue.')
-        # taskqueue.add(url='/sorting-proposed',
-        #               params=({'compare_id': compare_id,
-        #                        'starting_address': starting_address,
-        #                        'proposedPostlal': proposedPostlal,
-        #                        'currentdPostlal': currentdPostlal,
-        #                        'proposedPostlal_sequence': proposedPostlal_sequence,
-        #                        'has_return': has_return,
-        #                        'email': email,
-        #                        'num_of_vehicle': vehicle_quantity,
-        #                        'priority_capacity': priority_capacity,
-        #                        #'vehicle_capacity': vehicle_capacity,
-        #                        'num_user_load': num_user_load,
-        #
-        #                        }))
+        taskqueue.add(url='/sorting-proposed',
+                      params=({'compare_id': compare_id,
+                               'starting_address': starting_address,
+                               'proposedPostlal': proposedPostlal,
+                               'proposed_order_grp': proposed_order_grp,
+
+                               'currentdPostlal': currentdPostlal,
+                               'current_order_grp': current_order_grp,
+
+                               'has_return': has_return,
+                               'email': email,
+                               'num_of_vehicle': vehicle_quantity,
+                               'priority_capacity': priority_capacity,
+                               'num_user_load': num_user_load,
+
+                               }))
 
     # Return the result again to "Sorting_prep.py"
     return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq, grp_truck

@@ -10,7 +10,7 @@ var $studentSearch = $("<div class='student-search'></div>");
 
 var dataItems = $(".tr_parent tr");
 var studentDetails = $(".student-details");
-var perPage = 20;
+var perPage = 30;
 
 
 //$('.page-header').append("<input placeholder='Search by date' id='inputSearch' type='text'>");

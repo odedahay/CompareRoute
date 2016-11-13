@@ -55,11 +55,12 @@ class CurrentRoute(ndb.Model):
     latVal = ndb.StringProperty()   #FloatProperty()
     longVal = ndb.StringProperty()
     distance = ndb.FloatProperty()
-    order_id = ndb.IntegerProperty()
+    rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
+    order_id = ndb.StringProperty()
 
     @classmethod
-    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, order_id):
+    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id):
 
         current = CurrentRoute()
 
@@ -71,12 +72,13 @@ class CurrentRoute(ndb.Model):
         current.longVal = longVal
         current.url_id = url_id
         current.distance = distance
+        current.rank_id = rank_id
         current.order_id = order_id
 
         current.put()
 
         return current.key
-    
+
 class ProposedRoute(ndb.Model):
     compare_id = ndb.StringProperty(required=True)
     origin_code = ndb.StringProperty()
@@ -85,11 +87,12 @@ class ProposedRoute(ndb.Model):
     latVal = ndb.StringProperty()   #FloatProperty()
     longVal = ndb.StringProperty()
     distance = ndb.FloatProperty()
-    order_id = ndb.IntegerProperty()
+    rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
+    order_id = ndb.StringProperty()
 
     @classmethod
-    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, order_id):
+    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id):
 
         proposed = ProposedRoute()
 
@@ -101,6 +104,7 @@ class ProposedRoute(ndb.Model):
         proposed.longVal = longVal
         proposed.url_id = url_id
         proposed.distance = distance
+        proposed.rank_id = rank_id
         proposed.order_id = order_id
 
         proposed.put()

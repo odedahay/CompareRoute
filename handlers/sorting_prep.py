@@ -18,9 +18,6 @@ import re
 import time
 import itertools
 import operator
-from itertools import groupby
-
-
 
 from operator import itemgetter
 from collections import defaultdict
