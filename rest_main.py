@@ -143,10 +143,6 @@ class Truck_capacity_API(webapp2.RequestHandler):
         postal_sequence_list = []
         postal_sequence_current = []
 
-        # For empty order id and capacity
-        forEmp_OrderID_Cap = ['0', '0']
-        forEmp_Capt = ['0']
-
         # Type of Truck
         truck_capacity_grp = []
 
@@ -159,6 +155,8 @@ class Truck_capacity_API(webapp2.RequestHandler):
         error_valid_msg_truck = "Not Enough Truck! <br />The minimum balance number for delivery truck "
         error_capacity_msg_truck = " - exceeding capacity"
         error_capacity_num_truck = "Total maximum for 15 Trucks only"
+        error_capacity_cargo_unit = "Please check the input cargo unit - Location Details"
+
         maximum_truck = 15
 
         if auth_user == None:
@@ -188,10 +186,10 @@ class Truck_capacity_API(webapp2.RequestHandler):
 
         if len(errors) == 0:
 
-            starting_postal, error = checkInRequest('postalhq', data)
+            starting_postal, error = checkInRequest('starting_postal', data)
             errors.extend(error)
 
-            postal_sequence, error = checkInRequest('postal_result', data)
+            order_details, error = checkInRequest('order_details', data)
             errors.extend(error)
 
             type_of_truck, error = checkInRequest('type_of_truck', data)
@@ -232,35 +230,47 @@ class Truck_capacity_API(webapp2.RequestHandler):
             # Counter checking of Postal Code
             num_post_code = 0
 
-            for index in range(0, len(postal_sequence)):
-
-                num_post_code += 1
-
-                postal_pair = postal_sequence[index]
-
+            for index in range(0, len(order_details)):
                 """ ['760450', 'Order02', '2'] """
 
+                num_post_code += 1
+                postal_pair = order_details[index]
+
                 if len(postal_pair) == 1:
-                    errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+                    logging.info(postal_pair)
+                    errors.extend([error_capacity_cargo_unit])
+                    break
 
                 if len(postal_pair) == 2:
                     logging.info(postal_pair)
-                    postal_pair.extend(forEmp_Capt)
+                    errors.extend([error_capacity_cargo_unit])
+                    break
 
-                elif len(postal_pair) != 3:
-                    logging.info(postal_pair)
-                    postal_pair.extend(forEmp_OrderID_Cap)
+                # print "postal_pair", postal_pair
 
                 postal_code = str(postal_pair[0])
                 order_id = str(postal_pair[1])
-                track_capacity = int(postal_pair[2])
+                track_capacity = postal_pair[2]
+
+                # Check if the postal code is 5 digit only
+                if len(str(postal_code)) == 5:
+
+                    # add "0" in the index of Postal Code
+                    postal_code = "0" + postal_code
+
+                # Check if the 3rd column is integer or number
+                cargo_unit = RepresentsInt(track_capacity)
+
+                if not cargo_unit:
+                    errors.extend([postal_code + ' Error in track_capacity'])
+                    break
 
                 # Check if postal code is a valid value i.e. Contains only five or six digits
                 if not str.isdigit(postal_code) or len(str(postal_code)) != 6:
-
                     logging.info('Warning! Postal Code error')
-                    errors.extend(['Please check! Postal Code is not valid it should be 6 digit'])
+                    errors.extend(['Please check '+postal_code+ ' is not valid it should be 6 digit'])
 
+                # Check the limit of truck capacity limit for num_truck
                 if type_of_truck_1 and not type_of_truck_2:
 
                     if track_capacity > int(truck_capacity_1):
@@ -272,10 +282,10 @@ class Truck_capacity_API(webapp2.RequestHandler):
                     if track_capacity > int(truck_capacity_2):
                         logging.info('Warning! '+postal_code + error_capacity_msg_truck)
                         errors.extend(['Warning! '+postal_code + error_capacity_msg_truck])
-
                 else:
 
                     if track_capacity > int(truck_capacity):
+
                         logging.info('Warning! '+postal_code + error_capacity_msg_truck)
                         errors.extend(['Warning! '+postal_code + error_capacity_msg_truck])
 
@@ -283,7 +293,6 @@ class Truck_capacity_API(webapp2.RequestHandler):
                 postal_sequence_list.append([str(postal_code), str(order_id), int(track_capacity)])
 
                 # - - - - - - HQ Starting point Lat Long - - - - - #
-                # origin_destination = sorting.startingpoint_latlong(starting_postal)
 
             # maximum of 3 fields for truck
             # Additional Field of Truck 2
@@ -336,49 +345,49 @@ class Truck_capacity_API(webapp2.RequestHandler):
             sort_company = "false"
             vehicle_quantity = 0
 
-            origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
-                int(starting_postal),
-                postal_sequence_list,
-                int(vehicle_quantity),
-                email, has_return,
-                priority_capacity,
-                priority_capacity_comp,
-                api_user, sort_company, truck_capacity_grp, options_truck)
-
-            # Vehicle Result base of the priority:
-            result_num_truck = len(postal_result)
-
-            # Checking if truck is enough
-            if len(truck_capacity_grp) == 1:
-
-                if int(result_num_truck) > int(num_of_truck):
-                    errors.extend([error_valid_msg_truck + type_of_truck + " is " + str(result_num_truck)])
-
-            elif len(truck_capacity_grp) == 2:
-
-                if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
-                    errors.extend([error_valid_msg_truck,  type_of_truck_1, " is ", int(result_num_truck) - int(num_of_truck)])
-
-            elif len(truck_capacity_grp) == 3:
-
-                if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
-                    errors.extend([error_valid_msg_truck, type_of_truck_2, " is ", int(result_num_truck) - (int(num_of_truck) + int(num_of_truck_1))])
-
-                '''['postal_result', 'order_id', 'capacity']'''
-
-            # Converting HQ to lat & long value
-            # origin_destination = self.convert_hq(str(starting_postal))
-            current_distance = sorting_prep.result_distance_latlng(current_result, origin_destination, num_post_code)
-            proposed_distance = sorting_prep.result_distance_latlng(postal_result, origin_destination, num_post_code)
-
-            # GeoCode Map
-            latlng_array = map_visible(postal_result)
-
-            # Converting the total percentage saving of distance
-            difference_total = current_distance - proposed_distance
-            percentage_savings = (difference_total / current_distance) * 100
-
             if len(errors) == 0:
+
+                origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                    int(starting_postal),
+                    postal_sequence_list,
+                    int(vehicle_quantity),
+                    email, has_return,
+                    priority_capacity,
+                    priority_capacity_comp,
+                    api_user, sort_company, truck_capacity_grp, options_truck)
+
+                # Vehicle Result base of the priority:
+                result_num_truck = len(postal_result)
+
+                # Checking if truck is enough
+                if len(truck_capacity_grp) == 1:
+
+                    if int(result_num_truck) > int(num_of_truck):
+                        errors.extend([error_valid_msg_truck + type_of_truck + " is " + str(result_num_truck)])
+
+                elif len(truck_capacity_grp) == 2:
+
+                    if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1):
+                        errors.extend([error_valid_msg_truck,  type_of_truck_1, " is ", int(result_num_truck) - int(num_of_truck)])
+
+                elif len(truck_capacity_grp) == 3:
+
+                    if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
+                        errors.extend([error_valid_msg_truck, type_of_truck_2, " is ", int(result_num_truck) - (int(num_of_truck) + int(num_of_truck_1))])
+
+                    '''['postal_result', 'order_id', 'capacity']'''
+
+                # Converting HQ to lat & long value
+                # origin_destination = self.convert_hq(str(starting_postal))
+                current_distance = sorting_prep.result_distance_latlng(current_result, origin_destination, num_post_code)
+                proposed_distance = sorting_prep.result_distance_latlng(postal_result, origin_destination, num_post_code)
+
+                # GeoCode Map
+                latlng_array = map_visible(postal_result)
+
+                # Converting the total percentage saving of distance
+                difference_total = current_distance - proposed_distance
+                percentage_savings = (difference_total / current_distance) * 100
 
                 # Converting JSON
                 response['status'] = 'ok'
@@ -386,8 +395,8 @@ class Truck_capacity_API(webapp2.RequestHandler):
                         {
                             "required_fields": {
                                 "starting_postal": starting_postal,
-                                "propose_result": postal_result,
-                                "postal_sequence": vehicle_postal_list_new_seq,
+                                "propose_result": vehicle_postal_list_new_seq,
+                                # "postal_sequence": vehicle_postal_list_new_seq,
                                 "has_return": has_return
                                 },
                             "geo_code_latlng": {
@@ -405,8 +414,8 @@ class Truck_capacity_API(webapp2.RequestHandler):
                         }
                     ]
 
-        else:
-            errors.extend(['Error in Process'])
+            else:
+                errors.extend(['Error in Process'])
 
         if len(errors) > 0:
             response['status'] = 'error'
@@ -414,6 +423,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
 
         logging.info(response)
         self.response.out.write(json.dumps(response, indent=3))
+
 
 class Multi_truck_API(webapp2.RequestHandler):
 
@@ -464,13 +474,13 @@ class Multi_truck_API(webapp2.RequestHandler):
 
         if len(errors) == 0:
 
-            starting_postal, error = checkInRequest('postalhq', data)
+            starting_postal, error = checkInRequest('starting_postal', data)
             errors.extend(error)
 
-            postal_sequence, error = checkInRequest('postal_result', data)
+            order_details, error = checkInRequest('order_details', data)
             errors.extend(error)
 
-            vehicle_quantity, error = checkInRequest('vehicle_quantity', data)
+            number_of_vehicle, error = checkInRequest('number_of_vehicle', data)
             errors.extend(error)
 
             has_return, error = checkInRequest('has_return', data)
@@ -502,58 +512,54 @@ class Multi_truck_API(webapp2.RequestHandler):
             forEmp_OrderID_Cap = ['0', '0']
             forEmp_Capt = ['0']
 
-            # # Truck Capacity
-            # truck_type = ["truck_1", "truck_2"]
-            #
-            # if vehicle_type == truck_type[0]:
-            #     truck_cap = 10
-            #     print ('Hello this is truck 1')
-            #
-            # else:
-            #     print ('Hello this is truck 2')
-            #     truck_cap = 999
+            # Validation for Vehicle
+            if not number_of_vehicle:
+                errors.extend(["number_of_vehicle" + " is empty"])
+
+            # starting point 5 digit
+            if len(str(starting_postal)) == 5:
+                    starting_postal = "0" + starting_postal
+
+            # if below 5 digit
+            if len(starting_postal) != 6:
+                logging.info('Warning! '+starting_postal+ ' error')
+                errors.extend(['Starting Postal code is not valid, '+starting_postal+ ' it should be 6 digit'])
 
             # Counter checking of Postal Code
             num_post_code = 0
 
-            for index in range(0, len(postal_sequence)):
+            for index in range(0, len(order_details)):
                 num_post_code += 1
-                postal_pair = postal_sequence[index]
+                postal_pair = order_details[index]
 
-                """ [u'760450', u'Order02', u'2'] """
+                """ [u'760450', u'Order02'] """
+
+                if len(postal_pair) == 1:
+                    logging.info(postal_pair)
+                    postal_pair.extend(forEmp_OrderID_Cap)
 
                 if len(postal_pair) == 2:
                     logging.info(postal_pair)
                     postal_pair.extend(forEmp_Capt)
 
-                elif len(postal_pair) != 3:
-                    logging.info(postal_pair)
-                    postal_pair.extend(forEmp_OrderID_Cap)
-
                 postal_code = str(postal_pair[0])
                 order_id = str(postal_pair[1])
                 track_capacity = int(postal_pair[2])
 
+                if len(str(postal_code)) == 5:
+                    postal_code = "0" + postal_code
+
                 # Check if postal code is a valid value i.e. Contains only five or six digits
                 if not str.isdigit(postal_code) or len(str(postal_code)) != 6:
                     logging.info('Warning! Postal Code error')
-                    errors.extend(['Please check! Postal Code is not valid it should be 6 digit'])
-
-                # if priority_capacity == "true":
-                #     if track_capacity > int(truck_cap):
-                #         print ('Warning! Exceeding Volume')
-                #         errors.extend(['Warning! Postal Code capacity - Exceeding Volume'])
+                    errors.extend(['Please check '+postal_code+ ' is not valid it should be 6 digit'])
 
                 postal_sequence_current.append(str(postal_code))
                 postal_sequence_list.append([str(postal_code), str(order_id), int(track_capacity)])
 
-            # Set the Priority from Web App
-            # priority_capacity_comp = priority_capacity
-
             # - - - - - - HQ Starting point Lat Long - - - - - #
-            # origin_destination = sorting.startingpoint_latlong(starting_postal)
 
-            # for Non Multi Truck
+            # For Non Multi Truck
             priority_capacity = "false"
             priority_capacity_comp = "false"
             sort_company = "false"
@@ -565,7 +571,7 @@ class Multi_truck_API(webapp2.RequestHandler):
                 origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
-                    int(vehicle_quantity),
+                    int(number_of_vehicle),
                     email, has_return,
                     priority_capacity,
                     priority_capacity_comp,
@@ -591,23 +597,18 @@ class Multi_truck_API(webapp2.RequestHandler):
                         {
                             "required_fields": {
                                 "starting_postal": starting_postal,
-                                "propose_result": postal_result,
-                                "postal_sequence": vehicle_postal_list_new_seq,
+                                "propose_result": vehicle_postal_list_new_seq,
                                 "has_return": has_return
                                 },
                             "geo_code_latlng": {
                                 "latlng_array": latlng_array
                             },
                             "vehicle_priority": {
-                                "vehicle_num": vehicle_quantity
+                                "vehicle_num": number_of_vehicle
                                 },
-                            # "capacity_priority": {
-                            #     "priority_capacity": priority_capacity,
-                            #     # "vehicle_type": vehicle_type,
-                            #     # "vehicle_capacity": vehicle_capacity
-                            #     },
+
                             "total_summary_saving": {
-                                "propose_distance": proposed_distance,
+                                "proposed_distance": proposed_distance,
                                 "current_distance": current_distance,
                                 "total_savings": percentage_savings
                                 }
@@ -615,7 +616,7 @@ class Multi_truck_API(webapp2.RequestHandler):
                     ]
 
             else:
-                errors.extend(['Error in Postal Code'])
+                errors.extend(['Error in Process'])
 
         if len(errors) > 0:
             response['status'] = 'error'
@@ -624,147 +625,15 @@ class Multi_truck_API(webapp2.RequestHandler):
         logging.info(response)
         self.response.out.write(json.dumps(response, indent=3))
 
-    def options(self):
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
-        self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
-        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+def RepresentsInt(num):
 
-    def get_distance_proposed(self, postal_result, origin_destination, num_post_code):
+    try:
+        int(num)
+        return True
 
-        if num_post_code <= 69:
-            print "Below 0-69 postal code"
-            result_str = ""
+    except ValueError:
 
-            for postal_code in postal_result:
-                if not result_str:
-                    result_str += str(postal_code)
-                else:
-                    result_str += "_" + str(postal_code)
-
-            # Remove square brackets and single quotes and back to list object
-            result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
-            result_str = result_str.strip()
-            result_str_split = result_str.split(",")
-
-            batch_1_val = latlong_summary_starting(result_str_split, origin_destination)
-            route_distance = float(batch_1_val) / 1000
-
-            return route_distance
-
-        elif 70 <= num_post_code <= 130:
-            """ 70 <= num_post_code <= 130: """
-            print "Normal above 70-130 postal code"
-
-            result_str = ""
-
-            for postal_code in postal_result:
-                if not result_str:
-                    result_str += str(postal_code)
-                else:
-                    result_str += "_" + str(postal_code)
-
-            # Remove square brackets and single quotes and back to list object
-            result_str = result_str.replace("[", "").replace("]", "").replace("\'", "").replace("_", ", ")
-            result_str = result_str.strip()
-            result_str_split = result_str.split(",")
-
-            # Chunk it
-            result_str_chunk = sorting.chunkIt(result_str_split, 2)
-
-            batch_1 = result_str_chunk[0]
-            batch_2 = result_str_chunk[1]
-
-            # - - - - - Get value of list object- - - - - - #
-            batch_1_val = latlong_summary_starting(batch_1, origin_destination)
-            batch_2_val = latlong_summary(batch_2)
-
-            # Sum up the two batch
-            route_distance_add = batch_1_val + batch_2_val
-            route_distance = float(route_distance_add) / 1000
-
-            return route_distance
-
-        else:
-            errors = []
-            errors.extend(['Exceeding volume in postal code'])
-
-            return errors
-
-    def convert_hq(self, starting_postal):
-
-        # Converting HQ postal code = HQ geo code
-        compare_startPos = postalRecordDB.check_if_exists(starting_postal)
-
-        if compare_startPos == None:
-
-            compare_startPos = postalRecordDB.check_if_exists(starting_postal)
-
-        latlong = postalRecordDB.get_by_id(compare_startPos)
-
-        laglongSource = []
-
-        laglongSource.append(latlong.lat)
-        laglongSource.append(',')
-        laglongSource.append(latlong.long)
-        origin_destination = "".join(laglongSource)
-
-        return origin_destination
-
-
-# API For LAT-LONG with HQ PostalCode
-def latlong_summary_starting(list, origin_destination):
-
-    url_disc = "http://dev.logistics.lol:5000/viaroute?loc="
-    proposed_latlong = ""
-
-    for current_post in list:
-        current_post = current_post.strip()
-
-        # Convert to Lat-Long the postal code
-        destinations = postalcode_latlong(current_post)
-
-        if not destinations:
-            proposed_latlong += str(destinations)
-        else:
-            proposed_latlong += "&loc=" + str(destinations)
-
-    proposed_result = origin_destination + proposed_latlong
-    proposed_api = url_disc + proposed_result
-
-    dist_val = urllib.urlopen(proposed_api)
-    wjson = dist_val.read()
-    distance2 = json.loads(wjson)
-    distance_val = distance2['route_summary']['total_distance']
-
-    return distance_val
-
-# API For LAT-LONG -NO- HQ PostalCode
-def latlong_summary(list):
-
-    url_disc = "http://dev.logistics.lol:5000/viaroute?"
-    proposed_latlong = ""
-
-    for current_post in list:
-        current_post = current_post.strip()
-
-        # Convert to Lat-Long the postal code
-        destinations = postalcode_latlong(current_post)
-
-        if not destinations:
-            proposed_latlong += str(destinations)
-        else:
-            proposed_latlong += "&loc=" + str(destinations)
-
-    proposed_result = proposed_latlong
-    proposed_api = url_disc + proposed_result
-    dist_val = urllib.urlopen(proposed_api)
-    wjson = dist_val.read()
-    distance2 = json.loads(wjson)
-
-    distance_val = distance2['route_summary']['total_distance']
-
-    return distance_val
+        return False
 
 
 # GeoCode Latlng MAP - single company

@@ -1094,7 +1094,7 @@ $('#routeBtn').click(function () {
                             $p_note2.text('Breakdown of Proposed Delivery Routes');
 
                             // Table Layout
-                            $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>Cargo Unit</th></tr>");
+                            $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th></tr>");
 
 
                             // Loop the Postal Sequence
@@ -1127,7 +1127,7 @@ $('#routeBtn').click(function () {
                                     for (c = 0; c < new_postal_code.length; c++){
                                             var new_counter_num = c + 1;
                                     }
-                                    $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+capacity_load+"</td></tr>");
+                                    $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td></tr>");
                                 }
                             }
 

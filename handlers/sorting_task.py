@@ -103,7 +103,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
             optimise_id = 1
 
             truck_count = 0
-            for countList in iactual_vehicle_postal:
+            for countList in actual_vehicle_postal:
                 count_item = countList.split(", ")
                 delivery_routes = len(count_item)
 
@@ -113,7 +113,6 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
                 # store the truck details
                 Truck_capacity_details.add_truck_details(compare_id, int(truck_count), truck_name, delivery_routes)
-
 
         # Indicator for Returning vehicle
         if has_return == "true":

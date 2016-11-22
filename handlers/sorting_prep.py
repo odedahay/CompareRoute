@@ -150,7 +150,6 @@ class SortingPrep(webapp2.RequestHandler):
         has_return = self.request.get("has_return")
 
         options_truck = self.request.get("optionsTruck")
-
         priority_capacity = self.request.get("priority_capacity")
         priority_capacity_comp = self.request.get("priority_capacity_comp")
 
@@ -492,7 +491,7 @@ class SortingPrep(webapp2.RequestHandler):
 
             # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
             if not str.isdigit(postal_code) or int(postal_code) >= 830000:
-                errors.extend([postal_code, ' Invalid postal codes'])
+                errors.extend([postal_code, ' Invalid postal codes <br />'])
 
             # Route by Capacity:
             if priority_capacity == "true":
@@ -513,6 +512,7 @@ class SortingPrep(webapp2.RequestHandler):
                     list_of_companies.append(sorted_comp)
             else:
                 postal_sequence_list.append([postal_code, str(order_id), int(truck_volume)])
+
             postal_sequence_current.append(postal_code)
 
         if len(errors) == 0:
