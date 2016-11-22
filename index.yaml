@@ -13,25 +13,25 @@ indexes:
 - kind: CurrentRoute
   properties:
   - name: compare_id
+  - name: order_id
+
+- kind: CurrentRoute
+  properties:
+  - name: compare_id
+  - name: order_id
+  - name: vehicle_id
+
+- kind: CurrentRoute
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: order_id
+
+- kind: CurrentRoute
+  properties:
+  - name: compare_id
   - name: vehicle_id
   - name: rank_id
-
-- kind: CurrentRoute
-  properties:
-  - name: compare_id
-  - name: order_id
-
-- kind: CurrentRoute
-  properties:
-  - name: compare_id
-  - name: order_id
-  - name: vehicle_id
-
-- kind: CurrentRoute
-  properties:
-  - name: compare_id
-  - name: vehicle_id
-  - name: order_id
 
 - kind: CurrentRoute_api
   properties:
@@ -125,6 +125,11 @@ indexes:
   - name: user_id
   - name: created_date
     direction: desc
+
+- kind: Truck_capacity_details
+  properties:
+  - name: compare_id
+  - name: truck_details
 
 - kind: postalRecordDB
   properties:

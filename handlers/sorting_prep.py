@@ -150,6 +150,7 @@ class SortingPrep(webapp2.RequestHandler):
         has_return = self.request.get("has_return")
 
         options_truck = self.request.get("optionsTruck")
+
         priority_capacity = self.request.get("priority_capacity")
         priority_capacity_comp = self.request.get("priority_capacity_comp")
 
@@ -403,7 +404,6 @@ class SortingPrep(webapp2.RequestHandler):
                 #
                 # if int(num_comp_val) == 6:
 
-
             # Store Postal code and Vehicle
             starting_postal_list.append(str(starting_postal_1))
             vehicle_quantity_list.append(vehicle_quantity_1)
@@ -454,10 +454,10 @@ class SortingPrep(webapp2.RequestHandler):
         # Note: Order ID is untouched as we do not know their format
         for index in range(1, len(postal_sequence_split)):
 
-            num_post_code = num_post_code + 1
-
             # Retrieve each postal pair
             postal_pair = postal_sequence_split[index]
+
+            num_post_code += 1
 
             # Replace all tab spaces with normal spaces and remove trailing whitespace
             postal_pair = postal_pair.replace("\t", " ")
@@ -465,6 +465,9 @@ class SortingPrep(webapp2.RequestHandler):
 
             # Split the order ID/postal code pair by normal spacing
             postal_pair_split = postal_pair.split(" ")
+
+            if len(postal_pair_split) == 1:
+                errors.extend(["Please check the input of cargo unit - Location Details <br />"])
 
             if len(postal_pair_split) == 2:
                 postal_pair_split.extend(forEmp_Capt)
@@ -602,21 +605,6 @@ class SortingPrep(webapp2.RequestHandler):
                         # GeoCode Map
                         latlng_array = map_visible(propose_result)
                         latlng_array_list.append(latlng_array)
-
-                    # Create function for validation Truck Capacity
-                    # A function to check if the company is exceeding:
-
-                    # # Function for validation
-                    # result_numTruck = validation_checker.minimum_truck_checker_comp(num_comp_val, propose_result_company, starting_postal_list,
-                    #                                                        num_of_truck_c1, num_of_truck_cc1,
-                    #                                                        num_of_truck_c2, num_of_truck_cc21,
-                    #                                                        num_of_truck_c3, num_of_truck_cc31,
-                    #                                                        type_of_truck_c2,type_of_truck_cc1,type_of_truck_cc21,
-                    #                                                        type_of_truck_c1,
-                    #                                                        type_of_truck_c3,
-                    #                                                        add_truck_cc1, add_truck_cc2,add_truck_cc3)
-                    #
-                    # errors.extend(result_numTruck)
 
                     # Check if they have two company
                     if int(num_comp_val) == 2:
@@ -812,11 +800,6 @@ class SortingPrep(webapp2.RequestHandler):
                     # Vehicle Result base of the priority:
                     vehicle_quantity = len(vehicle_postal_list_new_seq)
 
-                    # if add_truck_capacity_1:
-                    #     print "hello--111"
-
-                    print "truck_capacity_grp", truck_capacity_grp
-
                     if len(truck_capacity_grp) == 1:
                         if int(result_num_truck) > int(num_of_truck):
                             errors.extend([error_valid_msg_truck,  type_of_truck, " is ", result_num_truck])
@@ -827,7 +810,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                     elif len(truck_capacity_grp) == 3:
                         if int(result_num_truck) > int(num_of_truck) + int(num_of_truck_1) + int(num_of_truck_2):
-                            errors.extend([error_valid_msg_truck, type_of_truck_2, " is ", int(result_num_truck) - ( int(num_of_truck) + int(num_of_truck_1) )])
+                            errors.extend([error_valid_msg_truck, type_of_truck_2, " is ", int(result_num_truck) - (int(num_of_truck) + int(num_of_truck_1))])
 
                 # Converting the postal code to lat_long
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)

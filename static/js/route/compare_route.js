@@ -799,7 +799,6 @@ $('#routeBtn').click(function () {
                             postalSorted = counter++;
                         }
 
-
                         $("#proposedTable").show();
                         $("#proposedTable_company").show();
 
@@ -836,7 +835,6 @@ $('#routeBtn').click(function () {
 
 
                         }// end of else for non-priority-comp
-
 
                         for (var hq = 0; hq < starting.length; hq++){
                             var hq_startingPoint = starting[hq];

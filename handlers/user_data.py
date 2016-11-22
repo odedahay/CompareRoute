@@ -2,7 +2,7 @@ from handlers import base
 from model.user_account import UserAccount
 
 # DB for Web App
-from model.admin_account import RouteDistance, CurrentRoute, ProposedRoute
+from model.admin_account import RouteDistance, CurrentRoute, ProposedRoute, Truck_capacity_details
 
 
 class User_Data(base.BaseHandler):
@@ -50,11 +50,20 @@ class User_Data_list(base.BaseHandler):
         web_routes = RouteDistance.query(RouteDistance.compare_id == compare_id).order(
             -RouteDistance.created_date).fetch()
 
+        # to get the value of truck capacity
+        web_routes_optimised = RouteDistance.query(RouteDistance.compare_id == compare_id).order().get()
+        route_by = web_routes_optimised.optimise_id
+
+        # if truck capacity selected
+        truck_details = Truck_capacity_details.query(Truck_capacity_details.compare_id == compare_id).order(Truck_capacity_details.truck_details).fetch()
+
         template_values = {
             'email': email,
             'web_current': web_current,
             'web_proposed': web_proposed,
             'web_routes': web_routes,
+            'route_by': route_by,
+            'truck_details': truck_details,
         }
 
         if email:

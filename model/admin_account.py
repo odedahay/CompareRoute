@@ -16,14 +16,16 @@ class RouteDistance(ndb.Model):
     return_vehicle = ndb.StringProperty()
     vehicle_capacity = ndb.StringProperty()
     user_count = ndb.IntegerProperty(default=0)
+    type_optimise = ndb.StringProperty()
+    optimise_id = ndb.IntegerProperty()
 
     @classmethod
     def add_new_route(cls, compare_id, user_id, starting_point, origin_destination, no_vehicle, vehicle_capacity,
-                      current_total_dist, proposed_total_dist, percentage_savings, postal_count, return_vehicle, user_count):
+                      current_total_dist, proposed_total_dist, percentage_savings, postal_count, return_vehicle,
+                      user_count, type_optimise, optimise_id):
 
         route = RouteDistance()
 
-        #route.get_by_id(long(compare_id))
         route.compare_id = compare_id
         route.user_id = user_id
         route.starting_point = starting_point
@@ -36,6 +38,8 @@ class RouteDistance(ndb.Model):
         route.postal_count = postal_count
         route.return_vehicle = return_vehicle
         route.user_count = user_count
+        route.type_optimise = type_optimise
+        route.optimise_id = optimise_id
 
         route.put()
 
@@ -58,9 +62,10 @@ class CurrentRoute(ndb.Model):
     rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
+    cargo_unit = ndb.StringProperty()
 
     @classmethod
-    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id):
+    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit):
 
         current = CurrentRoute()
 
@@ -74,6 +79,7 @@ class CurrentRoute(ndb.Model):
         current.distance = distance
         current.rank_id = rank_id
         current.order_id = order_id
+        current.cargo_unit = cargo_unit
 
         current.put()
 
@@ -90,9 +96,10 @@ class ProposedRoute(ndb.Model):
     rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
+    cargo_unit = ndb.StringProperty()
 
     @classmethod
-    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id):
+    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit):
 
         proposed = ProposedRoute()
 
@@ -106,6 +113,7 @@ class ProposedRoute(ndb.Model):
         proposed.distance = distance
         proposed.rank_id = rank_id
         proposed.order_id = order_id
+        proposed.cargo_unit = cargo_unit
 
         proposed.put()
 
@@ -256,3 +264,24 @@ class PostalRecordDB_history(ndb.Model):
         postal_entry.put()
 
         return postal_entry.key
+
+class Truck_capacity_details(ndb.Model):
+
+    compare_id = ndb.StringProperty(required=True)
+    no_vehicle = ndb.IntegerProperty()
+    truck_details = ndb.StringProperty()
+    cargo_loads = ndb.IntegerProperty()
+
+    @classmethod
+    def add_truck_details(cls, compare_id, no_vehicle, truck_details, cargo_loads):
+
+        truck_entry = Truck_capacity_details()
+
+        truck_entry.compare_id = compare_id
+        truck_entry.no_vehicle = no_vehicle
+        truck_entry.truck_details = truck_details
+        truck_entry.cargo_loads = cargo_loads
+
+        truck_entry.put()
+
+        return truck_entry.key
