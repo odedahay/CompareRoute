@@ -682,14 +682,48 @@ class Multi_companies_API(webapp2.RequestHandler):
 
         if len(errors) == 0:
 
-            starting_postal, error = checkInRequest('starting_postal', data)
-            errors.extend(error)
+            # starting_postal, error = checkInRequest('starting_postal', data)
+            # errors.extend(error)
 
             order_details, error = checkInRequest('order_details', data)
             errors.extend(error)
 
+            has_return, error = checkInRequest('has_return', data)
+            errors.extend(error)
+
+            print "order_details", order_details
+
+        # else:
+        #     errors.extend(['Error in JSON-Data'])
+
+
+            if len(errors) == 0:
+
+                # Converting JSON
+                    response['status'] = 'ok'
+                    response['data_result'] = [
+                            {
+                                "required_fields": {
+                                    # "starting_postal": starting_postal,
+                                    "propose_result": vehicle_postal_list_new_seq,
+                                    "has_return": has_return
+                                    },
+                                # "geo_code_latlng": {
+                                #     "latlng_array": latlng_array
+                                # },
+                                # "vehicle_priority": {
+                                #     "vehicle_num": number_of_vehicle
+                                #     },
+                                #
+                                # "total_summary_saving": {
+                                #     "proposed_distance": proposed_distance,
+                                #     "current_distance": current_distance,
+                                #     "total_savings": percentage_savings
+                                #     }
+                            }
+                        ]
         else:
-            errors.extend(['Error in JSON-Data'])
+            errors.extend(['Erro in Process'])
 
         # Final output
         if len(errors) > 0:
@@ -758,7 +792,6 @@ def postalcode_latlong(postal):
         return destinations
 
 app = webapp2.WSGIApplication([
-    # ('/api/v1(.*)', SortingHandler),
     ('/api/multi_truck/v1', Multi_truck_API),
     ('/api/truck_capacity/v1', Truck_capacity_API),
     ('/api/multi_companies/v1', Multi_companies_API)

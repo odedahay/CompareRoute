@@ -73,7 +73,7 @@ class JsonHandler(webapp2.RequestHandler):
         # END OF ERROR CHECKING           
              
         # START OF LOGIC IF NO ERROR FOUND     
-        if  not error:
+        if not error:
     
         
             # Initialize all the objects needed
