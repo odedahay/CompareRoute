@@ -54,21 +54,19 @@
          <!-- This is for Truck capacity -->
         {% if route_by == 1 %}
 
-            <h4>Truck Details for Multiple Truck</h4>
             <h4>Truck Details</h4>
             <table class="table table-bordered">
                 <tr>
                     <th>Truck No. </th>
-                    <th>Type of Truck </th>
                     <th>Delivery Routes </th>
                 </tr>
                 {% for truck_det in truck_details %}
                 <tr>
                     <td> {{ truck_det.no_vehicle }}</td>
-                    <td> {{ truck_det.truck_details }}</td>
                     <td> {{ truck_det.cargo_loads }} Proposed Routes</td>
                 </tr>
                 {% endfor %}
+
             </table>
 
         {% elif route_by == 2 %}

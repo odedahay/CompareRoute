@@ -172,6 +172,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
             errors.extend(['Error in Credits Access'])
 
         response = {}
+
         request_str = self.request.body
         logging.info(request_str)
 
@@ -180,8 +181,9 @@ class Truck_capacity_API(webapp2.RequestHandler):
             try:
                 data = json.loads(request_str)
 
-            except:
+                print "data", data
 
+            except:
                 errors.extend(['Error in JSON'])
 
         if len(errors) == 0:
@@ -221,6 +223,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
             num_of_truck_2, error = checkInRequest('num_of_truck_2', data)
             errors.extend(error)
 
+            # trigger value
             has_return, error = checkInRequest('has_return', data)
             errors.extend(error)
 
@@ -231,6 +234,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
             num_post_code = 0
 
             for index in range(0, len(order_details)):
+
                 """ ['760450', 'Order02', '2'] """
 
                 num_post_code += 1
@@ -267,6 +271,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
 
                 # Check if postal code is a valid value i.e. Contains only five or six digits
                 if not str.isdigit(postal_code) or len(str(postal_code)) != 6:
+
                     logging.info('Warning! Postal Code error')
                     errors.extend(['Please check '+postal_code+ ' is not valid it should be 6 digit'])
 
@@ -347,7 +352,7 @@ class Truck_capacity_API(webapp2.RequestHandler):
 
             if len(errors) == 0:
 
-                origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck, compare_id = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
                     int(vehicle_quantity),
@@ -389,30 +394,32 @@ class Truck_capacity_API(webapp2.RequestHandler):
                 difference_total = current_distance - proposed_distance
                 percentage_savings = (difference_total / current_distance) * 100
 
-                # Converting JSON
-                response['status'] = 'ok'
-                response['data_result'] = [
-                        {
-                            "required_fields": {
-                                "starting_postal": starting_postal,
-                                "propose_result": vehicle_postal_list_new_seq,
-                                # "postal_sequence": vehicle_postal_list_new_seq,
-                                "has_return": has_return
+                if len(errors) == 0:
+
+                    # Converting JSON
+                    response['status'] = 'ok'
+                    response['data_result'] = [
+                            {
+                                "required_fields": {
+                                    "starting_postal": starting_postal,
+                                    "propose_result": vehicle_postal_list_new_seq,
+                                    "has_return": has_return,
+                                    "priority_capacity": priority_capacity,
+                                    },
+                                "geo_code_latlng": {
+                                    "latlng_array": latlng_array
                                 },
-                            "geo_code_latlng": {
-                                "latlng_array": latlng_array
-                            },
-                            "capacity_priority": {
-                                "priority_capacity": priority_capacity,
-                                "grp_truck": grp_truck
-                                },
-                            "total_summary_saving": {
-                                "propose_distance": proposed_distance,
-                                "current_distance": current_distance,
-                                "total_savings": percentage_savings
-                                }
-                        }
-                    ]
+                                "vehicle_details": {
+
+                                    "grp_truck": grp_truck
+                                    },
+                                "total_summary_saving": {
+                                    "propose_distance": proposed_distance,
+                                    "current_distance": current_distance,
+                                    "total_savings": percentage_savings
+                                    }
+                            }
+                        ]
 
             else:
                 errors.extend(['Error in Process'])
@@ -521,9 +528,9 @@ class Multi_truck_API(webapp2.RequestHandler):
                     starting_postal = "0" + starting_postal
 
             # if below 5 digit
-            if len(starting_postal) != 6:
-                logging.info('Warning! '+starting_postal+ ' error')
-                errors.extend(['Starting Postal code is not valid, '+starting_postal+ ' it should be 6 digit'])
+            if len(str(starting_postal)) != 6:
+                logging.info('Warning! error')
+                errors.extend(['Starting Postal code is not valid, it should be 6 digit'])
 
             # Counter checking of Postal Code
             num_post_code = 0
@@ -568,7 +575,7 @@ class Multi_truck_API(webapp2.RequestHandler):
 
             if len(errors) == 0:
 
-                origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                origin_destination, postal_result, current_result, vehicle_postal_list_new_seq, grp_truck, compare_id = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
                     int(number_of_vehicle),
@@ -618,12 +625,80 @@ class Multi_truck_API(webapp2.RequestHandler):
             else:
                 errors.extend(['Error in Process'])
 
+        else:
+            errors.extend(['Error in JSON-Data'])
+
         if len(errors) > 0:
             response['status'] = 'error'
             response['errors'] = errors
 
         logging.info(response)
         self.response.out.write(json.dumps(response, indent=3))
+
+
+class Multi_companies_API(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Cache-Control'
+        self.response.headers['Access-Control-Allow-Credentials'] = 'true'
+        self.response.headers['Content-Type'] = 'application/json;charset=utf-8'
+
+        email = self.request.get('userId')
+        api_key = self.request.get('keyId')
+
+        # Error list for invalid postal codes
+        errors = []
+
+        api_user = "false"
+        auth_user = UserAccount.check_API_auth(email, api_key)
+
+        if auth_user == None:
+            errors.extend(['Incorrect email or API Key'])
+
+        if auth_user == True:
+            api_user = "true"
+
+        # Checking for Credit Access
+        credits_account = UserAccount.check_credit_usage(email)
+
+        if credits_account == None:
+            errors.extend(['Error in Credits Access <br />'])
+
+        response = {}
+        request_str = self.request.body
+        logging.info(request_str)
+
+        if len(errors) == 0:
+
+            try:
+                data = json.loads(request_str)
+
+            except:
+
+                errors.extend(['Error in JSON'])
+
+        if len(errors) == 0:
+
+            starting_postal, error = checkInRequest('starting_postal', data)
+            errors.extend(error)
+
+            order_details, error = checkInRequest('order_details', data)
+            errors.extend(error)
+
+        else:
+            errors.extend(['Error in JSON-Data'])
+
+        # Final output
+        if len(errors) > 0:
+            response['status'] = 'error'
+            response['errors'] = errors
+
+        logging.info(response)
+        self.response.out.write(json.dumps(response, indent=3))
+
 
 def RepresentsInt(num):
 
@@ -685,5 +760,6 @@ def postalcode_latlong(postal):
 app = webapp2.WSGIApplication([
     # ('/api/v1(.*)', SortingHandler),
     ('/api/multi_truck/v1', Multi_truck_API),
-    ('/api/truck_capacity/v1', Truck_capacity_API)
+    ('/api/truck_capacity/v1', Truck_capacity_API),
+    ('/api/multi_companies/v1', Multi_companies_API)
 ], debug=True)

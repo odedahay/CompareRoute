@@ -21,13 +21,13 @@
                             <th>Starting Postal Code </th>
                             <th>No. of Truck</th>
                             <th>Sorted Postal Code <br />w/ Starting-Postal Pts.</th>
-                            <!--<th>Returning Vehicle</th>-->
 
                             <th>Current Total Distance</th>
                             <th>Proposed Total Distance</th>
                             <th>Total Savings (%)</th>
                         </tr>
                     </thead>
+
                     <tbody class="tr_parent">
 
                         {% for route_web in user_routes_data %}
@@ -38,13 +38,13 @@
                             <td>{{ route_web.starting_point }}</td>
                             <td>{{ route_web.no_vehicle }}</td>
                             <td>{{ route_web.postal_count }}</td>
-                            <!--<td>{{ route_web.return_vehicle }}</td>-->
 
                             <td>{{ route_web.current_total_dist }}</td>
                             <td>{{ route_web.proposed_total_dist }}</td>
                             <td>{{ route_web.percentage_savings }}</td>
                         </tr>
                         {% endfor %}
+
                     </tbody>
                 </table><!-- End of Table -->
             </div>

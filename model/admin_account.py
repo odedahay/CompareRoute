@@ -213,6 +213,7 @@ class PostalRecordDB_alert(ndb.Model):
             new_entry.counter_no = counter_no
 
             new_entry.put()
+
             # return new_entry.key
         else:
 

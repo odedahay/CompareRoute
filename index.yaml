@@ -110,6 +110,23 @@ indexes:
 
 - kind: RouteDistance
   properties:
+  - name: compare_id
+  - name: no_vehicle
+    direction: desc
+
+- kind: RouteDistance
+  properties:
+  - name: compare_id
+  - name: optimise_id
+
+- kind: RouteDistance
+  properties:
+  - name: compare_id
+  - name: optimise_id
+    direction: desc
+
+- kind: RouteDistance
+  properties:
   - name: user_id
   - name: created_date
     direction: desc
@@ -129,7 +146,24 @@ indexes:
 - kind: Truck_capacity_details
   properties:
   - name: compare_id
+  - name: no_vehicle
+
+- kind: Truck_capacity_details
+  properties:
+  - name: compare_id
+  - name: no_vehicle
+    direction: desc
+
+- kind: Truck_capacity_details
+  properties:
+  - name: compare_id
   - name: truck_details
+
+- kind: Truck_capacity_details
+  properties:
+  - name: compare_id
+  - name: truck_details
+    direction: desc
 
 - kind: postalRecordDB
   properties:

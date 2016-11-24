@@ -168,6 +168,7 @@ class SortingPrep(webapp2.RequestHandler):
 
         # Check if the user if has valid credits
         credits_account = UserAccount.check_credit_usage(email)
+
         if credits_account == None:
 
             print "Error in Credits Account"
@@ -231,10 +232,6 @@ class SortingPrep(webapp2.RequestHandler):
         # For empty order id and capacity
         forEmp_OrderID_Cap = ['0', '0']
         forEmp_Capt = ['0']
-
-        # truck_type = ["truck_1", "truck_2"]
-
-        compare_id = datetime.now().strftime('%Y%m%d%H%m%f')
 
         # if options_truck == "true":
 
@@ -393,8 +390,6 @@ class SortingPrep(webapp2.RequestHandler):
                     # Grouping Section
                     truck_capacity_grp_comp1.extend([truck_capacity_list_cc1_grp, truck_capacity_list_cc2_grp, truck_capacity_list_cc3_grp])
 
-                    print "truck_capacity_grp_comp1", truck_capacity_grp_comp1
-
                 # if int(num_comp_val) == 4:
 
                 #
@@ -465,9 +460,18 @@ class SortingPrep(webapp2.RequestHandler):
             # Split the order ID/postal code pair by normal spacing
             postal_pair_split = postal_pair.split(" ")
 
-            if len(postal_pair_split) == 1:
-                errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+            # Route by Capacity:
+            if priority_capacity == "true":
 
+                if len(postal_pair_split) == 1:
+                    errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+                    break
+
+                if len(postal_pair_split) == 2:
+                    errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+                    break
+
+            # Route by Multiple Truck:
             if len(postal_pair_split) == 2:
                 postal_pair_split.extend(forEmp_Capt)
 
@@ -480,7 +484,6 @@ class SortingPrep(webapp2.RequestHandler):
             truck_volume = int(postal_pair_split[2])
 
             # Postal Code Validation entry
-
             # Add "0" in front of five digit postal codes
             if len(postal_code) == 5:
                 postal_code = "0" + postal_code
@@ -502,14 +505,19 @@ class SortingPrep(webapp2.RequestHandler):
 
             if sort_company == "true":
 
-                if len(postal_pair_split) == 3:
-                    print "Please add Company in 4th column <br/ >"
+                if len(postal_pair_split) == 1 or len(postal_pair_split) == 2:
                     errors.extend(['Please add Company in 4th column  <br/ >'])
+                    break
+
+                if len(postal_pair_split) == 3:
+                    errors.extend(['Please add Company in 4th column  <br/ >'])
+                    break
 
                 if len(errors) == 0:
                     sorted_comp = postal_pair_split[3]
                     postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), sorted_comp])
                     list_of_companies.append(sorted_comp)
+
             else:
                 postal_sequence_list.append([postal_code, str(order_id), int(truck_volume)])
 
@@ -719,7 +727,6 @@ class SortingPrep(webapp2.RequestHandler):
 
                         # GeoCode Map
                         latlng_array = map_visible(propose_result)
-
                         latlng_array_list.append(latlng_array)
 
                 # Converting the postal code to total distance
@@ -819,8 +826,6 @@ class SortingPrep(webapp2.RequestHandler):
                 # GeoCode Map
                 latlng_array = map_visible(propose_result)
 
-                # print "latlng_array", latlng_array
-
                 # Converting the total percentage saving of distance
                 difference_total = current_route_value - propose_route_value
                 percentage_savings = (difference_total / current_route_value) * 100
@@ -844,8 +849,6 @@ class SortingPrep(webapp2.RequestHandler):
                             "capacity_priority": {
                                 "priority_capacity": priority_capacity,
                                 "vehicle_type": grp_truck,
-                               #"vehicle_type": truck_capacity_grp,
-                               # "vehicle_capacity": vehicle_capacity,
                                 },
                             "total_summary_saving": {
                                 "propose_distance": propose_route_value,
@@ -862,10 +865,13 @@ class SortingPrep(webapp2.RequestHandler):
             response['errors'] = errors
 
         logging.info(response)
+
         self.response.out.headers['Content-Type'] = 'application/json; charset=utf-8'
+
         self.response.out.write(json.dumps(response, indent=3))
 
     def formatResultForCallback_current(self, result_current):
+
         # Final result string
         result_str = ""
 
@@ -893,7 +899,9 @@ def map_visible(propose_result):
 
         for current_post in vehicle_postal:
             # Convert to Lat-Long the postal code
-            destinations = postalcode_latlong(current_post)
+            # destinations = postalcode_latlong_map(current_post, compare_id, email)
+
+            destinations = postalcode_latlong_map(current_post)
 
             # For Geo-Code MAP
             lat_long_value_map = str(destinations)
@@ -906,35 +914,42 @@ def map_visible(propose_result):
     return latlng_array
 
 # GeoCode Latlng for Summary:
-def Latlng_value_list(propose_result, origin_destination):
-
-    # if numPostCode is > 200:
-    # Chunk the postal code by 2 and convert to laltlong
-    # Then append to list and sent to JS to convert it.
-
-    latlng_value = ""
-    for vehicle_postal in propose_result:
-        for current_post in vehicle_postal:
-
-            # Convert to Lat-Long the postal code
-            destinations = postalcode_latlong(current_post)
-
-            if not destinations:
-                latlng_value += str(destinations)
-            else:
-                latlng_value += "&loc=" + str(destinations)
-
-    result_value = origin_destination + latlng_value
-
-    return result_value
+# def Latlng_value_list(propose_result, origin_destination):
+#
+#     # if numPostCode is > 200:
+#     # Chunk the postal code by 2 and convert to laltlong
+#     # Then append to list and sent to JS to convert it.
+#
+#     latlng_value = ""
+#     for vehicle_postal in propose_result:
+#         for current_post in vehicle_postal:
+#
+#             # Convert to Lat-Long the postal code
+#             destinations = postalcode_latlong(current_post)
+#
+#             if not destinations:
+#                 latlng_value += str(destinations)
+#             else:
+#                 latlng_value += "&loc=" + str(destinations)
+#
+#     result_value = origin_destination + latlng_value
+#
+#     return result_value
 
 # GeoCode Latlng
 def postalcode_latlong(postal):
+
+        currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+
+        # Count the request
+        counter_no = 0
 
         # Validation for Task Q
         compare_postal = postalRecordDB.check_if_exists(postal)
 
         if compare_postal == None:
+
+            counter_no += 1
 
             # Remove "0" if still no record found
             if postal[0] == "0":
@@ -947,8 +962,57 @@ def postalcode_latlong(postal):
 
                 print('NO POSTAL CODE RECORD')
 
+                # Find the nearest postal code number in records
                 nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
                 compare_postal = nearest_postal_code.id()
+
+                # print('RECORD-1')
+                # PostalRecordDB_alert.add_new_postal_records(compare_id, postal, email, currentDateTime, int(counter_no))
+
+        latlong = postalRecordDB.get_by_id(compare_postal)
+
+        laglongSource = []
+
+        laglongSource.append(latlong.lat)
+
+        laglongSource.append(',')
+        laglongSource.append(latlong.long)
+        destinations = ''.join(laglongSource)
+
+        return destinations
+
+
+def postalcode_latlong_map(postal):
+
+        # currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+
+        # Count the request
+        # counter_no = 0
+
+        # Validation for Task Q
+        compare_postal = postalRecordDB.check_if_exists(postal)
+
+        if compare_postal == None:
+
+            # counter_no += 1
+
+            # Remove "0" if still no record found
+            if postal[0] == "0":
+
+                print "Adding Zero"
+                current_post = postal.lstrip("0")
+                compare_postal = postalRecordDB.check_if_exists(current_post)
+
+            else:
+
+                print('NO POSTAL CODE RECORD')
+
+                # Find the nearest postal code number in records
+                nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
+                compare_postal = nearest_postal_code.id()
+                #
+                # print('RECORD-1')
+                # PostalRecordDB_alert.add_new_postal_records(compare_id, postal, email, currentDateTime, int(counter_no))
 
         latlong = postalRecordDB.get_by_id(compare_postal)
 
@@ -2119,6 +2183,7 @@ def latlong_summary_starting(list, origin_destination):
 
 # Function to iterate the number of companies and return to UI
 class SortingPrep_comp(webapp2.RequestHandler):
+
     def post(self):
 
         postal_sequence = self.request.get("postal_sequence")
@@ -2162,8 +2227,8 @@ class SortingPrep_comp(webapp2.RequestHandler):
             postal_pair_split = postal_pair.split(" ")
 
             if len(postal_pair_split) == 3:
-                print 'Please add Company in 4th column'
                 errors.extend(['Please add Company in 4th column <br />'])
+                break
 
             if len(errors) == 0:
                 postal_code = str(postal_pair_split[0])

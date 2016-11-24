@@ -66,7 +66,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
         if priority_capacity == "true":
             # Name will appear at /compare-data
-            type_optimise += "Maximizing Truck Capacity"
+            type_optimise = "Maximizing Truck Capacity"
 
             # customise event-handler truck capacity
             optimise_id = 2
@@ -89,7 +89,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         elif sort_company == "true":
 
             # Name will appear at /compare-data
-            type_optimise += "Multiple Companies"
+            type_optimise = "Consolidated Delivery for Multiple Companies"
 
             # customise event-handler truck capacity
             optimise_id = 3
@@ -97,13 +97,14 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         else:
 
             # Name will appear at /compare-data
-            type_optimise += "Multiple Trucks"
+            type_optimise = "Multiple Trucks"
 
-            # customise event-handler truck capacity
+            # Customise event-handler Multiple Trucks
             optimise_id = 1
 
             truck_count = 0
             for countList in actual_vehicle_postal:
+
                 count_item = countList.split(", ")
                 delivery_routes = len(count_item)
 
@@ -132,8 +133,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         difference_total = current_total_dist - proposed_total_dist
         percentage_savings = (difference_total / current_total_dist) * 100
 
-        RouteDistance.add_new_route(compare_id, email,
-                                    starting_address,
+        RouteDistance.add_new_route(compare_id, email, starting_address,
                                     origin_destination,
                                     int(num_of_vehicle),
                                     vehicle_capacity,
@@ -158,6 +158,9 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         proposed_total_dist = 0
 
         for vehicle_postal, order_array, cargo_array in itertools.izip(actual_vehicle_postal, proposed_order_array, proposed_cargo_grp):
+
+            print "vehicle_postal", vehicle_postal
+
             vehicle_count += 1
 
             vehicle_postal = vehicle_postal.split(", ")
@@ -264,19 +267,26 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
         if compare_postal == None:
 
+            counter_no += 1
+
             if current_post[0] == "0":
                 current_post = current_post.lstrip("0")
                 compare_postal = postalRecordDB.check_if_exists(current_post)
 
             else:
                 print('No Postal Code Record')
-                counter_no += 1
+
+                print "current_post", current_post
+
                 PostalRecordDB_alert.add_new_postal_records(compare_id, current_post, email, currentDateTime, int(counter_no))
 
                 nearestPostalCode = postalRecordDB.query().filter(postalRecordDB.postal_code >= current_post).get(keys_only=True)
                 compare_postal = nearestPostalCode.id()
 
         latlong = postalRecordDB.get_by_id(compare_postal)
+
+
+        print "destinations", latlong
 
         laglongSource = []
         laglongSource.append(latlong.lat)

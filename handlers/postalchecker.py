@@ -2,6 +2,7 @@ from handlers import base
 
 from framework.request_handler import CompareRouteHandler
 from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
+from model.user_account import UserAccount
 import urllib2
 import urlparse
 import hmac
@@ -21,66 +22,87 @@ class Postal_checkerHandler(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
-        postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
+        if admin_user:
 
-        # Success Message
-        success = self.request.get("success")
-        msg = ""
+            postalCheckers = PostalRecordDB_alert.query().order(-PostalRecordDB_alert.postal_code).fetch()
+            postalHistory = PostalRecordDB_history.query().order(-PostalRecordDB_history.postal_code).fetch()
 
-        if success:
-            msg += "Save"
+            # Success Message
+            success = self.request.get("success")
+            msg = ""
 
-        new_alert_values = {
+            if success:
+                msg += "Save"
 
-            'email': email,
-            'postalCheckers': postalCheckers,
-            'postalHistory': postalHistory,
-            'update_postalcode_success': msg,
-        }
+            new_alert_values = {
 
-        self.render('admin/admin_alert.html', **new_alert_values)
+                'admin_user': admin_user,
+                'email': email,
+                'postalCheckers': postalCheckers,
+                'postalHistory': postalHistory,
+                'update_postalcode_success': msg,
+            }
+
+            self.render('admin/admin_alert.html', **new_alert_values)
+
+        else:
+
+            print "Hey! this page is restricted"
+            self.redirect("/compare")
 
 class Postal_checkerHandler_chk(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        postal = self.request.get("postal")
-        # postalCheckers = postalRecordDB.query(postalRecordDB.postal_code == postal).get()
+        if admin_user:
 
-        template_values = {
-            'email': email,
-            'postal': postal
-        }
+            postal = self.request.get("postal")
+            # postalCheckers = postalRecordDB.query(postalRecordDB.postal_code == postal).get()
 
-        self.render("admin/admin_postal_checker.html", **template_values)
+            template_values = {
+                'email': email,
+                'postal': postal
+            }
+
+            self.render("admin/admin_postal_checker.html", **template_values)
+        else:
+            self.redirect("/compare")
 
 class Postal_checkerHandler_chk_edit(base.BaseHandler):
     def get(self):
 
         email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
 
-        postal_code = self.request.get("postal")
+        if admin_user:
 
-        url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postal_code
+            postal_code = self.request.get("postal")
 
-        dist_val = urllib.urlopen(url)
-        wjson = dist_val.read()
-        latlong = json.loads(wjson)
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postal_code
 
-        latVal = latlong['results'][0]['geometry']['location']['lat']
-        lngVal = latlong['results'][0]['geometry']['location']['lng']
+            dist_val = urllib.urlopen(url)
+            wjson = dist_val.read()
+            latlong = json.loads(wjson)
 
-        #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
-        template_values = {
-            'email': email,
-            'postal_code': postal_code,
-            'latVal': latVal,
-            'lngVal': lngVal,
-        }
-        self.render("admin/admin_postal_add.html", **template_values)
+            latVal = latlong['results'][0]['geometry']['location']['lat']
+            lngVal = latlong['results'][0]['geometry']['location']['lng']
+
+            #  - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - -
+            template_values = {
+                'email': email,
+                'postal_code': postal_code,
+                'latVal': latVal,
+                'lngVal': lngVal,
+            }
+            self.render("admin/admin_postal_add.html", **template_values)
+        else:
+
+            self.redirect("/compare")
+
 
     def post(self):
 

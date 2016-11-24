@@ -9,7 +9,9 @@ from handlers import profile
 from handlers import resetpass
 from handlers import sorting_task
 from handlers import sortingsum
+
 from handlers.postalchecker import Postal_checkerHandler
+
 from model.admin_account import RouteDistance, CurrentRoute, ProposedRoute
 from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalRecordDB_history
 from model.admin_account_api import ProposedRoute_api, CurrentRoute_api, RouteDistance_api
@@ -146,7 +148,6 @@ class AdminHome_page(base.BaseHandler):
 
         email = self.session.get("email")
         admin_user = UserAccount.is_admin(email)
-
 
         if admin_user:
 

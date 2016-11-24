@@ -617,7 +617,7 @@ $('#routeBtn').click(function () {
                 // events value
                 add_truck_cc1_1: add_truck_cc1_1,
                 add_truck_cc1_2: add_truck_cc1_2,
-                
+
                 add_truck_cc2_1: add_truck_cc2_1,
                 add_truck_cc2_2: add_truck_cc2_2,
 
@@ -1401,7 +1401,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
     for(i = 0; i < latlng_array.length; i++){
         vehicle_latlng = latlng_array[i];
-        
+
         // console.log('vehicle_latlng', vehicle_latlng);
         // Store lat and lng for constructing the polygon
         polygon_coord = []
@@ -1414,7 +1414,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
             // console.log(lat);
             // console.log(lng);
-            
+
             polygon_coord.push(new google.maps.LatLng(lat, lng));
         }
 
@@ -1583,7 +1583,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
                   if (latlng.equals(pos)) {
                     text = text + " & " + content[i];
-                  }                   
+                  }
                 }
               }*/
 
@@ -1649,7 +1649,7 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
 
     for(i = 0; i < result_list_list.length; i++){
         var vehicle_postal_list = result_list_list[i];
-        
+
         // Push into a full list for plotting Markers later
         vehicle_postal_list_full.push(vehicle_postal_list);
     } // End of postal code formatting
@@ -1669,22 +1669,22 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
 
     // Setting the polygon coordinates
     polygon_array = [] // for assigning info window to polygon
-    polygon_array2 = [] 
-    // Colors to differentiate the polygons for 15 vehicles 
-    var colors = ["#ff0033", 
-                  "#0267fe", 
-                  "#02cc35", 
-                  "#fecc02", 
-                  "#999999", 
-                  "#ff00cc", 
-                  "#cc00ff", 
-                  "#029967", 
+    polygon_array2 = []
+    // Colors to differentiate the polygons for 15 vehicles
+    var colors = ["#ff0033",
+                  "#0267fe",
+                  "#02cc35",
+                  "#fecc02",
+                  "#999999",
+                  "#ff00cc",
+                  "#cc00ff",
+                  "#029967",
                   "#cccc67", // # cc00cc
-                  "#fe6702", 
-                  "#02fe35", 
-                  "#67ccfe", 
-                  "#fe6767", 
-                  "#ff33ff", 
+                  "#fe6702",
+                  "#02fe35",
+                  "#67ccfe",
+                  "#fe6767",
+                  "#ff33ff",
                   "#ffffff"];
 
     // Push into a full list for plotting Markers later
@@ -1735,7 +1735,7 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
        polygon_array2.push(polygon_array);
 
     }// End of latlng_array
-    
+
     // Create the info_window instance
     info_window = new google.maps.InfoWindow();
     var company_count = 0
@@ -1750,7 +1750,7 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
             var content = "Truck " + (i + 1) + "</b></br>";
             // Iterate through the postal codes to find the relevant order ID
             var postal_arr = result_list[i];
-          
+
             for(j = 0; j < postal_arr.length; j++){
                   // Set the content
 
@@ -1807,7 +1807,7 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
 
     var counter = 1;
     for (j = 0; j < starting.length; j++){
-       
+
         var postal_hq = starting[j];
         var company_counter = counter++;
 
@@ -1837,20 +1837,20 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
     } // end loop for starting point
 
     // Generate Markers
-    for(s = 0; s < vehicle_postal_list_full.length; s++){  
+    for(s = 0; s < vehicle_postal_list_full.length; s++){
         var result_list = vehicle_postal_list_full[s];
         var polygon_coord_list = latlng_array_list[s];
 
         for(i = 0; i < result_list.length; i++){
 
             var veh_postal = result_list[i]
- 
+
             for(j = 0; j < veh_postal.length; j++){
                 var postal = veh_postal[j];
-                // var latlng = polygon_coord2[j]; 
+                // var latlng = polygon_coord2[j];
                 // console.log('postal', postal);
 
-                 for (l = 0; l < polygon_coord_list.length; l++){ 
+                 for (l = 0; l < polygon_coord_list.length; l++){
                     var ven_latlng2 = polygon_coord_list[l];
 
                     for(k = 0; k < ven_latlng2.length; k++){
@@ -1887,7 +1887,7 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
 
                     }
                 }
-            
+
                 // var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
                 // Colors to differentiate the polygons
                 var content = "";
@@ -1897,8 +1897,8 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
                     var order_postal = order_postal_arr[k];
 
                     var postal2 = order_postal[0];
-                    var order_id = order_postal[1];         
-                    var company_id = order_postal[3];         
+                    var order_id = order_postal[1];
+                    var company_id = order_postal[3];
 
                     if(postal == postal2){
                         content += "[" + company_id + "]";
@@ -1907,8 +1907,8 @@ function generateGMap_company(starting, result_list, result_list_list, order_pos
                 content += "</br>" + postal;
                 createAndBindMarker(marker, content, map);
             }
-        }    
-       
+        }
+
     }// End of vehicle_postal_list_full
 } // End of generateGMap
 
@@ -1924,7 +1924,7 @@ function createAndBindPolygon(polygon, content, map){
 }
 // Link infowindow to the Markers and binding it to a mouseover //click event
 function createAndBindMarker(marker, content, map, postal){
-    google.maps.event.addListener(marker, 'click', function(event){ 
+    google.maps.event.addListener(marker, 'click', function(event){
                                 info_window.setContent(content);
                                 info_window.setPosition(event.latLng);
                                 info_window.open(map);
