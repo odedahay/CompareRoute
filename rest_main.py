@@ -9,6 +9,12 @@ from httplib import HTTPResponse
 
 import logging
 import json
+import itertools
+
+import operator
+
+from operator import itemgetter
+from collections import defaultdict
 
 import urllib
 # ------ sorting -----
@@ -496,21 +502,6 @@ class Multi_truck_API(webapp2.RequestHandler):
             options_truck, error = checkInRequest('options_truck', data)
             errors.extend(error)
 
-            # priority_capacity, error = checkInRequest('priority_capacity', data)
-            # errors.extend(error)
-            #
-            # vehicle_type, error = checkInRequest('vehicle_type', data)
-            # errors.extend(error)
-
-            # vehicle_capacity, error = checkInRequest('vehicle_capacity', data)
-            # errors.extend(error)
-
-            # sort_company, error = checkInRequest('sort_company', data)
-            # errors.extend(error)
-
-            # num_comp_val, error = checkInRequest('num_comp_val', data)
-            # errors.extend(error)
-
             # Sorting postal code sequence code
             postal_sequence_list = []
             postal_sequence_current = []
@@ -635,6 +626,88 @@ class Multi_truck_API(webapp2.RequestHandler):
         logging.info(response)
         self.response.out.write(json.dumps(response, indent=3))
 
+"""
+# for companies
+{
+     "companies_hq": [
+     	{
+          "starting_postal": "469001"
+     	},
+     	{
+          "starting_postal": "389458"
+     	}
+     ],
+     "order_details": [
+            ["469001", "Order01", 1, "Company_1"],
+            ["760450", "Order02", 1, "Company_1"],
+            ["596937", "Order03", 1, "Company_1"],
+            ["596740", "Order04", 1, "Company_1"],
+            ["098585", "Order05", 1, "Company_1"],
+            ["109680", "Order06", 1, "Company_1"],
+            ["560405", "Order07", 1, "Company_2"],
+            ["278986", "Order08", 1, "Company_2"],
+            ["431011", "Order09", 1, "Company_2"],
+            ["460102", "Order10", 1, "Company_2"],
+            ["159921", "Order11", 1, "Company_2"],
+            ["258500", "Order12", 1, "Company_2"]
+     ],
+
+     "multi_truck_details": [
+     	{
+          "number_of_vehicle": 1
+     	},
+     	{
+          "number_of_vehicle": 1
+        }],
+     "num_comp_val" : 2,
+     "has_return": "true",
+     "priority_capacity_comp": "false",
+     "sort_company": "true"
+}
+
+///
+
+{
+     "companies_hq": [
+     	{
+          "starting_postal": "469001"
+     	},
+     	{
+          "starting_postal": "389458"
+     	}
+     ],
+     "order_details": [
+            ["469001", "Order01", 1, "Company_1"],
+            ["760450", "Order02", 1, "Company_1"],
+            ["596937", "Order03", 1, "Company_1"],
+            ["596740", "Order04", 1, "Company_1"],
+            ["098585", "Order05", 1, "Company_1"],
+            ["109680", "Order06", 1, "Company_1"],
+            ["560405", "Order07", 1, "Company_2"],
+            ["278986", "Order08", 1, "Company_2"],
+            ["431011", "Order09", 1, "Company_2"],
+            ["460102", "Order10", 1, "Company_2"],
+            ["159921", "Order11", 1, "Company_2"],
+            ["258500", "Order12", 1, "Company_2"]
+     ],
+
+     "multi_truck_details": [
+	    	{
+	      		"type_of_truck": "AAA",
+	      		"truck_capacity": 3,
+	      		"num_of_truck": 1
+	    	},
+	    	{
+	      		"type_of_truck": "BBB",
+	      		"truck_capacity": 3,
+	      		"num_of_truck": 1
+	    	}],
+  "num_comp_val" : 2,
+     "has_return": "true",
+     "priority_capacity_comp": "true",
+     "sort_company": "true"
+}
+"""
 
 class Multi_companies_API(webapp2.RequestHandler):
     def post(self):
@@ -645,6 +718,8 @@ class Multi_companies_API(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Headers'] = 'Cache-Control'
         self.response.headers['Access-Control-Allow-Credentials'] = 'true'
         self.response.headers['Content-Type'] = 'application/json;charset=utf-8'
+
+        # api_key = self.request.authorization
 
         email = self.request.get('userId')
         api_key = self.request.get('keyId')
@@ -672,60 +747,244 @@ class Multi_companies_API(webapp2.RequestHandler):
         logging.info(request_str)
 
         if len(errors) == 0:
-
             try:
                 data = json.loads(request_str)
 
             except:
-
                 errors.extend(['Error in JSON'])
 
         if len(errors) == 0:
 
-            # starting_postal, error = checkInRequest('starting_postal', data)
-            # errors.extend(error)
+            companies_hq, error = checkInRequest('companies_hq', data)
+            errors.extend(error)
 
             order_details, error = checkInRequest('order_details', data)
+            errors.extend(error)
+
+            multi_truck_details, error = checkInRequest('multi_truck_details', data)
             errors.extend(error)
 
             has_return, error = checkInRequest('has_return', data)
             errors.extend(error)
 
-            print "order_details", order_details
+            sort_company, error = checkInRequest('sort_company', data)
+            errors.extend(error)
 
-        # else:
-        #     errors.extend(['Error in JSON-Data'])
+            priority_capacity_comp, error = checkInRequest('priority_capacity_comp', data)
+            errors.extend(error)
 
+            num_comp_val, error = checkInRequest('num_comp_val', data)
+            errors.extend(error)
+
+            # extracting data section
+            starting_postal_list = []
+            truck_sequence_list = []
+            truck_capacity_grp = []
+            postal_sequence_current = []
+            postal_sequence_company = []
+            company_list_grp = []
+
+            # Truck capacity Groupings
+            truck_capacity_list_c1 = []
+            truck_capacity_grp_comp1 = []
+
+            # extract starting points:
+            for starting_point in companies_hq:
+                starting = starting_point["starting_postal"]
+
+                # add zero in front if 5 digit only
+                if len(str(starting)) == 5:
+                    starting = "0" + starting
+
+                # if below 5 digit
+                if len(str(starting)) != 6:
+                    logging.info('Warning! error')
+                    errors.extend(['Starting Postal code is not valid, it should be 6 digit'])
+
+                starting_postal_list.append(starting)
+
+            if priority_capacity_comp == "true":
+
+                # extract truck details list:
+                for num_truck in multi_truck_details:
+
+                    type_of_truck = num_truck["type_of_truck"]
+                    truck_capacity = num_truck["truck_capacity"]
+                    num_of_truck = num_truck["num_of_truck"]
+
+                    truck_capacity_list_c1.append([[str(type_of_truck), int(truck_capacity), int(num_of_truck)]])
+
+                truck_capacity_grp_comp1.extend(truck_capacity_list_c1)
+
+            else:
+
+                # extract vehicle list:
+                for num_truck in multi_truck_details:
+                    vehicle_truck = num_truck["number_of_vehicle"]
+                    truck_sequence_list.append(vehicle_truck)
+
+            # Counter checking of Postal Code
+            num_post_code = 0
+
+            # extract order details:
+            for index in range(0, len(order_details)):
+
+                # Counter checking of Postal Code
+                num_post_code += 1
+
+                postal_pair = order_details[index]
+
+                if len(postal_pair) == 1:
+                    logging.info(postal_pair)
+                    errors.extend(['Please check the postal sequence input'])
+                    break
+
+                postal_code = str(postal_pair[0])
+                order_id = str(postal_pair[1])
+                truck_capacity = postal_pair[2]
+                company = postal_pair[3]
+
+                if len(str(postal_code)) == 5:
+                    postal_code = "0" + postal_code
+
+                # Check if postal code is a valid value i.e. Contains only five or six digits
+                if not str.isdigit(postal_code) or len(str(postal_code)) != 6:
+                    logging.info('Warning! Postal Code error')
+                    errors.extend(['Please check ' + postal_code + ' is not valid, it should be 6 digit'])
+
+                postal_sequence_current.append([str(postal_code), str(order_id), int(truck_capacity), str(company)])
+
+            # extract company groupings:
+            for company in range(len(postal_sequence_current)):
+                companyList = postal_sequence_current[company]
+                company_list_grp.append(companyList)
+
+            for key, group in itertools.groupby(company_list_grp, operator.itemgetter(3)):
+
+                # group as per company
+                postal_sequence_company.append(list(group))
+
+            # validation for company
+            if int(len(postal_sequence_company)) != num_comp_val:
+                errors.extend(['Please Check the number of company inputs'])
+
+            # print len(item_dict['result'][0]['run'])
+
+            # For Non Multi Truck
+            options_truck = "false"
+            priority_capacity = "false"
+            vehicle_quantity = 0
+
+            print "sort_company", sort_company
+            print "priority_capacity_comp", priority_capacity_comp
 
             if len(errors) == 0:
 
-                # Converting JSON
-                    response['status'] = 'ok'
-                    response['data_result'] = [
-                            {
-                                "required_fields": {
-                                    # "starting_postal": starting_postal,
-                                    "propose_result": vehicle_postal_list_new_seq,
-                                    "has_return": has_return
-                                    },
-                                # "geo_code_latlng": {
-                                #     "latlng_array": latlng_array
-                                # },
-                                # "vehicle_priority": {
-                                #     "vehicle_num": number_of_vehicle
-                                #     },
-                                #
-                                # "total_summary_saving": {
-                                #     "proposed_distance": proposed_distance,
-                                #     "current_distance": current_distance,
-                                #     "total_savings": percentage_savings
-                                #     }
-                            }
-                        ]
-        else:
-            errors.extend(['Erro in Process'])
+                propose_result_company = []
+                current_result_company = []
+                origin_result_company = []
+                propose_result_sequence = []
+                latlng_array_list = []
+                result_route_value = []
 
-        # Final output
+                if priority_capacity_comp == "true":
+
+                    # Calling function for sorting and chunking
+                    for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
+
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                            starting_post,
+                            company_sequence,
+                            vehicle_quantity,
+                            email, has_return,
+                            priority_capacity,
+                            priority_capacity_comp,
+                            api_user, sort_company, truck_capacity_grp, options_truck)
+
+                        propose_result_company.append(propose_result)
+                        current_result_company.append(current_result)
+                        origin_result_company.append(origin_destinations)
+                        propose_result_sequence.append(vehicle_postal_list_new_seq)
+
+                        # GeoCode Map
+                        latlng_array = map_visible(propose_result)
+                        latlng_array_list.append(latlng_array)
+
+                else:
+
+                    for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, truck_sequence_list):
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                            starting_post,
+                            company_sequence,
+                            vehicle_quantity,
+                            email, has_return,
+                            priority_capacity,
+                            priority_capacity_comp,
+                            api_user, sort_company, truck_capacity_grp, options_truck)
+
+                        propose_result_company.append(propose_result)
+                        current_result_company.append(current_result)
+                        origin_result_company.append(origin_destinations)
+                        propose_result_sequence.append(vehicle_postal_list_new_seq)
+
+                        # GeoCode Map
+                        latlng_array = map_visible(propose_result)
+                        latlng_array_list.append(latlng_array)
+
+                ##### Collect all data result #####
+
+                # Converting the postal code to total distance
+                for origin_destination, current_result_comp, propose_result_comp in itertools.izip(origin_result_company, current_result_company, propose_result_company):
+
+                    current_route_value = sorting_prep.result_distance_latlng(current_result_comp, origin_destination, num_post_code)
+                    propose_route_value = sorting_prep.result_distance_latlng(propose_result_comp, origin_destination, num_post_code)
+
+                    # Converting the total percentage saving of distance
+                    difference_total = current_route_value - propose_route_value
+                    percentage_savings = (difference_total / current_route_value) * 100
+
+                    proposed_route_val = round(propose_route_value, 2)
+                    current_route_val = round(current_route_value, 2)
+                    savings_route_val = round(percentage_savings, 2)
+
+                    # Total_summary_saving
+                    result_route_value.append([str(current_route_val), str(proposed_route_val), str(savings_route_val)])
+
+                # # For Google MAP
+                # result_list_arr = []
+                # for propose_result_company_1 in propose_result_company:
+                #     for propose_result_company_2 in propose_result_company_1:
+                #         result_list_arr.append(propose_result_company_2)
+
+                # Converting JSON
+
+                response['status'] = 'ok'
+                response['sort_company'] = 'true'
+                response['data_result'] = [
+                    {
+                        "required_fields": {
+                            "starting_postal": starting_postal_list,
+                            "propose_results": propose_result_sequence,
+                            "has_return": has_return
+                        },
+                        "geo_code_latlng": {
+                            "latlng_array": latlng_array_list
+                        },
+                        # "capacity_priority": {
+                        #     "priority_capacity": priority_capacity,
+                        # },
+                        "total_summary_saving": {
+                            "total_savings": result_route_value
+                        }
+                    }
+                ]
+
+
+            else:
+                errors.extend(['Error in process'])
+        else:
+            errors.extend(['Error in JSON-Data'])
+
         if len(errors) > 0:
             response['status'] = 'error'
             response['errors'] = errors

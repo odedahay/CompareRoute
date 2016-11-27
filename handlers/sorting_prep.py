@@ -230,6 +230,7 @@ class SortingPrep(webapp2.RequestHandler):
         vehicle_quantity_list = []
 
         # For empty order id and capacity
+        temp_comp = ['0', '0', '0']
         forEmp_OrderID_Cap = ['0', '0']
         forEmp_Capt = ['0']
 
@@ -471,17 +472,21 @@ class SortingPrep(webapp2.RequestHandler):
                     errors.extend(["Please check the input of cargo unit - Location Details <br />"])
                     break
 
-            # Route by Multiple Truck:
-            if len(postal_pair_split) == 2:
-                postal_pair_split.extend(forEmp_Capt)
+            # # Route by Multiple Truck:
+            # if len(postal_pair_split) == 2:
+            #     postal_pair_split.extend(forEmp_Capt)
 
             if len(postal_pair_split) != 3:
                 postal_pair_split.extend(forEmp_OrderID_Cap)
+
+            if len(postal_pair_split) != 4:
+                postal_pair_split.extend(temp_comp)
 
             # If Postal Code reverse in textbox
             postal_code = str(postal_pair_split[0])
             order_id = str(postal_pair_split[1])
             truck_volume = int(postal_pair_split[2])
+            temp_id = postal_pair_split[3]
 
             # Postal Code Validation entry
             # Add "0" in front of five digit postal codes
@@ -519,9 +524,10 @@ class SortingPrep(webapp2.RequestHandler):
                     list_of_companies.append(sorted_comp)
 
             else:
-                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume)])
+                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), temp_id])
 
             postal_sequence_current.append(postal_code)
+
 
         if len(errors) == 0:
 
@@ -545,6 +551,8 @@ class SortingPrep(webapp2.RequestHandler):
                 current_result_company = []
                 origin_result_company = []
                 propose_result_sequence = []
+
+                # Total Saving array
                 result_route_value = []
                 latlng_array_list = []
                 vehicle_list_grp = []
@@ -554,6 +562,7 @@ class SortingPrep(webapp2.RequestHandler):
                     company_list_grp.append(companyList)
 
                 for key, group in itertools.groupby(company_list_grp, operator.itemgetter(3)):
+
                     # group as per company
                     postal_sequence_company.append(list(group))
 
@@ -798,6 +807,10 @@ class SortingPrep(webapp2.RequestHandler):
                     priority_capacity_comp,
                     api_user, sort_company, truck_capacity_grp, options_truck)
 
+                print "origin_destination", origin_destination
+                print "propose_result", propose_result
+                print "current_result", current_result
+
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used through capacity
                 result_num_truck = len(propose_result)
@@ -899,8 +912,6 @@ def map_visible(propose_result):
 
         for current_post in vehicle_postal:
             # Convert to Lat-Long the postal code
-            # destinations = postalcode_latlong_map(current_post, compare_id, email)
-
             destinations = postalcode_latlong_map(current_post)
 
             # For Geo-Code MAP
@@ -984,8 +995,6 @@ def postalcode_latlong(postal):
 
 def postalcode_latlong_map(postal):
 
-        # currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-
         # Count the request
         # counter_no = 0
 
@@ -1010,9 +1019,6 @@ def postalcode_latlong_map(postal):
                 # Find the nearest postal code number in records
                 nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
                 compare_postal = nearest_postal_code.id()
-                #
-                # print('RECORD-1')
-                # PostalRecordDB_alert.add_new_postal_records(compare_id, postal, email, currentDateTime, int(counter_no))
 
         latlong = postalRecordDB.get_by_id(compare_postal)
 

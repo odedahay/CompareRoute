@@ -51,10 +51,16 @@ handlers:
 - url: /sorting_comp
   script: handlers.sorting_prep.app
 
-- url: /api/multi_truck/v1
+- url: /api/.*
   script: rest_main.app
 
 - url: /api/truck_capacity/v1
+  script: rest_main.app
+
+- url: /api/truck_capacity/v1
+  script: rest_main.app
+
+- url: /api/multi_companies/v1
   script: rest_main.app
 
 - url: /sorting-result-proposed

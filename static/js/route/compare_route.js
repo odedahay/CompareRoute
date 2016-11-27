@@ -770,8 +770,8 @@ $('#routeBtn').click(function () {
                         var result_list = response.data_result[0].required_fields.propose_result;
                         var result_list_list = response.data_result[0].required_fields.propose_results;
                         var name_of_company = response.data_result[0].required_fields.name_of_companies;
+
                         var has_return = response.data_result[0].required_fields.has_return;
-                        var name_of_company = response.data_result[0].required_fields.name_of_companies;
 
                         //GeoCode for LatLng
                         var latlng_array_list = response.data_result[0].geo_code_latlng.latlng_array;
@@ -844,6 +844,7 @@ $('#routeBtn').click(function () {
                             $ul_table_truck.append("<li>( "+(hq + 1) +" ) Starting Postal Code - " +company_name+  " : "+hq_startingPoint+ " </li>");
                         }
                         // - - - - - - Global Message - - - - - - - //
+
                         // Message Layout
                         $p_note2.text('Breakdown of Proposed Postal Code Routes');
 
@@ -858,7 +859,8 @@ $('#routeBtn').click(function () {
                         for(i = 0; i < postal_sequence_company.length; i++){
                             var postal_seq_vehicle = postal_sequence_company[i];
                             var name_of_companies = name_of_company[i];
-                                name_of_companies = name_of_companies.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
+
+                                //name_of_companies = name_of_companies.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
                             // Truck Counter
                             $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> "+name_of_companies+" " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
@@ -878,7 +880,7 @@ $('#routeBtn').click(function () {
                                      var order_id = company_details[1];
                                      var capacity_load = company_details[2];
                                      var company_id = company_details[3];
-                                         company_id = company_id.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
+                                         //company_id = company_id.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
                                     // Counter to check for repeated postal codes
                                     postal_code_arr.push(postal_code);

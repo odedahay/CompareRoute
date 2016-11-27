@@ -38,6 +38,9 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         proposed_cargo_grp = self.request.get('proposed_cargo_grp')
         current_cargo_grp = self.request.get('current_cargo_grp')
 
+        proposed_company_grp = self.request.get('proposed_company_grp')
+        current_company_grp = self.request.get('current_company_grp')
+
         priority_capacity = self.request.get('priority_capacity')
         sort_company = self.request.get('sort_company')
 
@@ -46,8 +49,8 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         origin_destination = sorting.startingpoint_latlong(starting_address)
 
         # two function for proposed and current route storing data
-        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination, email, proposed_order_grp, proposed_cargo_grp)
-        current_total_dist = self.task_current_Route(compare_id, starting_address, currentdPostlal, origin_destination, current_order_grp, current_cargo_grp)
+        proposed_total_dist = self.task_proposed_Route(compare_id, starting_address, proposedPostlal, origin_destination, email, proposed_order_grp, proposed_cargo_grp, proposed_company_grp)
+        current_total_dist = self.task_current_Route(compare_id, starting_address, currentdPostlal, origin_destination, current_order_grp, current_cargo_grp, current_company_grp)
 
         # Counting the number of postal code:
         actual_vehicle_postal = proposedPostlal.split("_")
@@ -62,7 +65,6 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         postal_count = len(postal_count_arr)
 
         # indicator for type of optimize route
-        type_optimise = ""
 
         if priority_capacity == "true":
             # Name will appear at /compare-data
@@ -76,6 +78,7 @@ class TaskRouteHandlerProposed(base.BaseHandler):
             actual_vehicle_postal = proposedPostlal.split("_")
 
             truck_count = 0
+
             for truck_name, countList in itertools.izip(grp_truck_name, actual_vehicle_postal):
                 count_item = countList.split(", ")
                 delivery_routes = len(count_item)
@@ -93,6 +96,20 @@ class TaskRouteHandlerProposed(base.BaseHandler):
 
             # customise event-handler truck capacity
             optimise_id = 3
+
+            truck_count = 0
+
+            for countList in actual_vehicle_postal:
+
+                count_item = countList.split(", ")
+                delivery_routes = len(count_item)
+
+                # counting the number of truck
+                truck_count += 1
+                truck_name = "None"
+
+                # store the truck details
+                Truck_capacity_details.add_truck_details(compare_id, int(truck_count), truck_name, delivery_routes)
 
         else:
 
@@ -145,11 +162,12 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                                     int(user_count),
                                     type_optimise, optimise_id)
 
-    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination, email, proposed_order_grp, proposed_cargo_grp):
+    def task_proposed_Route(self, compare_id, starting_address, proposedPostlal, origin_destination, email, proposed_order_grp, proposed_cargo_grp, proposed_company_grp):
 
         actual_vehicle_postal = proposedPostlal.split("_")
         proposed_order_array = proposed_order_grp.split("_")
         proposed_cargo_grp = proposed_cargo_grp.split("_")
+        proposed_company_grp = proposed_company_grp.split("_")
 
         origin_postcode = starting_address
         origin_destination = origin_destination
@@ -157,19 +175,18 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         vehicle_count = 0
         proposed_total_dist = 0
 
-        for vehicle_postal, order_array, cargo_array in itertools.izip(actual_vehicle_postal, proposed_order_array, proposed_cargo_grp):
-
-            print "vehicle_postal", vehicle_postal
+        for vehicle_postal, order_array, cargo_array, company_array in itertools.izip(actual_vehicle_postal, proposed_order_array, proposed_cargo_grp, proposed_company_grp):
 
             vehicle_count += 1
 
             vehicle_postal = vehicle_postal.split(", ")
             order_array = order_array.split(", ")
             cargo_array = cargo_array.split(", ")
+            company_array = company_array.split(", ")
 
             postal_rank = 0
 
-            for proposed_post, order_id, cargo_unit in itertools.izip(vehicle_postal, order_array, cargo_array):
+            for proposed_post, order_id, cargo_unit, company_id in itertools.izip(vehicle_postal, order_array, cargo_array, company_array):
 
                 postal_rank += 1
 
@@ -193,19 +210,20 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                 # Storing the data in Proposed Route
                 if (postal_rank == 1):
 
-                    ProposedRoute.add_new_proposed_route(compare_id, starting_address, proposed_post, int(vehicle_count), longval, latval, url_id, round(float(distance_km), 2), int(postal_rank), order_id, cargo_unit)
+                    ProposedRoute.add_new_proposed_route(compare_id, starting_address, proposed_post, int(vehicle_count), longval, latval, url_id, round(float(distance_km), 2), int(postal_rank), order_id, cargo_unit, company_id)
                 else:
-                    ProposedRoute.add_new_proposed_route(compare_id, origin_postcode, proposed_post, int(vehicle_count), longval, latval, url_id, round(float(distance_km), 2), int(postal_rank), order_id, cargo_unit)
+                    ProposedRoute.add_new_proposed_route(compare_id, origin_postcode, proposed_post, int(vehicle_count), longval, latval, url_id, round(float(distance_km), 2), int(postal_rank), order_id, cargo_unit, company_id)
 
                 origin_postcode = proposed_post
 
         return proposed_total_dist
 
-    def task_current_Route(self, compare_id, starting_address, currentdPostlal, origin_destination, current_order_grp, current_cargo_grp):
+    def task_current_Route(self, compare_id, starting_address, currentdPostlal, origin_destination, current_order_grp, current_cargo_grp, current_company_grp):
 
         current_vehicle_postal = currentdPostlal.split("_")
         current_order_array = current_order_grp.split("_")
         current_cargo_array = current_cargo_grp.split("_")
+        current_company_grp = current_company_grp.split("_")
 
         origin_postcode = starting_address
         origin_destination1 = origin_destination
@@ -213,18 +231,21 @@ class TaskRouteHandlerProposed(base.BaseHandler):
         vehicle_count = 0
         current_total_dist = 0
 
-        for vehicle_postal, order_array, cargo_array in itertools.izip(current_vehicle_postal, current_order_array, current_cargo_array):
+        for vehicle_postal, order_array, cargo_array, company_array in itertools.izip(current_vehicle_postal, current_order_array, current_cargo_array, current_company_grp):
             vehicle_count += 1
 
             vehicle_postal = vehicle_postal.split(", ")
             order_array = order_array.split(", ")
             cargo_array = cargo_array.split(", ")
+            company_array = company_array.split(", ")
 
             postal_rank = 0
 
-            for current_post, order_id, cargo_unit in itertools.izip(vehicle_postal, order_array, cargo_array):
+            for current_post, order_id, cargo_unit, company_id in itertools.izip(vehicle_postal, order_array, cargo_array, company_array):
 
                 postal_rank += 1
+
+                print "company_id", company_id
 
                 # Convert to Lat-Long the postal code
                 destinations, latval, longval = self.postalcode_latlong_current(current_post)
@@ -247,9 +268,9 @@ class TaskRouteHandlerProposed(base.BaseHandler):
                 # Storing data for Current Route
                 if (postal_rank == 1):
 
-                    CurrentRoute.add_new_current_route(compare_id, starting_address, current_post, int(vehicle_count), latval, longval, url_id, round(float(distance_km2), 2), int(postal_rank), order_id, cargo_unit)
+                    CurrentRoute.add_new_current_route(compare_id, starting_address, current_post, int(vehicle_count), latval, longval, url_id, round(float(distance_km2), 2), int(postal_rank), order_id, cargo_unit, company_id)
                 else:
-                    CurrentRoute.add_new_current_route(compare_id, origin_postcode, current_post, int(vehicle_count), latval, longval, url_id, round(float(distance_km2), 2), int(postal_rank), order_id, cargo_unit)
+                    CurrentRoute.add_new_current_route(compare_id, origin_postcode, current_post, int(vehicle_count), latval, longval, url_id, round(float(distance_km2), 2), int(postal_rank), order_id, cargo_unit, company_id)
 
                 origin_postcode = current_post
 
@@ -276,17 +297,12 @@ class TaskRouteHandlerProposed(base.BaseHandler):
             else:
                 print('No Postal Code Record')
 
-                print "current_post", current_post
-
                 PostalRecordDB_alert.add_new_postal_records(compare_id, current_post, email, currentDateTime, int(counter_no))
 
                 nearestPostalCode = postalRecordDB.query().filter(postalRecordDB.postal_code >= current_post).get(keys_only=True)
                 compare_postal = nearestPostalCode.id()
 
         latlong = postalRecordDB.get_by_id(compare_postal)
-
-
-        print "destinations", latlong
 
         laglongSource = []
         laglongSource.append(latlong.lat)

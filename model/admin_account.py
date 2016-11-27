@@ -63,9 +63,10 @@ class CurrentRoute(ndb.Model):
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
     cargo_unit = ndb.StringProperty()
+    company_id = ndb.StringProperty()
 
     @classmethod
-    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit):
+    def add_new_current_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit, company_id):
 
         current = CurrentRoute()
 
@@ -80,6 +81,7 @@ class CurrentRoute(ndb.Model):
         current.rank_id = rank_id
         current.order_id = order_id
         current.cargo_unit = cargo_unit
+        current.company_id = company_id
 
         current.put()
 
@@ -97,9 +99,10 @@ class ProposedRoute(ndb.Model):
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
     cargo_unit = ndb.StringProperty()
+    company_id = ndb.StringProperty()
 
     @classmethod
-    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit):
+    def add_new_proposed_route(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id, distance, rank_id, order_id, cargo_unit, company_id):
 
         proposed = ProposedRoute()
 
@@ -114,6 +117,7 @@ class ProposedRoute(ndb.Model):
         proposed.rank_id = rank_id
         proposed.order_id = order_id
         proposed.cargo_unit = cargo_unit
+        proposed.company_id = company_id
 
         proposed.put()
 
