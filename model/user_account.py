@@ -206,8 +206,6 @@ class UserAccount(ndb.Model):
     def is_admin(cls, email):
         user_id = cls.check_if_exists(email)
 
-        print "user_id", user_id.user_admin
-
         if user_id:
 
             # Check if user is admin:

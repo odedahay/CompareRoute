@@ -22,7 +22,7 @@ class SearchPostal(base.BaseHandler):
 
             elif compare_postal == None:
 
-                errormsg += query+" has no Postal Code record"
+                errormsg += query+" has no record found"
                 self.render('admin/search.html', errormsg=errormsg)
 
             else:
@@ -38,7 +38,6 @@ class SearchPostal(base.BaseHandler):
                         'results': results
                     }
                 self.render('admin/search.html', **tpl_values)
-
         else:
 
             # if not admin access
@@ -73,53 +72,21 @@ class PostalDelete_Handler(base.BaseHandler):
 
         postal_code = self.request.get("postal_code")
 
-        # long = self.request.get("long_val")
-        # lat = self.request.get("lat_val")
-
         # update Postal Code records:
-        del_postalcode = self.postalcode_db(postal_code)
+        # Delete the Postal Code in DB
 
-        success = del_postalcode[0]
-        msg = del_postalcode[1]
-
-        if success == False:
-
-            self.render('admin/admin_postal_delete.html', update_postalcode_erro=msg)
-
-        else:
-
-            self.redirect("/admin-search?title='%s' "%msg)
-
-    def postalcode_db(self, postal_code):
-
-        # Status of postal code added
-        status = []
-        success = False
-        msg = ""
-
-        if not postal_code:
-            success = False
-            msg += "Please check the Postal code"
-            status.append(success)
-            status.append(msg)
-
-            return status
-
-        else:
-            print('postal_code'), postal_code
-            # Delete in DB
-            # postalRecordDB.add_new_records(postal_code, long, lat)
-
-            # Delete the Postal Code in DB
+        try:
             delete_data = postalRecordDB.delete_postal_records(postal_code)
             delete_data.key.delete()
 
-            success = True
-            msg += "Successful"
-            status.append(success)
-            status.append(msg)
+        except:
 
-            return status
+            msg = postal_code+" error, please check the record"
+            self.render('admin/admin_postal_delete.html', update_postalcode_erro=msg)
+
+        errormsg = postal_code+" has been deleted"
+        self.render('admin/search.html', errormsg=errormsg)
+
 
 class PostalEdit_Handler(base.BaseHandler):
     def get(self):
@@ -141,20 +108,42 @@ class PostalEdit_Handler(base.BaseHandler):
 
     def post(self):
 
+        email = self.session.get("email")
+        admin_user = UserAccount.is_admin(email)
+
         postal_code = self.request.get("postal_code")
         lat_val = self.request.get("lat_val")
         long_val = self.request.get("long_val")
 
         postal_edit = postalRecordDB.query(postalRecordDB.postal_code == postal_code).get()
 
-        postal_edit.postal_code = postal_code
-        postal_edit.lat = lat_val
-        postal_edit.long = long_val
-        postal_edit.put()
+        try:
 
-        # Return to search page:
-        self.redirect("/admin-search?q="+postal_code)
+            postal_edit.postal_code = postal_code
+            postal_edit.lat = lat_val
+            postal_edit.long = long_val
+            postal_edit.put()
 
+        except AttributeError:
+
+            msg = "Error in saving"
+            self.render("admin/admin_postal_edit.html", postal_edit=msg)
+
+        update_save = postal_code + " Saved"
+
+        compare_postal = postalRecordDB.check_if_exists(postal_code)
+
+        postal_records = postalRecordDB.get_by_id(compare_postal)
+        results = postalRecordDB.query(postalRecordDB.postal_code >= postal_records.postal_code).order().fetch(1)
+
+        #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - - - - -
+        tpl_values = {
+            'admin_user': admin_user,
+            'email': email,
+            'results': results
+        }
+
+        self.render('admin/search.html', update_save=update_save, **tpl_values)
 
 
 

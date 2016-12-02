@@ -180,7 +180,6 @@ $(function() {
             //$('.multiTrucks').hide();
             $('.truckCap').hide();
             $('.multiComp').hide();
-
         }
 
         if($(this).attr("value")==="by_capacity"){
@@ -266,37 +265,6 @@ $("#priority_capacity").change(function() {
     }
 });
 
-// - - - - - Consider Truck Capacity, For Company Sorting- - - - - //  vehicle_qty_div
-//$("#priority_capacity_comp").change(function() {
-//    if(this.checked){
-//        $( "#vehicle_type_1" ).change(function() {
-//            if($(this).val() !== "truck_1" || $(this).val() !== "truck_2"){
-//                $('#truck_capacity_1').val('');
-//            }
-//         });
-//    }
-//    if(this.checked){
-//        $( "#vehicle_type_2" ).change(function() {
-//            if($(this).val() !== "truck_1" || $(this).val() !== "truck_2"){
-//                $('#truck_capacity_2').val('');
-//            }
-//         });
-//    }
-//    if(this.checked){
-//        $( "#vehicle_type_3" ).change(function() {
-//            if($(this).val() !== "truck_1" || $(this).val() !== "truck_2"){
-//                $('#truck_capacity_3').val('');
-//            }
-//         });
-//    }
-//    if(this.checked){
-//        $( "#vehicle_type_4" ).change(function() {
-//            if($(this).val() !== "truck_1" || $(this).val() !== "truck_2"){
-//                $('#truck_capacity_4').val('');
-//            }
-//         });
-//    }
-//});
 
 //// - - - - - Consider Truck Capacity, Option 2- - - - - //
 
@@ -412,33 +380,6 @@ $("#priority_capacity_comp").change(function() {
 
 }); //end of function
 
-//function generateFields_companies(){
-//
-//    //$('#vehicle_bigTruck_1').hide();
-//    $('#vehicle_type_1').change(function(){
-//
-//        if($('#vehicle_type_1').val() == 'truck_2'){
-//            $('#vehicle_bigTruck_1').show();
-//            //$('#vehicle_m3_1').hide();
-//
-//        }else {
-//           //$('#vehicle_bigTruck_1').hide();
-//           //$('#vehicle_m3_1').show();
-//        }
-//    });
-//    //2nd set
-//   //$('#vehicle_bigTruck_2').hide();
-//    $('#vehicle_type_2').change(function(){
-//        if($('#vehicle_type_2').val() == 'truck_2'){
-//            $('#vehicle_bigTruck_2').show();
-//            //$('#vehicle_m3_2').hide();
-//
-//        }else {
-//          // $('#vehicle_bigTruck_2').hide();
-//          // $('#vehicle_m3_2').show();
-//        }
-//    });
-//}
 
 // - - - - -  End for Sorting by Company - - - - //
 
@@ -817,7 +758,7 @@ $(".clickable-row").click(function() {
 // - - API page for the page - - - - - -//
 // Hide after 3sec the error message box
 //Display error message for 3 seconds and then fades out
-//$('.hideThis').delay(3000).fadeOut();
+$('.hideThis').delay(3000).fadeOut();
 
 
 // Make Credit button disabled
@@ -827,14 +768,12 @@ $('#api_credits').on('keyup', function () {
 
 
 // - - Back to Top Function- - - - - -//
-//Check to see if the window is top if not then display button
+// Hide and Show Go Up button
 $(window).scroll(function(){
 
     if ($(this).scrollTop() > 400) {
         $('.scrollToTop').fadeIn();
-
     } else {
-
         $('.scrollToTop').fadeOut();
     }
 
@@ -846,6 +785,13 @@ $('.scrollToTop').click(function(){
     return false;
 });
 
+// Click Generate Button to scroll down in order to show the progress bar
+$("#routeBtn").click(function(){
+    var down = $(document).height();
+    $('html, body').animate({scrollTop : down}, 800);
+
+    return false;
+});
 
 // - - By Route Truck Capacity Function by Adding input fields - - - - - -//
 

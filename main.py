@@ -17,6 +17,9 @@ from model.admin_account import postalRecordDB, PostalRecordDB_alert, PostalReco
 from model.admin_account_api import ProposedRoute_api, CurrentRoute_api, RouteDistance_api
 from model.user_account import UserAccount
 
+# 404 error
+from google.appengine.ext.webapp.util import run_wsgi_app
+
 
 class MainPage(base.BaseHandler):
     def get(self):
@@ -40,12 +43,17 @@ class APIHandler_reg(base.BaseHandler):
         email = self.session.get("email")
         admin_user = UserAccount.is_admin(email)
 
-        api_key_for_user = UserAccount.create_api_key(email)
+        if admin_user:
 
-        if email:
-            self.render("/api/api2.html", email=email, api_key_for_user=api_key_for_user, admin_user=admin_user)
+            api_key_for_user = UserAccount.create_api_key(email)
+
+            if email:
+                self.render("/api/api2.html", email=email, api_key_for_user=api_key_for_user, admin_user=admin_user)
+            else:
+                self.render("/api/api.html")
         else:
-            self.render("/api/api.html")
+
+            self.redirect("/")
 
 class LoginPage(login.LoginHandler, base.BaseHandler):
 
@@ -239,18 +247,9 @@ class AdminSummary(base.BaseHandler):
         compare_id = self.request.get("compare_id")
         email = self.session.get("email")
 
-        web_current = CurrentRoute.query(CurrentRoute.compare_id == compare_id).order(
-                                                                                    CurrentRoute.vehicle_id,
-                                                                                    CurrentRoute.order_id).fetch()
-        web_proposed = ProposedRoute.query(ProposedRoute.compare_id == compare_id).order(
-                                                                                    ProposedRoute.vehicle_id,
-                                                                                    ProposedRoute.order_id).fetch()
-        web_routes = RouteDistance.query(RouteDistance.compare_id == compare_id).order(
-                                                                                    -RouteDistance.created_date).fetch()
-
-        # User_Id
-        # web_routes_user_id = RouteDistance.query(RouteDistance.compare_id == compare_id).order(
-        #     -RouteDistance.created_date).fetch()
+        web_current = CurrentRoute.query(CurrentRoute.compare_id == compare_id).order(CurrentRoute.vehicle_id, CurrentRoute.rank_id).fetch()
+        web_proposed = ProposedRoute.query(ProposedRoute.compare_id == compare_id).order(ProposedRoute.vehicle_id, ProposedRoute.rank_id).fetch()
+        web_routes = RouteDistance.query(RouteDistance.compare_id == compare_id).order(-RouteDistance.created_date).fetch()
 
         #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - - - - - #
 
@@ -269,25 +268,31 @@ class AdminSummary_api(base.BaseHandler):
         email = self.session.get("email")
 
         # API User
-        api_routes = RouteDistance_api.query(RouteDistance_api.compare_id == compare_id).order(
-                                                                                        -RouteDistance_api.created_date
-                                                                                        ).fetch()
-        api_current = CurrentRoute_api.query(CurrentRoute_api.compare_id == compare_id).order(
-                                                                                        CurrentRoute_api.vehicle_id,
-                                                                                        CurrentRoute_api.order_id
-                                                                                        ).fetch()
-        api_proposed = ProposedRoute_api.query(ProposedRoute_api.compare_id == compare_id).order(
-                                                                                        ProposedRoute_api.vehicle_id,
-                                                                                        ProposedRoute_api.order_id
-                                                                                        ).fetch()
+        api_routes = RouteDistance_api.query(RouteDistance_api.compare_id == compare_id).order(-RouteDistance_api.created_date).fetch()
+
+        api_current = CurrentRoute_api.query(CurrentRoute_api.compare_id == compare_id).order(CurrentRoute_api.vehicle_id, CurrentRoute_api.rank_id).fetch()
+
+        api_proposed = ProposedRoute_api.query(ProposedRoute_api.compare_id == compare_id).order(ProposedRoute_api.vehicle_id, ProposedRoute_api.rank_id).fetch()
+
+        # to get the value from type of optimization
+        api_routes_optimised = RouteDistance_api.query(RouteDistance_api.compare_id == compare_id).order().get()
+        route_by = api_routes_optimised.optimise_id
+
         #  - - - - - - - - - - - - - - - - - - routing section  - - - - - - - - - - - - - - - - - -
         template_values = {
             'email': email,
             'api_routes': api_routes,
             'api_current': api_current,
             'api_proposed': api_proposed,
+            'route_by': route_by
         }
         self.render("admin/admin_summary_api.html",  **template_values)
+
+class NotFoundPageHandler(base.BaseHandler):
+    def get(self):
+        self.error(404)
+
+        self.render("404_error/main_404.html")
 
 app = webapp2.WSGIApplication([
       ('/', MainPage),
@@ -325,6 +330,7 @@ app = webapp2.WSGIApplication([
       ('/admin-postal-search', Postal_Search),
       ('/admin-search', 'handlers.search_postal.SearchPostal'),
       ('/admin-search-del', 'handlers.search_postal.PostalDelete_Handler'),
-      ('/admin-search-edit', 'handlers.search_postal.PostalEdit_Handler')
+      ('/admin-search-edit', 'handlers.search_postal.PostalEdit_Handler'),
+      ('/.*', NotFoundPageHandler),
 
 ], config=base.sessionConfig, debug=True)

@@ -8,6 +8,8 @@ class RouteDistance(ndb.Model):
     created_date = ndb.DateTimeProperty(auto_now_add=True)
     starting_point = ndb.StringProperty()
     origin_destination = ndb.StringProperty()
+    latVal = ndb.StringProperty()  # FloatProperty()
+    longVal = ndb.StringProperty()
     no_vehicle = ndb.IntegerProperty()
     current_total_dist = ndb.FloatProperty()
     proposed_total_dist = ndb.FloatProperty()
@@ -20,7 +22,7 @@ class RouteDistance(ndb.Model):
     optimise_id = ndb.IntegerProperty()
 
     @classmethod
-    def add_new_route(cls, compare_id, user_id, starting_point, origin_destination, no_vehicle, vehicle_capacity,
+    def add_new_route(cls, compare_id, user_id, starting_point, origin_destination, longVal, latVal, no_vehicle, vehicle_capacity,
                       current_total_dist, proposed_total_dist, percentage_savings, postal_count, return_vehicle,
                       user_count, type_optimise, optimise_id):
 
@@ -30,6 +32,8 @@ class RouteDistance(ndb.Model):
         route.user_id = user_id
         route.starting_point = starting_point
         route.origin_destination = origin_destination
+        route.longVal = longVal
+        route.latVal = latVal
         route.no_vehicle = no_vehicle
         route.vehicle_capacity = vehicle_capacity
         route.current_total_dist = current_total_dist
@@ -62,7 +66,7 @@ class CurrentRoute(ndb.Model):
     rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
-    cargo_unit = ndb.StringProperty()
+    cargo_unit = ndb.IntegerProperty()
     company_id = ndb.StringProperty()
 
     @classmethod
@@ -98,7 +102,7 @@ class ProposedRoute(ndb.Model):
     rank_id = ndb.IntegerProperty()
     url_id = ndb.StringProperty()
     order_id = ndb.StringProperty()
-    cargo_unit = ndb.StringProperty()
+    cargo_unit = ndb.IntegerProperty()
     company_id = ndb.StringProperty()
 
     @classmethod

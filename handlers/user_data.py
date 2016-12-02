@@ -53,7 +53,7 @@ class User_Data_list(base.BaseHandler):
         web_routes = RouteDistance.query(RouteDistance.compare_id == compare_id).order(
             -RouteDistance.created_date).fetch()
 
-        # to get the value of truck capacity
+        # to get the value from type of optimization
         web_routes_optimised = RouteDistance.query(RouteDistance.compare_id == compare_id).order().get()
         route_by = web_routes_optimised.optimise_id
 

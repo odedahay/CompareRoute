@@ -36,8 +36,35 @@ indexes:
 - kind: CurrentRoute_api
   properties:
   - name: compare_id
+  - name: rank_id
+
+- kind: CurrentRoute_api
+  properties:
+  - name: compare_id
   - name: vehicle_id
   - name: order_id
+
+- kind: CurrentRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: order_id
+    direction: desc
+
+- kind: CurrentRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: postal_code
+    direction: desc
+  - name: order_id
+    direction: desc
+
+- kind: CurrentRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: rank_id
 
 - kind: Note
   ancestor: yes
@@ -94,8 +121,70 @@ indexes:
 - kind: ProposedRoute_api
   properties:
   - name: compare_id
+  - name: order_id
+  - name: postal_code
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: postal_code
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: rank_id
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: rank_id
+  - name: postal_code
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: rank_id
+    direction: desc
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: rank_id
+    direction: desc
+  - name: postal_code
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
   - name: vehicle_id
   - name: order_id
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: order_id
+    direction: desc
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: postal_code
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+  - name: rank_id
+
+- kind: ProposedRoute_api
+  properties:
+  - name: compare_id
+  - name: vehicle_id
+    direction: desc
+  - name: order_id
+    direction: desc
 
 - kind: RouteDistance
   properties:

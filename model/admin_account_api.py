@@ -2,7 +2,6 @@ from google.appengine.ext import ndb
 from google.appengine.api import search
 
 
-
 class RouteDistance_api(ndb.Model):
     compare_id = ndb.StringProperty(required=True)
     user_id = ndb.StringProperty()
@@ -17,6 +16,7 @@ class RouteDistance_api(ndb.Model):
     return_vehicle = ndb.StringProperty()
     vehicle_capacity = ndb.StringProperty()
     user_count = ndb.IntegerProperty(default=0)
+    optimise_id = ndb.IntegerProperty()
 
     @classmethod
     def add_new_route_api(cls, compare_id,
@@ -30,7 +30,7 @@ class RouteDistance_api(ndb.Model):
                           percentage_savings,
                           postal_count,
                           return_vehicle,
-                          user_count):
+                          user_count, optimise_id):
 
         route = RouteDistance_api()
 
@@ -46,6 +46,7 @@ class RouteDistance_api(ndb.Model):
         route.postal_count = postal_count
         route.return_vehicle = return_vehicle
         route.user_count = user_count
+        route.optimise_id = optimise_id
 
         route.put()
 
@@ -65,12 +66,15 @@ class CurrentRoute_api(ndb.Model):
     latVal = ndb.StringProperty()   #FloatProperty()
     longVal = ndb.StringProperty()
     distance = ndb.FloatProperty()
-    order_id = ndb.IntegerProperty()
+    rank_id = ndb.IntegerProperty()
+    order_id = ndb.StringProperty()
     url_id = ndb.StringProperty()
+    cargo_unit = ndb.IntegerProperty()
+    company_id = ndb.StringProperty()
 
     @classmethod
     def add_new_current_route_api(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id,
-                                  distance, order_id):
+                                  distance, rank_id, order_id, cargo_unit, company_id):
 
         current = CurrentRoute_api()
 
@@ -82,7 +86,10 @@ class CurrentRoute_api(ndb.Model):
         current.longVal = longVal
         current.url_id = url_id
         current.distance = distance
+        current.rank_id = rank_id
         current.order_id = order_id
+        current.cargo_unit = cargo_unit
+        current.company_id = company_id
 
         current.put()
 
@@ -94,15 +101,18 @@ class ProposedRoute_api(ndb.Model):
     origin_code = ndb.StringProperty()
     postal_code = ndb.StringProperty()
     vehicle_id = ndb.IntegerProperty()
-    latVal = ndb.StringProperty()   #FloatProperty()
+    latVal = ndb.StringProperty()
     longVal = ndb.StringProperty()
     distance = ndb.FloatProperty()
-    order_id = ndb.IntegerProperty()
+    rank_id = ndb.IntegerProperty()
+    order_id = ndb.StringProperty()
     url_id = ndb.StringProperty()
+    cargo_unit = ndb.IntegerProperty()
+    company_id = ndb.StringProperty()
 
     @classmethod
     def add_new_proposed_route_api(cls, compare_id, origin_code, postal_code, vehicle_id, latVal, longVal, url_id,
-                                   distance, order_id):
+                                   distance, rank_id, order_id, cargo_unit, company_id):
 
         proposed = ProposedRoute_api()
 
@@ -114,7 +124,10 @@ class ProposedRoute_api(ndb.Model):
         proposed.longVal = longVal
         proposed.url_id = url_id
         proposed.distance = distance
+        proposed.rank_id = rank_id
         proposed.order_id = order_id
+        proposed.cargo_unit = cargo_unit
+        proposed.company_id = company_id
 
         proposed.put()
 

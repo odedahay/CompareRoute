@@ -103,7 +103,6 @@ class Postal_checkerHandler_chk_edit(base.BaseHandler):
 
             self.redirect("/compare")
 
-
     def post(self):
 
         # From user input:

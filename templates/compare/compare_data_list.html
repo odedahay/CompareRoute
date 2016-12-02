@@ -20,7 +20,7 @@
         <div class="col-lg-12">
         {% for route_web in web_routes %}
 
-                 <h4>Summary Details</h4>
+                 <h4>Summary Records</h4>
                 <table class="table table-bordered">
                     <tr>
                         <th>Created Date </th>
@@ -50,11 +50,30 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-md-6">
+            <h4>Starting Point Information</h4>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Starting Point Info</th>
+                    <th>Latitude </th>
+                    <th>Longtitude </th>
+                </tr>
+                {% for starting in web_routes %}
+                    <tr>
+                        <td>{{ starting.starting_point }}</td>
+                        <td>{{ starting.latVal }} </td>
+                        <td> {{ starting.longVal }}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+         </div>
+
+        <div class="col-md-6">
          <!-- This is for Truck capacity -->
         {% if route_by == 1 %}
 
-            <h4>Truck Details</h4>
+            <h4>Truck Information</h4>
             <table class="table table-bordered">
                 <tr>
                     <th>Truck No. </th>
@@ -93,7 +112,10 @@
 
         {% endif %}
         </div>
+
+
     </div>
+
     <br /><br />
     <div class="page-tab">
         <div class="row">
@@ -131,6 +153,8 @@
 
                                         <th>Origin Postal Code</th>
                                         <th>Destination Postal Code</th>
+                                        <th>Latitude</th>
+                                        <th>Longtitude</th>
                                         <th>Distance (km)</th>
                                     </tr>
                                 </thead>
@@ -148,6 +172,8 @@
 
                                             <td>{{ propose.origin_code }}</td>
                                             <td>{{ propose.postal_code }}</td>
+                                            <td>{{ propose.longVal }} </td>
+                                            <td>{{ propose.latVal }}</td>
 
                                             <td>{{ propose.distance }}</td>
                                         </tr>
@@ -182,7 +208,8 @@
 
                                         <th>Origin Postal Code</th>
                                         <th>Destination Postal Code</th>
-
+                                         <th>Latitude</th>
+                                        <th>Longtitude</th>
                                         <th>Distance (km)</th>
                                     </tr>
                                 </thead>
@@ -200,6 +227,8 @@
 
                                             <td>{{ propose.origin_code }}</td>
                                             <td>{{ propose.postal_code }}</td>
+                                            <td>{{ propose.latVal }}</td>
+                                            <td>{{ propose.longVal }}</td>
                                             <td>{{ propose.distance }}</td>
                                         </tr>
                                         {% endfor %}

@@ -5,7 +5,6 @@ if (typeof jQuery === "undefined") {
     throw new Error("jQuery progress timer requires jQuery");
 }
 
-
 // validation for Route by Trucks:
 var errorBox = $('#message-errors');
 
@@ -128,6 +127,7 @@ $('#routeBtn').click(function () {
     var postal_sequence = $("#postal_sequence").val();
     var email = $("[name=email_value]").val();
     var has_return = $("#return_startpoint")[0].checked;
+    var time_windows = $("#time_windows")[0].checked;
 
     var optionsTruck = $("#optionsTruck")[0].checked;
     var priority_capacity = $("#priority_capacity")[0].checked;
@@ -509,7 +509,7 @@ $('#routeBtn').click(function () {
 
     }// end of Company
 
-   console.log("generate_route", generate_route);
+   //console.log("generate_route", generate_route);
 
    // Check first value of inputs before it process
    if(generate_route === true){
@@ -627,6 +627,7 @@ $('#routeBtn').click(function () {
                 postal_sequence: postal_sequence,
                 email: email,
                 has_return: has_return,
+                time_windows: time_windows,
 
                 optionsTruck: optionsTruck,
                 priority_capacity: priority_capacity,
@@ -637,7 +638,6 @@ $('#routeBtn').click(function () {
             },
             beforeSend:function(){
                 var errorBox = $('#message-errors');
-
 
                 // this is where we append a loading image
                 $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
@@ -658,9 +658,11 @@ $('#routeBtn').click(function () {
 
 
                 errorBox.hide();
-                //$("#routeBtn").prop('disabled', true);
+                $("#routeBtn").prop('disabled', true);
              },
             success: function (response) {
+
+                $("#routeBtn").prop('disabled', false);
 
                 // Main Variable for Layout
                 var $sorted_sequence = $("#sorted_sequence0");
@@ -828,7 +830,7 @@ $('#routeBtn').click(function () {
 
                         if (priority_capacity_comp === true){
 
-
+                        // please work on this
 
                         }
                         else{
@@ -954,6 +956,7 @@ $('#routeBtn').click(function () {
                         var postal_sequence_new = response.data_result[0].required_fields.postal_sequence;
                         var result_list = response.data_result[0].required_fields.propose_result;
                         var has_return = response.data_result[0].required_fields.has_return;
+                        var time_windows = response.data_result[0].required_fields.time_windows;
 
                         //GeoCode for LatLng
                         var latlng_array = response.data_result[0].geo_code_latlng.latlng_array;
@@ -1129,7 +1132,10 @@ $('#routeBtn').click(function () {
                                     for (c = 0; c < new_postal_code.length; c++){
                                             var new_counter_num = c + 1;
                                     }
+
                                     $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td></tr>");
+
+
                                 }
                             }
 
@@ -1297,6 +1303,7 @@ $('#routeBtn').click(function () {
                 }
             },
             error: function (response) {
+                $("#routeBtn").prop('disabled', false);
 
                 // failed request; give feedback to user
                 $('#progressbar').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');

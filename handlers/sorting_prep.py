@@ -92,9 +92,6 @@ class SortingPrep(webapp2.RequestHandler):
         num_of_truck_c1 = self.request.get("num_of_truck_c1")
         num_of_truck_c2 = self.request.get("num_of_truck_c2")
         num_of_truck_c3 = self.request.get("num_of_truck_c3")
-        num_of_truck_c4 = self.request.get("num_of_truck_c4")
-        num_of_truck_c5 = self.request.get("num_of_truck_c5")
-        num_of_truck_c6 = self.request.get("num_of_truck_c6")
 
         # 1st fields for capacity truck
         type_of_truck_cc1 = self.request.get("type_of_truck_cc1")
@@ -148,6 +145,7 @@ class SortingPrep(webapp2.RequestHandler):
         postal_sequence = self.request.get("postal_sequence")
         email = self.request.get("email")
         has_return = self.request.get("has_return")
+        time_windows = self.request.get("time_windows")
 
         options_truck = self.request.get("optionsTruck")
         priority_capacity = self.request.get("priority_capacity")
@@ -194,13 +192,9 @@ class SortingPrep(webapp2.RequestHandler):
         truck_capacity_grp = []
 
         # Type of Truck - Company
-        # truck_capacity_list_c = []
         truck_capacity_list_c1 = []
         truck_capacity_list_c2 = []
         truck_capacity_list_c3 = []
-        truck_capacity_list_c4 = []
-        truck_capacity_list_c5 = []
-        truck_capacity_list_c6 = []
 
         # Field 1 sub truck
         truck_capacity_list_cc1 = []
@@ -218,9 +212,6 @@ class SortingPrep(webapp2.RequestHandler):
         truck_capacity_list_cc2_grp = []
         truck_capacity_list_cc3_grp = []
 
-        truck_capacity_list_cc21_grp = []
-        truck_capacity_list_cc23_grp = []
-
         # Type of Truck
         truck_capacity_grp_comp1 = []
         truck_capacity_grp_comp2 = []
@@ -231,10 +222,7 @@ class SortingPrep(webapp2.RequestHandler):
 
         # For empty order id and capacity
         temp_comp = ['0', '0', '0']
-        forEmp_OrderID_Cap = ['0', '0']
-        forEmp_Capt = ['0']
-
-        # if options_truck == "true":
+        temp_order_id = ['0']
 
         # For Route by Truck Capacity validation
         if priority_capacity == "true":
@@ -439,9 +427,6 @@ class SortingPrep(webapp2.RequestHandler):
 
                 errors.extend([starting_postal, error_StartingPoint])
 
-                # if int(vehicle_quantity) >= 17:
-                #     errors.extend(['Number vehicle maximum 17 only'])
-
         # Counter checking of Postal Code
         num_post_code = 0
 
@@ -461,54 +446,96 @@ class SortingPrep(webapp2.RequestHandler):
             # Split the order ID/postal code pair by normal spacing
             postal_pair_split = postal_pair.split(" ")
 
+            if options_truck == "true":
+
+                if time_windows == "true":
+
+                    # show error if not 4 column
+                    if len(postal_pair_split) == 1:
+                        postal_pair_split.extend(temp_order_id)
+
+                    postal_code = str(postal_pair_split[0])
+                    order_id = str(postal_pair_split[1])
+                    tw_from = str(postal_pair_split[2])
+                    tw_to = str(postal_pair_split[3])
+
+                    # Add "0" in front of five digit postal codes
+                    if len(postal_code) == 5:
+                        postal_code = "0" + postal_code
+
+                    # Any Postal Code below 4 will throw error
+                    if len(postal_code) < 4:
+                        errors.extend(["  Please Check ", postal_code, ", it should 6 digits <br />"])
+
+                    # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
+                    if not str.isdigit(postal_code) or int(postal_code) >= 830000:
+                        errors.extend([postal_code, ' Invalid postal codes <br />'])
+
+                    # save to an empty array
+                    postal_sequence_list.append([postal_code, str(order_id), tw_from, tw_to])
+
+                else:
+
+                    # if one column, add zero to make two column
+                    if len(postal_pair_split) == 1:
+                        postal_pair_split.extend(temp_order_id)
+
+                    # If Postal Code reverse in textbox
+                    postal_code = str(postal_pair_split[0])
+                    order_id = str(postal_pair_split[1])
+
+                    # Add "0" in front of five digit postal codes
+                    if len(postal_code) == 5:
+                        postal_code = "0" + postal_code
+
+                    # Any Postal Code below 4 will throw error
+                    if len(postal_code) < 4:
+                        errors.extend(["  Please Check ", postal_code, ", it should 6 digits <br />"])
+
+                    # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
+                    if not str.isdigit(postal_code) or int(postal_code) >= 830000:
+                        errors.extend([postal_code, ' Invalid postal codes <br />'])
+
+                    # save to an empty array
+                    postal_sequence_list.append([postal_code, str(order_id)])
+
             # Route by Capacity:
             if priority_capacity == "true":
 
                 if len(postal_pair_split) == 1:
-                    errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+                    errors.extend(["Please check your format for  Maximizing Truck Capacity<br />"])
                     break
 
                 if len(postal_pair_split) == 2:
-                    errors.extend(["Please check the input of cargo unit - Location Details <br />"])
+                    errors.extend(["Please check your format for  Maximizing Truck Capacity <br />"])
                     break
 
-            # # Route by Multiple Truck:
-            # if len(postal_pair_split) == 2:
-            #     postal_pair_split.extend(forEmp_Capt)
+                # if len(postal_pair_split) != 3:
+                #     postal_pair_split.extend(forEmp_OrderID_Cap)
 
-            if len(postal_pair_split) != 3:
-                postal_pair_split.extend(forEmp_OrderID_Cap)
+                # If Postal Code reverse in textbox
+                postal_code = str(postal_pair_split[0])
+                order_id = str(postal_pair_split[1])
+                cargo_unit = int(postal_pair_split[2])
 
-            if len(postal_pair_split) != 4:
-                postal_pair_split.extend(temp_comp)
-
-            # If Postal Code reverse in textbox
-            postal_code = str(postal_pair_split[0])
-            order_id = str(postal_pair_split[1])
-            truck_volume = int(postal_pair_split[2])
-            temp_id = postal_pair_split[3]
-
-            # Postal Code Validation entry
-            # Add "0" in front of five digit postal codes
-            if len(postal_code) == 5:
-                postal_code = "0" + postal_code
-
-            # Any Postal Code below 4 will throw error
-            if len(postal_code) <= 4:
-                errors.extend(["  Please Check ", postal_code, ", Postal Code should only be 6 digits <br />"])
-
-            # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
-            if not str.isdigit(postal_code) or int(postal_code) >= 830000:
-                errors.extend([postal_code, ' Invalid postal codes <br />'])
-
-            # Route by Capacity:
-            if priority_capacity == "true":
+                # Add "0" in front of five digit postal codes
+                if len(postal_code) == 5:
+                    postal_code = "0" + postal_code
 
                 # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
                 if truck_volume > int(truck_capacity):
                     errors.extend([postal_code, " exceeding to the minimum Truck Capacity <br />"])
 
+                # save in empty array
+                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), cargo_unit])
+
             if sort_company == "true":
+
+                # If Postal Code reverse in textbox
+                postal_code = str(postal_pair_split[0])
+                order_id = str(postal_pair_split[1])
+                cargo_unit = int(postal_pair_split[2])
+                company_id = int(postal_pair_split[3])
 
                 if len(postal_pair_split) == 1 or len(postal_pair_split) == 2:
                     errors.extend(['Please add Company in 4th column  <br/ >'])
@@ -518,16 +545,11 @@ class SortingPrep(webapp2.RequestHandler):
                     errors.extend(['Please add Company in 4th column  <br/ >'])
                     break
 
-                if len(errors) == 0:
-                    sorted_comp = postal_pair_split[3]
-                    postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), sorted_comp])
-                    list_of_companies.append(sorted_comp)
+                # save in empty array
+                postal_sequence_list.append([postal_code, str(order_id), int(cargo_unit), company_id])
+                list_of_companies.append(company_id)
 
-            else:
-                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), temp_id])
-
-            postal_sequence_current.append(postal_code)
-
+            # postal_sequence_current.append(postal_code)
 
         if len(errors) == 0:
 
@@ -605,7 +627,7 @@ class SortingPrep(webapp2.RequestHandler):
                     # Calling function for sorting and chunking
                     for starting_post, company_sequence, truck_capacity_grp in itertools.izip(starting_postal_list, postal_sequence_company, truck_capacity_grp_comp1):
 
-                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, current_postal_list_seq, grp_truck = sorting.sort_by_postals_chunck(
                             starting_post,
                             company_sequence,
                             vehicle_quantity,
@@ -719,7 +741,7 @@ class SortingPrep(webapp2.RequestHandler):
 
                     for starting_post, company_sequence, vehicle_quantity in itertools.izip(starting_postal_list, postal_sequence_company, vehicle_quantity_list):
 
-                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                        origin_destinations, propose_result, current_result, vehicle_postal_list_new_seq, current_postal_list_seq, grp_truck = sorting.sort_by_postals_chunck(
                             starting_post,
                             company_sequence,
                             vehicle_quantity,
@@ -784,8 +806,7 @@ class SortingPrep(webapp2.RequestHandler):
                         },
                         "capacity_priority": {
                             "priority_capacity": priority_capacity,
-                            "vehicle_capacity": vehicle_list_grp,
-                            # "truck_capacity_grp_c": truck_capacity_grp_c,
+                            "vehicle_capacity": vehicle_list_grp
                         },
                         "total_summary_saving": {
                             "total_savings": result_route_value
@@ -796,20 +817,20 @@ class SortingPrep(webapp2.RequestHandler):
             else:
 
                 # - - - - - - - - - This is for Non-company sorting - - - - - - #
-                """ Route By Truck and Route by Capacity """
+                """
+                Route for Multiple Trucks
+                Route by Maximizing Truck Capacity
 
-                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq, grp_truck = sorting.sort_by_postals_chunck(
+                """
+
+                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq, current_postal_list_seq, grp_truck = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
                     int(vehicle_quantity),
                     email, has_return,
                     priority_capacity,
                     priority_capacity_comp,
-                    api_user, sort_company, truck_capacity_grp, options_truck)
-
-                print "origin_destination", origin_destination
-                print "propose_result", propose_result
-                print "current_result", current_result
+                    api_user, sort_company, truck_capacity_grp, options_truck, time_windows)
 
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used through capacity
@@ -880,7 +901,6 @@ class SortingPrep(webapp2.RequestHandler):
         logging.info(response)
 
         self.response.out.headers['Content-Type'] = 'application/json; charset=utf-8'
-
         self.response.out.write(json.dumps(response, indent=3))
 
     def formatResultForCallback_current(self, result_current):
@@ -924,33 +944,8 @@ def map_visible(propose_result):
 
     return latlng_array
 
-# GeoCode Latlng for Summary:
-# def Latlng_value_list(propose_result, origin_destination):
-#
-#     # if numPostCode is > 200:
-#     # Chunk the postal code by 2 and convert to laltlong
-#     # Then append to list and sent to JS to convert it.
-#
-#     latlng_value = ""
-#     for vehicle_postal in propose_result:
-#         for current_post in vehicle_postal:
-#
-#             # Convert to Lat-Long the postal code
-#             destinations = postalcode_latlong(current_post)
-#
-#             if not destinations:
-#                 latlng_value += str(destinations)
-#             else:
-#                 latlng_value += "&loc=" + str(destinations)
-#
-#     result_value = origin_destination + latlng_value
-#
-#     return result_value
-
 # GeoCode Latlng
 def postalcode_latlong(postal):
-
-        currentDateTime = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 
         # Count the request
         counter_no = 0
@@ -965,7 +960,7 @@ def postalcode_latlong(postal):
             # Remove "0" if still no record found
             if postal[0] == "0":
 
-                print "Adding Zero"
+                print "Remove Zero"
                 current_post = postal.lstrip("0")
                 compare_postal = postalRecordDB.check_if_exists(current_post)
 
@@ -976,9 +971,6 @@ def postalcode_latlong(postal):
                 # Find the nearest postal code number in records
                 nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > postal).get(keys_only=True)
                 compare_postal = nearest_postal_code.id()
-
-                # print('RECORD-1')
-                # PostalRecordDB_alert.add_new_postal_records(compare_id, postal, email, currentDateTime, int(counter_no))
 
         latlong = postalRecordDB.get_by_id(compare_postal)
 
@@ -1035,6 +1027,7 @@ def postalcode_latlong_map(postal):
 
 # Summary Distance
 def result_distance_latlng(propose_result, origin_destination, num_post_code):
+
 
     if num_post_code <= 69:
         print "Below 0-69 postal code"

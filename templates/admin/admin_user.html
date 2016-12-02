@@ -22,7 +22,7 @@
           <div class="tab-content">
               <div role="tabpanel" class="tab-pane active" id="home">
                 <div class="row">
-                    <h3></h3>
+                    <h4 class="text-center">Web App's User Record</h4>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
@@ -45,8 +45,6 @@
                                 <th>User id</th>
                                 <th>Created date</th>
                                 <th>Starting point</th>
-                                <!--<th>No. of Truck</th>-->
-                                <!--<th>Truck Capacity</th>-->
                                 <th>Sorted Postal Code</th>
                                 <th>Returning Vehicle</th>
                                 <th>Current Total Distance</th>
@@ -60,8 +58,6 @@
                                 </td>
                                 <td>{{ route_web.created_date.strftime('%Y-%m-%d %H:%m') }}</td>
                                 <td>{{ route_web.starting_point }}</td>
-                                <!--<td>{{ route_web.no_vehicle }}</td>-->
-                                <!--<td>{{ route_web.vehicle_capacity }}</td>-->
                                 <td>{{ route_web.postal_count }}</td>
                                 <td>{{ route_web.return_vehicle }}</td>
                                 <td>{{ route_web.current_total_dist }}</td>
@@ -76,7 +72,7 @@
               </div><!--End of the Web App -->
               <div role="tabpanel" class="tab-pane" id="api">
                  <div class="row">
-                   <h2>API's Details</h2>
+                   <h4 class="text-center">API User Record</h4>
                  </div>
                  <div class="row">
                     <div class="col-xs-3">
@@ -100,8 +96,6 @@
                                 <th>User id</th>
                                 <th>Created date</th>
                                 <th>Starting point</th>
-                                <th>No. vehicle</th>
-                                <th>Truck Capacity</th>
                                 <th>Sorted Postal Code</th>
                                 <th>Returning Vehicle</th>
                                 <th>Current Total Distance</th>
@@ -115,8 +109,6 @@
                                 </td>
                                 <td>{{ route_api.created_date.strftime('%Y-%m-%d %H:%m') }}</td>
                                 <td>{{ route_api.starting_point }}</td>
-                                <td>{{ route_api.no_vehicle }}</td>
-                                <td>{{ route_api.vehicle_capacity }}</td>
                                 <td>{{ route_api.postal_count }}</td>
                                 <td>{{ route_api.return_vehicle }}</td>
                                 <td>{{ route_api.current_total_dist }}</td>

@@ -11,14 +11,14 @@
     </div>
 	<div class="container">
         <div class="row">
-            <div class="col-xs-4"><h3>Are you sure you want to delete?</h3></div>
-            <div class="col-xs-8">
+            <div class="col-md-4"><h3>Are you sure you want to delete?</h3></div>
+            <div class="col-md-8">
 
             </div>
         </div>
 		<div class="row">
 
-			<div class="col-xs-6">
+			<div class="col-md-6">
 				{% if update_postalcode_error %}
 					<div id="ajax-errors" class="alert alert-danger" role="alert" style="width: 300px">
 					<p style="text-align: center">{{update_postalcode_error}}</p>
@@ -46,20 +46,16 @@
 					<label>Long </label></br>
 					<input class="form-control" type="text" id="long_val" name="long_val" value="{{ record.long }}">
 
-
-
 					<br />
 					<br />
-
-
-					<button type="submit" id="move_postal_code" class="btn btn-primary">Delete</button>
 					<a href="/admin-search?q={{record.postal_code}}" class="btn btn-info"><i class="fa fa-step-backward" aria-hidden="true"></i> Cancel</a>
+					<button type="submit" id="move_postal_code" class="btn btn-primary">Delete</button>
 					{% endfor %}
 				</form>
 
 			</div>
 			<br />
-			<div class="col-xs-4"></div>
+			<div class="col-md-4"></div>
 		</div><!-- row-->
 
 	</div><!-- container -->

@@ -8,10 +8,13 @@ class ComparePage(base.BaseHandler):
         email = self.session.get("email")
         admin_user = UserAccount.is_admin(email)
 
-        if email:
-            self.render("/compare/compare.html", email=email, admin_user=admin_user)
+        if admin_user:
+
+            if email:
+                self.render("/compare/compare.html", email=email, admin_user=admin_user)
+            else:
+                self.render("/login/login.html", register_error="Please login!")
+
         else:
-            self.render("/login/login.html", register_error="Please login!")
-
-
+            self.redirect("/login")
 
