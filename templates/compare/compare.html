@@ -204,11 +204,7 @@
                 <p class="plainBox tableDisplay cr_truck"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks</p>
                 <p class="plainBox tableDisplay cr_capacity"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route by Maximizing Truck Capacity</p>
                 <p class="plainBox tableDisplay cr_companies"><span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Consolidated Delivery for Multiple Companies</p>
-                <!--<p class="bubble">-->
-                    <!--<a class="close close_cust" id="closeBtn" data-dismiss="alert">×</a>-->
-                    <!--<span class="glyphicon glyphicon-map-marker" aria-hidden="false"></span>Route For Multiple Trucks-->
-                <!--</p>-->
-
+               
             </div>
             <div class="col-md-6 space_10">
                 <!--<div class="col-md-6 col-md-offset-6 space_10">-->
@@ -223,7 +219,7 @@
 
                 <div class="col-md-3 down_15">
                     <label class="control-label font_11" for="starting_postal">Enter Starting Postal Code * </label>
-                    <input type="text" class="form-control input" id="starting_postal" name="starting_postal" placeholder="e.g. 461051" aria-describedby="helpBlock" value="">
+                    <input type="text" class="form-control input" id="starting_postal" name="starting_postal" placeholder="e.g. 461051" aria-describedby="helpBlock" value="461051">
                     <p class="js_error startingPoint"></p>
                 </div>
                 <div class="col-md-2">
@@ -400,13 +396,39 @@
             <div class="row">
                 <div class="col-md-12">
                     <!--<div><button id="btn_export" class="btn btn-success btn-xs">Export to excel</button></div>-->
-                    <div id="sorted_sequence0"></div> <!-- Successful-->
+                    <div id="sorted_sequence0">
+                        <!--<h2 style='font-weight:normal'>Successful</h2>-->
+                        <!--<div id="download_button" style="margin:20px 0;">-->
+                            <!--<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>-->
+                        <!--</div>-->
+                        <!--<table class="tableL table-bordered">-->
+                            <!--<thead><tr><th>Summary Details</th><th></th></tr></thead>-->
+                            <!--<tbody><tr><td>Test 1</td><td>Test 2</td></tr></tbody>-->
+                        <!--</table>-->
+                    </div> <!-- Successful-->
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-6">
-                    <div id="sorted_sequence"></div><!-- Proposed_table -->
+                    <div id="sorted_sequence">
+                        <!--<p class="table_note">Proposed Delivery Routes Breakdown</p>-->
+                        <!--<table class="tableL table-bordered">-->
+                            <!--<tr><th>#</th><th>Postal Code</th> <th>Order ID</th></tr>-->
+                            <!--<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck ("+ (i + 1) +" ) :  </b></td></tr>-->
+                            <!--<tr><td class='postal_num'>1</td><td>461051</td><td>Order_1</td></tr>-->
+                        <!--</table>-->
+                    </div><!-- Proposed_table -->
+                </div>
+                <div class="col-md-6">
+                    <div id="time_windows_sequence">
+                        <!--<p class="table_note">Proposed Delivery Routes Breakdown with Time Windows</p>-->
+
+                        <!--<table class="tableL table-bordered">-->
+                            <!--<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>From</th><th>To</th></tr>-->
+                            <!--<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck ("+ (i + 1) +" ) :  </b></td></tr>-->
+                            <!--<tr><td class='postal_num'>1</td><td>461051</td><td>Order_2</td><td>12:00</td><td>13:00</td></tr>-->
+                        <!--</table>-->
+                    </div><!-- Proposed_table -->
                 </div>
             </div>
             <div class="row">
@@ -421,6 +443,11 @@
                     <div id="loading_map" style="display: block; "></div>
                     <div id="visualization"><!-- Elements inside here will be created by JavaScript --></div>
                 </div>
+                <br />
+                <div class="col-md-12">
+                    <div id="loading_map_tw" style="display: block; "></div>
+                    <div id="visualization_tw"><!-- Elements inside here will be created by JavaScript --></div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-12 hidden_field_legend">
@@ -434,20 +461,21 @@
 
                 </div>
             </div>
+            <!--  Time windows Visualization -->
+            
             <!--  Company Visualization -->
             <div class="row">
                 <div class="col-md-12">
-                        <!--<br/>-->
-                        <div class="row" style="display:none;" id="visualization_tab_comp"></div>
+                      <div class="row" style="display:none;" id="visualization_tab_comp"></div>
                 </div>
             </div>
             <!--  Single Visualization -->
             <div class="row">
                  <div class="col-md-12">
                     <div id="visualization_table" style="display:none;">
-                        <!--<table id="summaryTable" class="summary_Table" >-->
+
                         <table id="summaryTable" class="tableL table-bordered">
-                            <br />
+
                             <b>Summary Savings</b>
                             <tr>
                                 <th>Current Total Distance</th>
@@ -458,7 +486,30 @@
                                 <td id="currentTotalDist">00</td>
                                 <td id="proposedTotalDist">00</td>
                                 <td id="totalSavings">00</td>
-                                <!--<input type="hidden" id ="hdnTotalCurrent" name = "hdnTotalCurrent">-->
+
+                            </tr>
+                        </table>
+                    </div> <!-- // visualization_table -->
+                 </div>
+            </div>
+            <!-- for TW-->
+            <div class="row">
+                 <div class="col-md-12">
+                    <div id="visualization_table_tw" style="display:none;">
+
+                        <table id="summaryTable_tw" class="tableL table-bordered">
+
+                            <b>Summary Savings</b>
+                            <tr>
+                                <th>Current Total Distance</th>
+                                <th>Proposed Total Distance </th>
+                                <th>Total Savings</th>
+                            </tr>
+                            <tr>
+                                <td id="currentTotalDist_tw">00</td>
+                                <td id="proposedTotalDist_tw">00</td>
+                                <td id="totalSavings_tw">00</td>
+
                             </tr>
                         </table>
                     </div> <!-- // visualization_table -->

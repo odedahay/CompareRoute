@@ -336,6 +336,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 sorted_tw = sorted(truck_count, key=lambda x: x[2])
                 tw_proposed_list.append(sorted_tw)
 
+            # back to warehouse
             if has_return == "true":
                 for vehicle_postal_list_tw_seq in tw_proposed_list:
                     vehicle_postal_list_tw_seq.append(starting_address_seq)
@@ -392,7 +393,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     proposed_postal = convert_to_string(vehicle_postal_list_new)
 
     postal_list_sequence = {
-
         "proposed_postal_list_seq": vehicle_postal_list_new_seq,
         "current_postal_list_seq": vehicle_postal_list_orig_seq,
     }
@@ -454,10 +454,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     #                            })
     #                   )
 
-
-
     # Return the result again to "Sorting_prep.py"
-    return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq, vehicle_postal_list_orig_seq, grp_truck
+    return origin_destination, vehicle_postal_list_new, vehicle_current_postal_list, vehicle_postal_list_new_seq, vehicle_postal_list_orig_seq, tw_proposed_list, grp_truck
 
 
 # Function for assigning Variable to Truck Types:

@@ -643,17 +643,19 @@ $('#routeBtn').click(function () {
                 $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
 
                 $("#sorted_sequence").hide();
-                $("#sorted_sequence0").hide();
+                $("#time_windows_sequence").hide();
 
+                $("#sorted_sequence0").hide();
                 $("#sorted_sequence0_ul").hide();
                 $("#sorted_sequence0_ul_02").hide();
-                //$("#sorted_sequence1").hide();
 
                 $("#proposedTable_company").hide();
 
                 $("#visualization").hide();
+                $("#visualization_tw").hide();
                 $("#visualization_tab_comp").hide();
                 $("#visualization_table").hide();
+                $("#visualization_table_tw").hide();
                 $(".hidden_field_legend").hide();
 
 
@@ -664,25 +666,30 @@ $('#routeBtn').click(function () {
 
                 $("#routeBtn").prop('disabled', false);
 
-                // Main Variable for Layout
+                // Main Row for "Successful message"
                 var $sorted_sequence = $("#sorted_sequence0");
+
+                // Id for table
                 var $sorted_sequenceTable = $("#sorted_sequence");
+                var $sorted_sequenceTable_tw = $("#time_windows_sequence");
+
+                // Error Message
                 var errorBox = $('#message-errors');
 
+                // Call for empty to avoid duplicate
                 $sorted_sequence.empty();
+
                 $sorted_sequenceTable.empty();
+                $sorted_sequenceTable_tw.empty();
 
                 $('#progressbar').empty();
 
                 $("#sorted_sequence0_ul").empty();
                 $("#sorted_sequence0_ul_02").empty();
-                //$("#sorted_sequence1").empty();
                 $("#proposedTable_company").empty();
                 $("#visualization_tab_comp").empty();
 
                 $("#map_legend").empty();
-
-                //$("#routeBtn").prop('disabled', false);
 
                 var status = response.status;
                 var sort_company = response.sort_company;
@@ -697,35 +704,37 @@ $('#routeBtn').click(function () {
                     var $ul_sequence = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
                     var $ul_result = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
 
-                    var $p_note = $("<p style='font-weight:normal; font-size:16px;'></p>");
-                    var $p_note1 = $("<p style='font-weight:normal; font-size:16px;'></p>");
 
-                    // Details Table
+
+                    // Main table
                     var $ParentTable = $('<table class="tableL table-bordered"></table>');
 
-                    // Route by Trucks
-                    var $tableThead0 = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+                    // T-head for Consolidation for Companies
+                    var $tableThead_comp = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
 
-                    // Route by Capacity
-                    var $tableThead1 = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+                    // T-head for Capacity
+                    var $table_priority_capacity = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+
+                    // Body of table Details
                     var $tableTbody = $('<tbody></tbody>');
-                    var $tableTd = $('<tr></tr>'); // min -4 td
+                    var $tableTR = $('<tr></tr>'); // min -4 td
                     var $tableTd1 = $('<td></td>');
                     var $tableTd2 = $('<td></td>');
                     var $tableTd3 = $('<td></td>');
                     var $ul_table = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-                    //var $ul_table1 = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
 
                     //Companies
-                    var $tableThead_comp = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
                     var $ul_table_truck = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
                     var $ul_table_name = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
                     var $ul_table_delivery = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
 
-                    // Summary Table
+                    // Main Table layout
                     var $proposedTable = $('<table id="proposedTable" class="tableL table-bordered"></table>');
+                    var $proposedTable_tw = $('<table id="proposedTable_tw" class="tableL table-bordered"></table>');
+
                     var $p_dlBtn = $('');
-                    var $p_note2 = $('<p style="font-weight:normal; font-size:16px;"></p>');
+                    var $p_note1 = $("<p class='table_note'></p>");
+                    var $p_note2 = $("<p class='table_note'></p>");
 
                     //Status and Download
                     $download_div.append($download_button);
@@ -735,16 +744,16 @@ $('#routeBtn').click(function () {
                     //List of Data Entry
                     $sorted_sequence.append($ul_sequence);
                     $sorted_sequence.append($ul_result);
-                    $sorted_sequence.append($p_note1);
-                    $sorted_sequence.append($p_note);
+                    // $sorted_sequence.append($p_note1);
+                    // $sorted_sequence.append($p_note);
 
                     // Div for Table for Postal Code list
                     $sorted_sequenceTable.append($p_dlBtn);
-                    $sorted_sequenceTable.append($p_note2);
-                    $sorted_sequenceTable.append($proposedTable);
 
-                    // Global Function //
-                    // Addition
+                    $sorted_sequenceTable.append($p_note1);
+                    $sorted_sequenceTable_tw.append($p_note2);
+
+                    // Global Function // // Addition
                     function add(a, b) {return a + b;}
 
                     // Counter to check for repeated postal codes
@@ -802,10 +811,12 @@ $('#routeBtn').click(function () {
                         }
 
                         $("#proposedTable").show();
+                        $("#proposedTable_tw").show();
                         $("#proposedTable_company").show();
 
                         $sorted_sequence.show();
                         $sorted_sequenceTable.show();
+                        $sorted_sequenceTable_tw.show();
                         //- - - - - - - - Info Box - - - - - - - - - -//
 
                         $(".hidden_field_legend").show();
@@ -816,13 +827,13 @@ $('#routeBtn').click(function () {
                         $tableThead_comp.appendTo($ParentTable);
                         $tableTbody.appendTo($ParentTable);
 
-                        $tableTbody.append($tableTd);
+                        $tableTbody.append($tableTR);
                         $tableTd1.append($ul_table_truck); //$ul_table
-                        //$tableTd2.append($ul_table_name);
+
                         $tableTd2.append($ul_table_delivery);
                         $tableTd1.appendTo($tableTd);
                         $tableTd2.appendTo($tableTd);
-                        //$tableTd3.appendTo($tableTd);
+
 
                         $h2_success.text('Successful!');
 
@@ -956,7 +967,6 @@ $('#routeBtn').click(function () {
                         var postal_sequence_new = response.data_result[0].required_fields.postal_sequence;
                         var result_list = response.data_result[0].required_fields.propose_result;
                         var has_return = response.data_result[0].required_fields.has_return;
-                        var time_windows = response.data_result[0].required_fields.time_windows;
 
                         //GeoCode for LatLng
                         var latlng_array = response.data_result[0].geo_code_latlng.latlng_array;
@@ -973,24 +983,58 @@ $('#routeBtn').click(function () {
                         var current_route_value = response.data_result[0].total_summary_saving.current_distance;
                         var total_savings = response.data_result[0].total_summary_saving.total_savings;
 
+                        //Time Windows
+                        var tw_proposed_seq = response.data_result[0].time_windows_data.tw_proposed_seq;
+                        var tw_propose_route_value = response.data_result[0].time_windows_data.tw_propose_route_value;
+                        var tw_proposed_map = response.data_result[0].time_windows_data.tw_latlng_array;
+
+                        //total_summary_saving
+                        var tw_total_savings = response.data_result[0].time_windows_data.tw_total_savings;
+
+                        console.log("tw_proposed_distance", tw_propose_route_value);
+
                         // Get the value from unsorted Postal Code
                         var postal_seq = postal_sequence;
                         var postal_seq_arr = postal_seq.split("\n");
 
-                        // Storing the order ID and postal pairs  // current route
+                        // current route
+                        // Storing the order ID and postal pairs
                         var order_postal_arr = [];
+
+                        // storing Postal Code from TW proposed routes
+                        var proposed_postal_list = [];
 
                         // postal_seq_arr.replace(/\s+/g, " ")
                         for(i = 0; i < postal_seq_arr.length; i ++){
                             var order_postal = postal_seq_arr[i];
+
                             order_postal = order_postal.replace(/\s+/g, " ")
                             order_postal = order_postal.replace("\t", " ");
                             order_postal = order_postal.trim();
 
                             var order_postal_split = order_postal.split(" ");
-                            order_postal_arr.push(order_postal_split)
+
+                            if (i > 0){
+                                order_postal_arr.push(order_postal_split)
+                            }
                         }
 
+                        // iterate the postal code sequence for TW
+                        for(x = 0; x < tw_proposed_seq.length; x ++){
+                            var proposed_postal_tw = tw_proposed_seq[x];
+
+                            proposed_postal = [];
+
+                            for (var s = 0; s < proposed_postal_tw.length; s++){
+                                var postal_list = proposed_postal_tw[s];
+
+                                var postal_code = postal_list[0];
+                                var order_id = postal_list[1];
+
+                                proposed_postal.push(postal_code)
+                            }
+                            proposed_postal_list.push(proposed_postal);
+                        }
 
                         //- - - - - - export btn - - - - -  - - - - -//
                         $("#download_button").show();
@@ -998,8 +1042,8 @@ $('#routeBtn').click(function () {
 
                         $sorted_sequence.show();
                         $sorted_sequenceTable.show();
+                        $sorted_sequenceTable_tw.show();
 
-                        //$("#sorted_sequence1").show();
                         $(".hidden_field_legend").show();
 
                         // Counter for Postal Code Sorted;
@@ -1012,115 +1056,40 @@ $('#routeBtn').click(function () {
 
                         $h2_success.text('Successful!')
 
+
                         // Condition for Route by Truck:
                         if(optionsTruck === true){
 
-                            //$p_note.append('Summary Details : <br />');
+                            var $table_summary_for_multi_trucks = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
 
-                            // Summary Table
+                            // Create table for summary
                             $sorted_sequence.append($ParentTable);
 
-                            // if the Truck is more than 1:
-                            if(parseInt(vehicle_priority) > 1){
-                                // Summary Table
-                                $sorted_sequence.append($ParentTable);
+                            // Append the Thead (title of each col)
+                            $ParentTable.append($table_summary_for_multi_trucks);
+                            $ParentTable.append($tableTbody);
 
-                                // Append the Thead (title of each col)
-                                $ParentTable.append($tableThead0);
-                                $ParentTable.append($tableTbody);
+                            $tableTbody.append($tableTR)
 
-                                $tableTbody.append($tableTd)
+                            // Col 1
+                            $tableTR.append($tableTd1);
+                            $tableTd1.append('Starting Postal Code : '+starting);
+                            // Col 2
+                            $tableTR.append($tableTd2);
+                            $tableTd2.append($ul_table);
 
-                                // Col 1
-                                $tableTd.append($tableTd1);
-                                $tableTd1.append('Starting Postal Code : '+starting);
-                                // Col 2
-                                $tableTd.append($tableTd2);
-                                $tableTd2.append($ul_table);
+                            var new_postal_code;
+                            var counter_nums;
+                            var counter_num_array = [];
 
-                                var new_postal_code;
-                                var counter_nums;
-                                var counter_num_array = [];
-
-                                for(i = 0; i < postal_sequence_new.length; i++){
-                                    var postal_seq_vehicle = postal_sequence_new[i];
-                                    var postal_code_arr = [];
-
-                                    // counts the postal code
-                                    for(k = 0; k < postal_seq_vehicle.length; k++){
-                                        var postal_seq_new = postal_seq_vehicle[k]
-                                        var postal_code = postal_seq_new[0];
-
-                                        var counter_num = k + 1;
-
-                                        // Counter to check for repeated postal codes
-                                        postal_code_arr.push(postal_code);
-
-                                        var new_postal_code = unique_postal(postal_code_arr);
-                                        for (c = 0; c < new_postal_code.length; c++){
-                                                var counter_num = c + 1;
-                                            }
-                                    }
-                                    counter_num_array.push(counter_num);
-                                    $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
-
-                                }
-                                var sum = counter_num_array.reduce(add, 0);
-
-                            }
-                            else{
-
-                                // Append the Thead (title of each col)
-                                $ParentTable.append($tableThead0);
-                                $ParentTable.append($tableTbody);
-
-                                $tableTbody.append($tableTd)
-
-                                // Col 1
-                                $tableTd.append($tableTd1);
-                                // Col 2
-                                $tableTd.append($tableTd2);
-
-                                var total_num_result;
-                                var total_truck;
-
-                                for (var a=0; a < latlng_array.length; a++){
-                                    var result_sortedPostal = latlng_array[a];
-                                           total_num_result = result_sortedPostal.length;
-                                }
-
-                                // Result
-                                $tableTd1.append('Starting Postal Code : '+starting);
-                                $tableTd2.append('Delivery Truck '+vehicle_priority+' : '+total_num_result+' Proposed Delivery Routes');
-
-                            }
-
-                            // Breakdown Table of the Generated Results for Route by Truck
-                            $p_note2.text('Breakdown of Proposed Delivery Routes');
-
-                            // Table Layout
-                            $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th></tr>");
-
-
-                            // Loop the Postal Sequence
                             for(i = 0; i < postal_sequence_new.length; i++){
                                 var postal_seq_vehicle = postal_sequence_new[i];
-                                var latlng_value = latlng_array[i];
-
                                 var postal_code_arr = [];
 
-                                // Marker Truck Counter
-                                $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i+ 1) +"'></i></li>");
-
-                                // Summary Table Truck Counter
-                                $proposedTable.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck ("+ (i + 1) +" ) :  </b></td></td>" );
-
+                                // counts the postal code
                                 for(k = 0; k < postal_seq_vehicle.length; k++){
                                     var postal_seq_new = postal_seq_vehicle[k]
-
                                     var postal_code = postal_seq_new[0];
-                                    var order_id = postal_seq_new[1];
-                                    var capacity_load = postal_seq_new[2];
 
                                     var counter_num = k + 1;
 
@@ -1128,16 +1097,139 @@ $('#routeBtn').click(function () {
                                     postal_code_arr.push(postal_code);
 
                                     var new_postal_code = unique_postal(postal_code_arr);
-
                                     for (c = 0; c < new_postal_code.length; c++){
-                                            var new_counter_num = c + 1;
-                                    }
-
-                                    $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td></tr>");
-
-
+                                            var counter_num = c + 1;
+                                        }
                                 }
+                                counter_num_array.push(counter_num);
+                                $ul_table.append('<li> Truck '+(i+1)+' : '+counter_num+' Proposed Delivery Routes </li>');
+
                             }
+                            var sum = counter_num_array.reduce(add, 0);
+
+                            if (time_windows === true ){
+
+                                // Breakdown Table of the Generated Results for Route by Truck
+                                $p_note1.text('Proposed Delivery Routes Breakdown');
+                                $p_note2.text('Proposed Delivery Routes Breakdown w/ Time Windows');
+
+                                // Table Layout 1
+                                $sorted_sequenceTable.append($proposedTable);
+                                $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th></tr>");
+
+                                // Loop the Postal Sequence
+                                for(i = 0; i < postal_sequence_new.length; i++){
+                                    var postal_seq_vehicle = postal_sequence_new[i];
+                                    var latlng_value = latlng_array[i];
+
+                                    var postal_code_arr = [];
+
+                                    // Marker Truck Counter
+                                    $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i+ 1) +"'></i></li>");
+
+                                    // Summary Table Truck Counter
+                                    $proposedTable.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck ("+ (i + 1) +" ) :  </b></td></td>" );
+
+                                    for(k = 0; k < postal_seq_vehicle.length; k++){
+                                        var postal_seq_new = postal_seq_vehicle[k]
+
+                                        var postal_code = postal_seq_new[0];
+                                        var order_id = postal_seq_new[1];
+
+                                        var counter_num = k + 1;
+
+                                        // Counter to check for repeated postal codes
+                                        postal_code_arr.push(postal_code);
+
+                                        var new_postal_code = unique_postal(postal_code_arr);
+
+                                        for (c = 0; c < new_postal_code.length; c++){ var new_counter_num = c + 1; }
+
+                                        $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td></tr>");
+                                    }
+                                }
+
+                                // Table Layout 2
+
+                                $sorted_sequenceTable_tw.append($proposedTable_tw);
+                                $proposedTable_tw.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>TW From</th><th>TW To</th></tr>");
+
+                                // Loop the Postal Sequence
+                                for(i = 0; i < tw_proposed_seq.length; i++){
+
+                                    var new_postal = tw_proposed_seq[i];
+
+                                    var latlng_value = tw_proposed_map[i];
+
+                                    var truck_num = i + 1;
+
+                                    var postal_code_tw = [];
+
+                                    // Summary Table Truck Counter
+                                    $proposedTable_tw.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='5'><b>Delivery Truck ("+ truck_num +" ) :  </b></td></td>" );
+
+                                     for(k = 0; k < new_postal.length; k++){
+                                         var postal_seq_new = new_postal[k]
+
+                                         var postal_code = postal_seq_new[0];
+                                         var order_id = postal_seq_new[1];
+                                         var tw_from = postal_seq_new[2];
+                                         var tw_to = postal_seq_new[3];
+
+                                         var counter_num = k + 1;
+
+                                         if (tw_from === undefined && tw_to == undefined){
+
+                                             tw_from = "0";
+                                             tw_to = "0";
+                                         }
+                                        $proposedTable_tw.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+tw_from+"</td><td>"+tw_to+"</td></tr>");
+                                    }
+                                }
+                            // end of Time windows layout
+
+                            }
+                            else{
+
+                                // Breakdown Table of the Generated Results for Route by Truck
+                                $p_note1.text('Proposed Delivery Routes Breakdown');
+
+                                // Table Layout 1
+                                $sorted_sequenceTable.append($proposedTable);
+                                $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th></tr>");
+
+                                // Loop the Postal Sequence
+                                for(i = 0; i < postal_sequence_new.length; i++){
+                                    var postal_seq_vehicle = postal_sequence_new[i];
+                                    var latlng_value = latlng_array[i];
+
+                                    var postal_code_arr = [];
+
+                                    // Marker Truck Counter
+                                    $("#map_legend").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i+ 1) +"'></i></li>");
+
+                                    // Summary Table Truck Counter
+                                    $proposedTable.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='3'><b>Delivery Truck ("+ (i + 1) +" ) :  </b></td></td>" );
+
+                                    for(k = 0; k < postal_seq_vehicle.length; k++){
+                                        var postal_seq_new = postal_seq_vehicle[k]
+
+                                        var postal_code = postal_seq_new[0];
+                                        var order_id = postal_seq_new[1];
+
+                                        var counter_num = k + 1;
+
+                                        // Counter to check for repeated postal codes
+                                        postal_code_arr.push(postal_code);
+
+                                        var new_postal_code = unique_postal(postal_code_arr);
+
+                                        for (c = 0; c < new_postal_code.length; c++){ var new_counter_num = c + 1; }
+                                        $proposedTable.append("<tr><td class='postal_num'>"+ new_counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td></tr>");
+                                    }
+                                }
+
+                            } // end of else
 
                         } // end of if condition - Route by Truck
 
@@ -1148,21 +1240,17 @@ $('#routeBtn').click(function () {
                             $sorted_sequence.append($ParentTable);
 
                             // Append the Thead (title of each col)
-                            $ParentTable.append($tableThead1);
+                            $ParentTable.append($table_priority_capacity);
                             $ParentTable.append($tableTbody);
 
-                            $tableTbody.append($tableTd)
+                            $tableTbody.append($tableTR)
 
                             // Col 1
-                            $tableTd.append($tableTd1);
+                            $tableTR.append($tableTd1);
                             $tableTd1.append('Starting Postal Code : '+starting);
                             // Col 2
-                            $tableTd.append($tableTd2);
+                            $tableTR.append($tableTd2);
                             $tableTd2.append($ul_table);
-
-                            // Col 3
-                            //$tableTd.append($tableTd3);
-                            //$tableTd3.append($ul_table1);
 
                             var new_postal_code;
                             var counter_nums;
@@ -1197,7 +1285,6 @@ $('#routeBtn').click(function () {
                                     //
                                     var postal_code = postal_seq_new[0];
 
-                                    //console.log('postal_seq_new-1' ,postal_seq_new);
                                     var counter_num = k + 1;
 
                                     // Counter to check for repeated postal codes
@@ -1262,16 +1349,46 @@ $('#routeBtn').click(function () {
                         } // end of if condition - Route by Capacity
 
 
-                        // - - - - - - Start Map Results - - - - - - - //
+                        // - - - - - - Map Section- - - - - - - //
 
-                        //Visual Map Function
-                        generateGMap(starting, result_list, order_postal_arr, latlng_array);
+                        if (time_windows === true){
 
-                        //Table below map - Summary-Value
-                        $('#visualization_table').show()
-                        $('#currentTotalDist').html(current_route_value.toFixed(2) + ' km');
-                        $('#proposedTotalDist').html(propose_route_value.toFixed(2) + ' km');
-                        $('#totalSavings').html(total_savings.toFixed(2) + '%');
+                            // current routes = order_postal_arr
+                            // proposed routes = result_list
+                            // map_lat_long = latlng_array
+
+
+                            // Generate Map with Time Windows Routes
+                            generateGMap_tw(starting, proposed_postal_list, order_postal_arr, tw_proposed_map);
+
+                            //Table below map - Summary-Value
+                            $('#visualization_table_tw').show()
+                            $('#currentTotalDist_tw').html(current_route_value.toFixed(2) + ' km');
+                            $('#proposedTotalDist_tw').html(tw_propose_route_value.toFixed(2) + ' km');
+                            $('#totalSavings_tw').html(tw_total_savings.toFixed(2) + '%');
+
+                              //Visual Map Function
+                            generateGMap(starting, result_list, order_postal_arr, latlng_array);
+
+                            //Table below map - Summary-Value
+                            $('#visualization_table').show()
+                            $('#currentTotalDist').html(current_route_value.toFixed(2) + ' km');
+                            $('#proposedTotalDist').html(propose_route_value.toFixed(2) + ' km');
+                            $('#totalSavings').html(total_savings.toFixed(2) + '%');
+
+
+                        }else{
+
+                            //Visual Map Function
+                            generateGMap(starting, result_list, order_postal_arr, latlng_array);
+
+                            //Table below map - Summary-Value
+                            $('#visualization_table').show()
+                            $('#currentTotalDist').html(current_route_value.toFixed(2) + ' km');
+                            $('#proposedTotalDist').html(propose_route_value.toFixed(2) + ' km');
+                            $('#totalSavings').html(total_savings.toFixed(2) + '%');
+
+                        }
 
                         //send email section
                         $.post('/email_info',  {
@@ -1330,21 +1447,7 @@ $('#routeBtn').click(function () {
 
 }); //end of function
 
-// function avoid duplicate postal code
-function eliminateDuplicates(arr) {
-  var i,
-      len=arr.length,
-      out=[],
-      obj={};
 
-  for (i=0;i<len;i++) {
-    obj[arr[i]]=0;
-  }
-  for (i in obj) {
-    out.push(i);
-  }
-  return out;
-}
 
 // Generate Google Map according to the sorted postal sequence
 function generateGMap(starting_postal, result_list, order_postal_arr, latlng_array, sort_company){
@@ -1357,7 +1460,6 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
     $("<h3>").attr("id", "header_visualization").append("Visualization".bold()).appendTo("#visualization");
 
     // Array containing lat and lng for plotting on Google Maps
-    //var latlng_array = []
 
     // Format the postal codes (split by "," and removal of whitespaces) for calling Geocoding API
     var vehicle_postal_list_full = [];
@@ -1366,12 +1468,6 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
     for(i = 0; i < result_list.length; i++){
 
         var vehicle_postal_list = result_list[i];
-
-        // for(j = 0; j < vehicle_postal_list.length; j++){
-        //     vehicle_postal_list[j] = vehicle_postal_list[j].trim();
-
-
-        // }
 
         // Push into a full list for plotting Markers later
         vehicle_postal_list_full.push(vehicle_postal_list);
@@ -1421,9 +1517,6 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
             lat = latlng[0];
             lng = latlng[1];
 
-            // console.log(lat);
-            // console.log(lng);
-
             polygon_coord.push(new google.maps.LatLng(lat, lng));
         }
 
@@ -1453,8 +1546,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
     } // End of latlng array forEach
 
-
-    // Create the infowindow instance
+    // Create the info-window instance
     info_window = new google.maps.InfoWindow();
 
     for(i = 0; i < polygon_array.length; i++){
@@ -1465,57 +1557,25 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
         // Iterate through the postal codes to find the relevant order ID
         var postal_arr = result_list[i];
 
+        // Counter to check for repeated postal codes
+        var counter = 0;
         for(j = 0; j < postal_arr.length; j++){
 
-            var postal = postal_arr[j].trim();
-
-            for(k = 0; k < order_postal_arr.length; k++){
-                var order_postal = order_postal_arr[k];
-                var order_id = order_postal[0];
-                var postal2 = order_postal[1];
-
-                if(postal == postal2){
-                    if(j == 0){
-                        content += order_id;
-                    }else{
-                        content += ", " + order_id;
-                    }
-                }
-            }
-        }
-
-        // Postal codes for the content
-        var postal_str = "";
-        for(j = 0; j < postal_arr.length; j++){
             var postal = postal_arr[j];
 
-            // Counter to check for repeated postal codes
-            var counter = 0;
+//            console.log("postal", postal);
 
-            for(k = 0; k < order_postal_arr.length; k++){
-                var order_postal = order_postal_arr[k];
-                var postal2 = order_postal[0];
+            if(j == 0){
 
-                if(postal == postal2){
-                    counter++;
-                }
+                content += postal;
+            }else{
+                content += ", " + postal;
             }
 
-            for(k = 0; k < counter; k++){
-                if(j == 0 && k == 0){
-                    postal_str += postal;
-                    //console.log('counter-0: ', postal_str);
-                }else{
-                    postal_str += ", " + postal;
-                }
-            }
-            //console.log('order_id: ', postal_str);
         }
-        content += "</br>" + postal_str;
 
-        //console.log('order_id-1: ', content);
-        // Bind polygons to mouseover events
         createAndBindPolygon(polygon_array[i], content, map);
+
     }
 
     // Get lat lng of starting postal code and plot a marker
@@ -1524,6 +1584,9 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
         type: "GET",
         async: false,
         success: function(result){
+
+            //console.log("result", result);
+
             var lat = result.results[0].geometry.location.lat
             var lng = result.results[0].geometry.location.lng
 
@@ -1552,6 +1615,9 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
         for(j = 0; j < veh_postal.length; j++){
             var postal = veh_postal[j];
             var latlng = ven_latlng[j];
+
+//            console.log("postal", postal);
+//            console.log("latlng", latlng);
 
             // var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
             // Colors to differentiate the polygons
@@ -1601,11 +1667,14 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
             // Find the relevant order ID for the content
             for(k = 0; k < order_postal_arr.length; k++){
                 var order_postal = order_postal_arr[k];
+
                 var order_id = order_postal[0];
                 var postal2 = order_postal[1];
 
-                if(postal == postal2){
-                    content += "[" + postal + "]";
+                if(postal == order_id){
+
+                    content += " " + (j+1) + " ";
+                    content += "[" + postal2 + "]";
                 }
             }
             content += "</br>" + postal;
@@ -1974,6 +2043,287 @@ function addLine(polygon_line, map) {
         }
 
     });
+}
+
+
+// Google Map for Time Windows
+
+// Generate Google Map according to the sorted postal sequence
+function generateGMap_tw(starting_postal, proposed_postal_list, order_postal_arr, latlng_array){
+
+//    console.log("proposed_postal_list", proposed_postal_list);
+
+    // Clear all "Visualization" child elements(i.e. header and google maps)
+    $("#visualization_tw").empty();
+    $("#visualization_tw").show();
+
+    //// Counter to check for repeated postal codes
+    function unique_postal(originalArray){
+        var ar = originalArray.slice(0); //Make a copy of the array and store it in ar
+        var i = ar.length;
+
+        while(i--){  //Iterate through the array
+            if(ar.indexOf(ar[i],i+1)> -1){  //If the array has a duplicate
+                ar.splice(i,1);  //Remove that element!
+            }
+        }
+        return ar; //Return the new, more unique array
+    }
+
+    // Create "Visualization" header
+    $("<h3>").attr("id", "header_visualization_tw").append("Visualization for Time Windows".bold()).appendTo("#visualization_tw");
+
+    // Format the postal codes (split by "," and removal of whitespaces) for calling Geocoding API
+    var vehicle_postal_list_full = [];
+
+    // Start of formatting:
+    for(i = 0; i < proposed_postal_list.length; i++){
+
+        var vehicle_postal_list = proposed_postal_list[i];
+
+        // Push into a full list for plotting Markers later
+        vehicle_postal_list_full.push(vehicle_postal_list);
+    } // End of postal code formatting
+
+    // Create the div for Google Map
+    $("<div>").attr("id", "map-canvas-tw").appendTo("#visualization_tw");
+
+    // Setting map zoom and center coordinates
+    var mapOptions = {
+        zoom: 12,
+        center: new google.maps.LatLng(1.362600, 103.830000)
+    };
+
+    // Generate the map
+    var map = new google.maps.Map(document.getElementById("map-canvas-tw"), mapOptions);
+
+    // Setting the polygon coordinates
+    polygon_array = [] // for assigning info window to polygon
+
+    // Colors to differentiate the polygons
+
+    var colors = ["#ff0033", "#0267fe", "#02cc35",
+                  "#fecc02", "#999999", "#ff00cc",
+                  "#cc00ff", "#029967", "#cccc67",  // #cc00cc
+                  "#fe6702", "#02fe35", "#67ccfe",
+                  "#fe6767", "#ff33ff", "#ccfefe",
+                  "#670202", "#c6641d"];
+
+    // Push into a full list for plotting Markers later
+    polygon_coord_full = [];
+
+    for(i = 0; i < latlng_array.length; i++){
+        vehicle_latlng = latlng_array[i];
+
+        // Store lat and lng for constructing the polygon
+        polygon_coord = []
+
+        // Extract out the lat and lng per postal code to create LatLng object
+        for(j = 0; j < vehicle_latlng.length; j++){
+            latlng = vehicle_latlng[j];
+            lat = latlng[0];
+            lng = latlng[1];
+
+            polygon_coord.push(new google.maps.LatLng(lat, lng));
+        }
+
+        polygon_coord_full.push(polygon_coord);
+
+        // Construct the polygon
+        // [i] the numbers of vehicle // colors[i]
+        var polygon_line;
+
+        polygon_line = new google.maps.Polygon({
+            paths: polygon_coord,
+            strokeColor: colors[i],
+            strokeOpacity: 0.6,
+            strokeWeight: 2, //3
+            fillColor: colors[i],
+            fillOpacity: 0.2
+        });
+
+        // Plot the polygon on the map
+        addLine(polygon_line, map);
+        //polygon_line.setMap(map);
+
+        // Store the polygon for infowindow binding
+        polygon_array.push(polygon_line);
+
+        //addLine(polygon_line);
+
+    } // End of latlng array forEach
+
+    // Create the info-window instance
+    info_window = new google.maps.InfoWindow();
+
+    for(i = 0; i < polygon_array.length; i++){
+
+        // Set the content
+        var content = "<b>Delivery Truck No. " + (i + 1) + "</b></br>";
+
+        // Iterate through the postal codes to find the relevant order ID
+        var postal_arr = proposed_postal_list[i];
+
+        // Counter to check for repeated postal codes
+        var counter = 0;
+
+        for(j = 0; j < postal_arr.length; j++){
+
+            var postal = postal_arr[j];
+
+//            console.log("postal", postal);
+
+            if(j == 0){
+
+                content += postal;
+            }else{
+                content += ", " + postal;
+            }
+
+        }
+        createAndBindPolygon(polygon_array[i], content, map);
+
+    }
+
+    // Get lat lng of starting postal code and plot a marker
+    $.ajax({
+        url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + starting_postal,
+        type: "GET",
+        async: false,
+        success: function(result){
+
+//            console.log("result", result);
+
+            var lat = result.results[0].geometry.location.lat
+            var lng = result.results[0].geometry.location.lng
+
+            var latlng = new google.maps.LatLng(lat, lng);
+            var marker = new google.maps.Marker({
+                position: latlng,
+                animation: google.maps.Animation.Drop,
+                map: map,
+               // icon: "img/gmap_marker/marker-blue.png"
+                icon: "img/gmap_marker/marker-blue_2.png",
+                zIndex:100,
+            });
+            google.maps.event.addListener(marker, 'click', function(event){
+                    info_window.setContent("Starting Postal Code: " + starting_postal);
+                    info_window.setPosition(event.latLng);
+                    info_window.open(map);
+                });
+        }
+    }); // End of GET
+
+    // Generate Markers
+    for(i = 0; i < vehicle_postal_list_full.length; i++){
+
+        veh_postal = vehicle_postal_list_full[i];
+        ven_latlng = polygon_coord_full[i];
+
+        var postal_code_arr = [];
+
+        for(j = 0; j < veh_postal.length; j++){
+
+            var postal = veh_postal[j];
+            var latlng = ven_latlng[j];
+
+            postal_code_arr.push(postal);
+
+            // var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+            // Colors to differentiate the polygons
+
+            var images = ["img/gmap_marker/red/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/blue/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/green/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/yellow/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/black/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/orchid/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/indigo/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/darkcyan/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/nine/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/orange/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/lawngreen/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/azure/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/rose/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/magenta/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/fifteen/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/sixteen/marker" + (j + 1) + ".png",
+                          "img/gmap_marker/seventeen/marker" + (j + 1) + ".png",
+                          ];
+
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                icon: images[i],
+                zIndex:10,
+            });
+
+            marker.setOptions({'opacity': 0.8})
+
+            var content = "";
+
+            // Find the relevant order ID for the content
+            for(k = 0; k < order_postal_arr.length; k++){
+
+                var order_postal = order_postal_arr[k];
+
+                var order_id = order_postal[0];
+                var postal2 = order_postal[1];
+
+                if(postal == order_id){
+
+                    //content += " " + (j+1) + " ";
+                    content += "[" + postal2 + "]";
+
+                }
+
+            }
+
+
+            content += "</br>" + postal;
+            createAndBindMarker(marker, content, map);
+        }
+    }
+
+} // End of generateGMap_tw
+
+function removeLine(polygon_line) {
+        polygon_line.setMap(null);
+      }
+
+// Linking infowindow to the polygons and binding it to a click//mouseover event
+function createAndBindPolygon(poly, content, map){
+    $('#loading_map_tw').show();
+
+    google.maps.event.addListener(poly, 'click', function(event){
+            info_window.setContent(content);
+            info_window.setPosition(event.latLng);
+            info_window.open(map);
+        });
+}
+// Link infowindow to the Markers and binding it to a click event
+function createAndBindMarker(marker, content, map){
+        google.maps.event.addListener(marker, 'click', function(event){
+        info_window.setContent(content);
+        info_window.setPosition(event.latLng);
+        info_window.open(map);
+    });
+}
+
+// function avoid duplicate postal code
+function eliminateDuplicates(arr) {
+  var i,
+      len=arr.length,
+      out=[],
+      obj={};
+
+  for (i=0;i<len;i++) {
+    obj[arr[i]]=0;
+  }
+  for (i in obj) {
+    out.push(i);
+  }
+  return out;
 }
 
 

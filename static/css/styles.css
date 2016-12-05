@@ -1244,6 +1244,9 @@ p.js_error:after{
     margin-bottom: 0px;
     padding: 5px;
 }
+.table_note{
+    font-weight:normal; font-size:16px;
+}
 
 /*** Tool Tip styles **********/
 

@@ -822,8 +822,7 @@ class SortingPrep(webapp2.RequestHandler):
                 Route by Maximizing Truck Capacity
 
                 """
-
-                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq, current_postal_list_seq, grp_truck = sorting.sort_by_postals_chunck(
+                origin_destination, propose_result, current_result, vehicle_postal_list_new_seq, current_postal_list_seq, tw_proposed_seq, grp_truck = sorting.sort_by_postals_chunck(
                     int(starting_postal),
                     postal_sequence_list,
                     int(vehicle_quantity),
@@ -835,7 +834,6 @@ class SortingPrep(webapp2.RequestHandler):
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used through capacity
                 result_num_truck = len(propose_result)
-
                 if priority_capacity == "true":
 
                     # Vehicle Result base of the priority:
@@ -857,6 +855,34 @@ class SortingPrep(webapp2.RequestHandler):
                 propose_route_value = result_distance_latlng(propose_result, origin_destination, num_post_code)
                 current_route_value = result_distance_latlng(current_result, origin_destination, num_post_code)
 
+                # Time windows:
+                # variables for Time windows:
+                tw_postal_list = []
+                tw_propose_route_value = 0
+                tw_total_savings = 0
+                tw_latlng_array = 0
+
+                if time_windows == "true":
+
+                    for truck_count in tw_proposed_seq:
+                        tw_postal_list_inner = []
+
+                        for tw_orders in truck_count:
+                            tw_postal_list_inner.append(tw_orders[0])
+                        tw_postal_list.append(tw_postal_list_inner)
+
+                    # Get the distance
+                    tw_propose_route_value = result_distance_latlng(tw_postal_list, origin_destination, num_post_code)
+
+                    print "ode", tw_propose_route_value
+
+                    # Converting the total percentage saving of distance
+                    difference_total = current_route_value - tw_propose_route_value
+                    tw_total_savings = (difference_total / current_route_value) * 100
+
+                    # GeoCode Map for TW
+                    tw_latlng_array = map_visible(tw_postal_list)
+
                 # GeoCode Map
                 latlng_array = map_visible(propose_result)
 
@@ -876,6 +902,13 @@ class SortingPrep(webapp2.RequestHandler):
                                 },
                             "geo_code_latlng": {
                                 "latlng_array": latlng_array
+                            },
+
+                            "time_windows_data": {
+                                "tw_proposed_seq": tw_proposed_seq,
+                                "tw_propose_route_value": tw_propose_route_value,
+                                "tw_total_savings": tw_total_savings,
+                                "tw_latlng_array": tw_latlng_array
                             },
                             "vehicle_priority": {
                                 "vehicle_num": vehicle_quantity
