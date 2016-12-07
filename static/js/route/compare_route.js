@@ -980,6 +980,7 @@ $('#routeBtn').click(function () {
                         var total_savings = response.data_result[0].total_summary_saving.total_savings;
 
                         //Time Windows
+                        var tw_postal_list = response.data_result[0].time_windows_data.tw_postal_list;
                         var tw_proposed_seq = response.data_result[0].time_windows_data.tw_proposed_seq;
                         var tw_proposed_distance = response.data_result[0].time_windows_data.tw_propose_route_value;
                         var tw_total_savings = response.data_result[0].time_windows_data.tw_total_savings;
@@ -992,9 +993,6 @@ $('#routeBtn').click(function () {
                         // current route
                         // Storing the order ID and postal pairs
                         var order_postal_arr = [];
-
-                        // storing Postal Code from TW proposed routes
-                        var proposed_postal_list = [];
 
                         // postal_seq_arr.replace(/\s+/g, " ")
                         for(i = 0; i < postal_seq_arr.length; i ++){
@@ -1012,22 +1010,7 @@ $('#routeBtn').click(function () {
                             }
                         }
 
-                        // iterate the postal code sequence for TW
-                        for(x = 0; x < tw_proposed_seq.length; x ++){
-                            var proposed_postal_tw = tw_proposed_seq[x];
 
-                            proposed_postal = [];
-
-                            for (var s = 0; s < proposed_postal_tw.length; s++){
-                                var postal_list = proposed_postal_tw[s];
-
-                                var postal_code = postal_list[0];
-                                var order_id = postal_list[1];
-
-                                proposed_postal.push(postal_code)
-                            }
-                            proposed_postal_list.push(proposed_postal);
-                        }
 
                         //- - - - - - export btn - - - - -  - - - - -//
                         $("#download_button").show();
@@ -1403,10 +1386,13 @@ $('#routeBtn').click(function () {
 
                         // - - - - - - Map Section- - - - - - - //
 
+                        // storing Postal Code from TW proposed routes
+                        var proposed_postal_list_tw = [];
+
                         if (time_windows === true){
 
                             // Generate Map with Time Windows Routes
-                            generateGMap_tw(starting, proposed_postal_list, order_postal_arr, tw_proposed_map);
+                            generateGMap_tw(starting, tw_postal_list, order_postal_arr, tw_proposed_map);
 
                             //Table below map - Summary-Value
                             $('#visualization_table_tw').show()
@@ -1703,7 +1689,7 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
 
                 if(postal == order_id){
 
-                    content += " " + (j+1) + " ";
+                    content += " " + (i+1) + " ";
                     content += "[" + postal2 + "]";
                 }
             }

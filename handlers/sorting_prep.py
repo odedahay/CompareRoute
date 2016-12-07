@@ -961,6 +961,7 @@ class SortingPrep(webapp2.RequestHandler):
                             },
 
                             "time_windows_data": {
+                                "tw_postal_list": tw_postal_list,
                                 "tw_proposed_seq": tw_proposed_seq,
                                 "tw_propose_route_value": tw_propose_route_value,
                                 "tw_total_savings": tw_total_savings,
