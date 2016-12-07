@@ -59,7 +59,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
 
         # Add Value to starting point for DB storing
         starting_address_seq = [starting_address, "0", 0]
-        postal_dictionary, postal_list, order_dict, capacity_dic, capacity_list = setLists(postal_sequence_list)
+        postal_dictionary, postal_list, order_dict, capacity_list = setLists(postal_sequence_list)
 
     else:
 
@@ -70,130 +70,152 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # Sorted Postal Code
     postal_sorted = sort_by_postals(starting_address, postal_list)
 
+    print "postal_sorted-xx", postal_sorted
+
     if priority_capacity == "true":
 
-        # If the OrderID and Load Capacity are not complete
-        if checker_order_capacity(postal_sequence_list) == True:
 
-            # Propose Route
-            num_of_truck = len(postal_sorted) / float(vehicle_quantity)
-            vehicle_postal_list_new = chunkIt(postal_sorted, num_of_truck)
 
-            # Current Route
-            num_of_truck_1 = len(postal_list) / float(vehicle_quantity)
-            vehicle_current_postal_list = chunkIt(postal_list, num_of_truck_1)
+        # # If the OrderID and Load Capacity are not complete
+        # if checker_order_capacity(postal_sequence_list) == True:
+        #
+        #     # Propose Route
+        #     num_of_truck = len(postal_sorted) / float(vehicle_quantity)
+        #     vehicle_postal_list_new = chunkIt(postal_sorted, num_of_truck)
+        #
+        #     # Current Route
+        #     num_of_truck_1 = len(postal_list) / float(vehicle_quantity)
+        #     vehicle_current_postal_list = chunkIt(postal_list, num_of_truck_1)
+        #
+        #     # Sequence Route
+        #     num_of_truck_seq = len(postal_list) / float(vehicle_quantity)
+        #     vehicle_postal_list_new_seq = chunkIt(postal_list, num_of_truck_seq)
+        #
+        # # Else OrderID and Load Capacity are complete
+        # else:
 
-            # Sequence Route
-            num_of_truck_seq = len(postal_list) / float(vehicle_quantity)
-            vehicle_postal_list_new_seq = chunkIt(postal_list, num_of_truck_seq)
+        # Find Postal code that match to the Current cargo unit
+        result_postal = []
+        result_postal_seq = []
+        result_postal_seq_tw = []
 
-        # Else OrderID and Load Capacity are complete
-        else:
+        # combine all related order to postal code
+        for postal in postal_sorted:
 
-            # Find Postal code that match to the Current cargo unit
-            result_postal = []
-            result_postal_seq = []
+            # get all related items in order dictionary
+            for key, value in order_dict.iteritems():
 
-            for i in range(len(postal_sorted)):
-                postal = postal_sorted[i]
+                if postal == value[0]:
+                    result_postal_seq.append([postal, value[1], int(value[2])])
+                    result_postal.append([postal, int(value[2])])
 
-                for x in range(len(postal_sequence_list)):
-                    order_postal = postal_sequence_list[x]
+        if time_windows == "true":
 
-                    postal2 = order_postal[0]
-                    orderId = order_postal[1]
-                    capacity = order_postal[2]
-                    temp_id = order_postal[2]
+            # combine all related order to postal code
+            for postal in postal_sorted:
 
-                    # If postal codes has length of 5
-                    if len(postal2) == 5:
-                        postal2 = "0" + postal2
+                # get all related items in order dictionary
+                for key, value in order_dict.iteritems():
 
-                    # If postal codes match, display the relevant Capacity loads
-                    if postal == postal2:
-                        result_postal_seq.append([postal, orderId, capacity, temp_id])
-                        result_postal.append([postal, capacity])
+                    if postal == value[0]:
+                        result_postal_seq_tw.append([postal, value[1], int(value[2]), value[3], value[4]])
 
-            # Chunk the Postal code according to minimum truck capacity
-            # Define and assign variables for truck
-            truck_dictionary = truck_details(truck_capacity_grp)
+        # Chunk the Postal code according to minimum truck capacity
+        # Define and assign variables for truck
+        truck_dictionary = truck_details(truck_capacity_grp)
 
-            # Chunk according to Capacity / No of truck
-            vehicle_postal_list_new = list(chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
+        # Chunk according to Capacity / No of truck
+        vehicle_postal_list_new = list(chunk_to_sum_no_truck(result_postal, *truck_capacity_grp, **truck_dictionary))
 
-            # Current Route
-            vehicle_current_postal_list = list(chunk_to_sum_no_truck(capacity_list, *truck_capacity_grp, **truck_dictionary))
+        # Current Route
+        vehicle_current_postal_list = list(chunk_to_sum_no_truck(capacity_list, *truck_capacity_grp, **truck_dictionary))
 
-            # for Postal Seq
-            vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_sequence(result_postal_seq, *truck_capacity_grp, **truck_dictionary))
+        # for Postal Seq
+        vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_sequence(result_postal_seq, *truck_capacity_grp, **truck_dictionary))
 
-            # for Current Postal Seq
-            vehicle_postal_list_orig_seq = list(chunk_to_sum_no_truck_sequence(postal_sequence_list, *truck_capacity_grp, **truck_dictionary))
+        # for Current Postal Seq
+        vehicle_postal_list_orig_seq = list(chunk_to_sum_no_truck_sequence(postal_sequence_list, *truck_capacity_grp, **truck_dictionary))
 
-            # example output of truck
-            "for 2 = {'max_1': 2, 'max_2': 2, 'truck_1': 'MK100', 'truck_2': 'MK200', 'target_2': 7, 'target_1': 8}"
+        # condition for TW - Priority Capacity after splitting for truck allocation
+        if time_windows == "true":
+            # for TW format
+            vehicle_postal_list_new_seq_tw = list(chunk_to_sum_no_truck_sequence_tw(result_postal_seq_tw, *truck_capacity_grp, **truck_dictionary))
 
-            list_truck = []
+            for truck_count in vehicle_postal_list_new_seq_tw:
 
-            count = 0
+                # sort for each time windows
+                sorted_tw = sorted(truck_count, key=lambda x: x[3])
+                tw_proposed_list.append(sorted_tw)
 
-            for x in range(len(vehicle_postal_list_new_seq)):
-                new_x = vehicle_postal_list_new_seq[x]
+                # back to warehouse
+            if has_return == "true":
+                for vehicle_postal_list_tw_seq in tw_proposed_list:
+                    vehicle_postal_list_tw_seq.append(starting_address_seq)
 
-                count += 1
-                # if the truck input fields is set by three
-                if len(truck_capacity_grp) == 3:
+        # example output of truck
+        "for 2 = {'max_1': 2, 'max_2': 2, 'truck_1': 'MK100', 'truck_2': 'MK200', 'target_2': 7, 'target_1': 8}"
 
-                    min_truck1 = truck_dictionary['max_1']
-                    min_truck2 = truck_dictionary['max_2']
+        list_truck = []
 
-                    truck_name1 = truck_dictionary['truck_1']
-                    truck_name2 = truck_dictionary['truck_2']
-                    truck_name3 = truck_dictionary['truck_3']
+        count = 0
 
-                    if count <= int(min_truck1):
+        for x in range(len(vehicle_postal_list_new_seq)):
+            new_x = vehicle_postal_list_new_seq[x]
 
-                        list_truck.append(truck_name1)
+            count += 1
+            # if the truck input fields is set by three
+            if len(truck_capacity_grp) == 3:
 
-                    # reset the max 1
-                    elif count - int(min_truck1) <= int(min_truck2):
+                min_truck1 = truck_dictionary['max_1']
+                min_truck2 = truck_dictionary['max_2']
 
-                        list_truck.append(truck_name2)
+                truck_name1 = truck_dictionary['truck_1']
+                truck_name2 = truck_dictionary['truck_2']
+                truck_name3 = truck_dictionary['truck_3']
 
-                    else:
+                if count <= int(min_truck1):
 
-                        list_truck.append(truck_name3)
+                    list_truck.append(truck_name1)
 
-                # if the truck input fields is set by two
-                elif len(truck_capacity_grp) == 2:
+                # reset the max 1
+                elif count - int(min_truck1) <= int(min_truck2):
 
-                    min_truck1 = truck_dictionary['max_1']
+                    list_truck.append(truck_name2)
 
-                    # variable from truck dictionary
-                    truck_name1 = truck_dictionary['truck_1']
-                    truck_name2 = truck_dictionary['truck_2']
-
-                    if count <= int(min_truck1):
-
-                        list_truck.append(truck_name1)
-
-                    else:
-
-                        list_truck.append(truck_name2)
                 else:
 
-                    min_truck1 = truck_dictionary['max_1']
-                    truck_name1 = truck_dictionary['truck_1']
+                    list_truck.append(truck_name3)
 
-                    if count <= int(min_truck1):
+            # if the truck input fields is set by two
+            elif len(truck_capacity_grp) == 2:
 
-                        list_truck.append(truck_name1)
+                min_truck1 = truck_dictionary['max_1']
 
-            grp_truck.append(list_truck)
+                # variable from truck dictionary
+                truck_name1 = truck_dictionary['truck_1']
+                truck_name2 = truck_dictionary['truck_2']
 
-            # Number of vehicle allocated
-            num_of_vehicles = len(vehicle_postal_list_new)
-            vehicle_quantity = num_of_vehicles
+                if count <= int(min_truck1):
+
+                    list_truck.append(truck_name1)
+
+                else:
+
+                    list_truck.append(truck_name2)
+            else:
+
+                min_truck1 = truck_dictionary['max_1']
+                truck_name1 = truck_dictionary['truck_1']
+
+                if count <= int(min_truck1):
+
+                    list_truck.append(truck_name1)
+
+        grp_truck.append(list_truck)
+
+        # Number of vehicle allocated
+        num_of_vehicles = len(vehicle_postal_list_new)
+        vehicle_quantity = num_of_vehicles
 
     elif sort_company == "true" and priority_capacity_comp == "true":
 
@@ -328,7 +350,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 proposed_tw_seq.append(result_postal_orders1)
 
             # sort the list according to Time Windows
-
             for x in range(0, len(proposed_tw_seq)):
                 truck_count = proposed_tw_seq[x]
 
@@ -687,7 +708,6 @@ def chunk_to_sum_no_truck_seq_comp(iterable, *list, **params):
 
     elif len(list) == 2:
 
-        print "Hello"
         # Enter Max Truck Capacity *
         target_1 = params['target_1']
         target_2 = params['target_2']
@@ -1034,7 +1054,6 @@ def chunk_to_sum_no_truck_sequence(iterable, *list, **params):
             key = chunk_seq[0]
             order = chunk_seq[1]
             item = chunk_seq[2]
-            # comp_temp = chunk_seq[3]
 
             chunk_sum += item
 
@@ -1138,23 +1157,161 @@ def chunk_to_sum_no_truck_sequence(iterable, *list, **params):
     if chunk:
         yield chunk
 
+# # Function for Truck Capacity - sequence format with TW
+def chunk_to_sum_no_truck_sequence_tw(iterable, *list, **params):
+
+    chunk_sum = 0.0
+
+    chunk = []
+    array = []
+
+    # If else = if type truck capacity input = 3, 2 and 1
+    # List  - the group of trucks
+    # Params - are the value of Truck dictionary
+    """
+    sample dict of truck
+    {
+    'max_1': 2, 'max_2': 2, 'max_3': 1,
+    'target_1': 5, 'target_2': 7, 'target_3': 5,
+    'truck_1': 'MK100', 'truck_2': 'MK200', 'truck_3': 'Mk30000',
+    }
+    """
+    # Get number of truck entered in the fields
+    if len(list) == 3:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+        target_3 = params['target_3']
+
+        # No. of Truck
+        max_1 = params['max_1']
+        max_2 = params['max_2']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+        # group_truck = target_1 * max_1
+        group_truck_1 = target_1 * max_1
+        group_truck_2 = target_2 * max_2
+
+        for x in range(len(iterable)):
+
+            chunk_seq = iterable[x]
+
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            tw_from = chunk_seq[3]
+            tw_to = chunk_seq[4]
+
+            chunk_sum += item
+
+            if len(array) <= group_truck_1:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [[key, order, item, tw_from, tw_to]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, tw_from, tw_to])
+
+            elif (len(array) - group_truck_1) <= group_truck_2:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [[key, order, item, tw_from, tw_to]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, tw_from, tw_to])
+            else:
+
+                if chunk_sum > target_3:
+
+                    yield chunk
+                    chunk = [[key, order, item, tw_from, tw_to]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, tw_from, tw_to])
+
+            array.append(chunk)
+
+    elif len(list) == 2:
+
+        # Enter Max Truck Capacity *
+        target_1 = params['target_1']
+        target_2 = params['target_2']
+
+        # No. of Truck
+        max_1 = params['max_1']
+
+        # e.g: Each truck has a capacity of 3 (box),
+        # company have 3 truck available : 3 x 3 = 9
+
+        group_truck = target_1 * max_1
+
+        for x in range(len(iterable)):
+            chunk_seq = iterable[x]
+
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            tw_from = chunk_seq[3]
+            tw_to = chunk_seq[4]
+
+            chunk_sum += item
+
+            if len(array) <= group_truck:
+
+                if chunk_sum > target_1:
+
+                    yield chunk
+                    chunk = [[key, order, item, tw_from, tw_to]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, tw_from, tw_to])
+            else:
+
+                if chunk_sum > target_2:
+
+                    yield chunk
+                    chunk = [[key, order, item,tw_from, tw_to]]
+                    chunk_sum = item
+                else:
+                    chunk.append([key, order, item, tw_from, tw_to])
+
+            array.append(chunk)
+
+    else:
+
+        # if one type of truck input:
+        target_1 = params['target_1']
+
+        for x in range(len(iterable)):
+            chunk_seq = iterable[x]
+
+            key = chunk_seq[0]
+            order = chunk_seq[1]
+            item = chunk_seq[2]
+            tw_from = chunk_seq[3]
+            tw_to = chunk_seq[4]
+
+            chunk_sum += item
+
+            if chunk_sum > target_1:
+
+                yield chunk
+                chunk = [[key, order, item, tw_from, tw_to]]
+                chunk_sum = item
+            else:
+                chunk.append([key, order, item, tw_from, tw_to])
+    # edit
+    if chunk:
+        yield chunk
+
 # Sorting happening here:
 def sort_by_postals(starting_address, postal_list):
-
-# def sort_by_postals(starting_address, postal_sequence_list, sort_company):
-
-    # Set the up the required lists
-    # Postal_dictionary to store same postal codes into 10
-    # Postal_list refers to the unique list of postal codes
-    # Order_dict to store all the specific details pertaining to the order
-
-    # if sort_company == "true":
-    #
-    #     postal_dictionary, postal_list, order_dict, capacity_dic, capacity_list, company_list = sorting_company.setLists_company(
-    #         postal_sequence_list)
-    # else:
-    #     # Get the starting address
-    #     postal_dictionary, postal_list, order_dict, capacity_dic, capacity_list = setLists(postal_sequence_list)
 
     starting_address = str(starting_address)
     num_of_vehicle = 1
@@ -1165,11 +1322,8 @@ def sort_by_postals(starting_address, postal_list):
     # Sort the postal code using AreCodeRanking Dictionary
     custPostal_arr_sorted = sortPostalArray(areaCodeRanking_dict, postal_list)
 
-
     # Split postal codes into list for each vehicle
-    # vehicle_postal_list = chunkIt(custPostal_arr_sorted, num_of_vehicle)
-
-    vehicle_postal_list = chunkIt(custPostal_arr_sorted, 1)
+    vehicle_postal_list = chunkIt(custPostal_arr_sorted, num_of_vehicle)
 
     # Set the Starting postal code near in 1st rank of postal code
     actual_vehicle_postal_list = []
@@ -1236,7 +1390,6 @@ def convert_to_string(iterable):
 
     return result_str
 
-
 def startingpoint_latlong(starting_address):
 
     compare_startPos = postalRecordDB.check_if_exists(starting_address)
@@ -1246,8 +1399,10 @@ def startingpoint_latlong(starting_address):
         if starting_address[0] == "0":
             starting_address = starting_address.lstrip("0")
             compare_startPos = postalRecordDB.check_if_exists(starting_address)
+
         else:
-            print('starting_point')
+
+            logging.info(starting_address)
             nearest_postal_code = postalRecordDB.query().filter(postalRecordDB.postal_code > starting_address).get(
                 keys_only=True)
             compare_startPos = nearest_postal_code.id()
@@ -1313,21 +1468,18 @@ def setLists(list):
     # Create Order dictionary to store all the values that relate to the specific order
     order_dict = {}
 
-    # Create Capacity dictionary to store all the values that relate to the specific order
-    capacity_dic = {}
-
     for i in range(0, len(list)):
 
         order = list[i]
 
         postal_list.append(order[0])
+
         capacity_list.append([order[0], int(order[2])])
 
         if order[1] and order[2] not in postal_dictionary.keys():
             postal_dictionary[order[0]] = []
 
-        postal_dictionary[order[0]].append(str(order[1]))
-        postal_dictionary[order[0]].append(order[2])
+        postal_dictionary[order[0]].append([str(order[1]), order[2]])
 
         if order[0] and order[2] not in order_dict.keys():
             order_dict[order[1]] = []
@@ -1335,14 +1487,7 @@ def setLists(list):
         for j in range(0, len(order)):
             order_dict[order[1]].append(str(order[j]))
 
-        if order[0] and order[1] not in capacity_dic.keys():
-            capacity_dic[order[2]] = []
-
-        for k in range(0, len(order)):
-            capacity_dic[order[2]].append(str(order[k]))
-
-    return postal_dictionary, postal_list, order_dict, capacity_dic, capacity_list
-
+    return postal_dictionary, postal_list, order_dict, capacity_list
 
 # Sort the postal array
 def sortPostalArray(areaCodeRanking_dict, list):

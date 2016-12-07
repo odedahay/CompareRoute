@@ -657,7 +657,7 @@ $('#routeBtn').click(function () {
                 $("#visualization_table").hide();
                 $("#visualization_table_tw").hide();
                 $(".hidden_field_legend").hide();
-
+                $(".well").hide();
 
                 errorBox.hide();
                 $("#routeBtn").prop('disabled', true);
@@ -690,6 +690,7 @@ $('#routeBtn').click(function () {
                 $("#visualization_tab_comp").empty();
 
                 $("#map_legend").empty();
+                $("#map_legend_tw").empty();
 
                 var status = response.status;
                 var sort_company = response.sort_company;
@@ -699,21 +700,16 @@ $('#routeBtn').click(function () {
                     // HTML Tags Reference:
                     var $h2_success = $("<h2 style='font-weight:normal'></h2>");
                     var $download_div = $('<div id="download_button" style="margin:20px 0;"></div>');
-                    var $download_button = $('<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>'); //<a id="btn_export" class="btn btn-success btn-xs">Export to excel</a>
+                    var $download_button = $('<button id="btn_export" class="btn btn-success btn-xs">Export to excel</button>');
 
                     var $ul_sequence = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
                     var $ul_result = $('<ul class="list-group" style="list-style-type:none; font-size:16px;"></ul>');
-
-
 
                     // Main table
                     var $ParentTable = $('<table class="tableL table-bordered"></table>');
 
                     // T-head for Consolidation for Companies
                     var $tableThead_comp = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
-
-                    // T-head for Capacity
-                    var $table_priority_capacity = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
 
                     // Body of table Details
                     var $tableTbody = $('<tbody></tbody>');
@@ -744,8 +740,6 @@ $('#routeBtn').click(function () {
                     //List of Data Entry
                     $sorted_sequence.append($ul_sequence);
                     $sorted_sequence.append($ul_result);
-                    // $sorted_sequence.append($p_note1);
-                    // $sorted_sequence.append($p_note);
 
                     // Div for Table for Postal Code list
                     $sorted_sequenceTable.append($p_dlBtn);
@@ -817,6 +811,7 @@ $('#routeBtn').click(function () {
                         $sorted_sequence.show();
                         $sorted_sequenceTable.show();
                         $sorted_sequenceTable_tw.show();
+
                         //- - - - - - - - Info Box - - - - - - - - - -//
 
                         $(".hidden_field_legend").show();
@@ -893,7 +888,8 @@ $('#routeBtn').click(function () {
                                      var order_id = company_details[1];
                                      var capacity_load = company_details[2];
                                      var company_id = company_details[3];
-                                         //company_id = company_id.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
+
+                                     //company_id = company_id.toLowerCase().replace(/\b[a-z]/g, function(letter) {return letter.toUpperCase(); });
 
                                     // Counter to check for repeated postal codes
                                     postal_code_arr.push(postal_code);
@@ -985,13 +981,9 @@ $('#routeBtn').click(function () {
 
                         //Time Windows
                         var tw_proposed_seq = response.data_result[0].time_windows_data.tw_proposed_seq;
-                        var tw_propose_route_value = response.data_result[0].time_windows_data.tw_propose_route_value;
-                        var tw_proposed_map = response.data_result[0].time_windows_data.tw_latlng_array;
-
-                        //total_summary_saving
+                        var tw_proposed_distance = response.data_result[0].time_windows_data.tw_propose_route_value;
                         var tw_total_savings = response.data_result[0].time_windows_data.tw_total_savings;
-
-                        console.log("tw_proposed_distance", tw_propose_route_value);
+                        var tw_proposed_map = response.data_result[0].time_windows_data.tw_latlng_array;
 
                         // Get the value from unsorted Postal Code
                         var postal_seq = postal_sequence;
@@ -1015,6 +1007,7 @@ $('#routeBtn').click(function () {
                             var order_postal_split = order_postal.split(" ");
 
                             if (i > 0){
+
                                 order_postal_arr.push(order_postal_split)
                             }
                         }
@@ -1045,6 +1038,7 @@ $('#routeBtn').click(function () {
                         $sorted_sequenceTable_tw.show();
 
                         $(".hidden_field_legend").show();
+                        $(".well").show();
 
                         // Counter for Postal Code Sorted;
                         var counter = 0;
@@ -1054,8 +1048,8 @@ $('#routeBtn').click(function () {
                             var postalSorted = counter++;
                         }
 
+                        // Show message once generated result
                         $h2_success.text('Successful!')
-
 
                         // Condition for Route by Truck:
                         if(optionsTruck === true){
@@ -1150,7 +1144,6 @@ $('#routeBtn').click(function () {
                                 }
 
                                 // Table Layout 2
-
                                 $sorted_sequenceTable_tw.append($proposedTable_tw);
                                 $proposedTable_tw.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>TW From</th><th>TW To</th></tr>");
 
@@ -1162,8 +1155,10 @@ $('#routeBtn').click(function () {
                                     var latlng_value = tw_proposed_map[i];
 
                                     var truck_num = i + 1;
-
                                     var postal_code_tw = [];
+
+                                    // Truck Counter
+                                    $("#map_legend_tw").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
 
                                     // Summary Table Truck Counter
                                     $proposedTable_tw.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='5'><b>Delivery Truck ("+ truck_num +" ) :  </b></td></td>" );
@@ -1186,10 +1181,13 @@ $('#routeBtn').click(function () {
                                         $proposedTable_tw.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+tw_from+"</td><td>"+tw_to+"</td></tr>");
                                     }
                                 }
+                                $("#floating-panel_tw").show();
                             // end of Time windows layout
 
                             }
                             else{
+
+                                $("#floating-panel_tw").hide();
 
                                 // Breakdown Table of the Generated Results for Route by Truck
                                 $p_note1.text('Proposed Delivery Routes Breakdown');
@@ -1236,18 +1234,21 @@ $('#routeBtn').click(function () {
                         // Condition for Route by Capacity:
                         if (priority_capacity === true){
 
-                            // Summary Table
+                            // T-head for Capacity
+                            var $table_priority_capacity = $('<thead><tr><th>Summary Details </th><th></th></tr></thead>');
+
+                            ///////  Summary Table   //////
                             $sorted_sequence.append($ParentTable);
 
-                            // Append the Thead (title of each col)
+                            // Append the T-head (title of each col)
                             $ParentTable.append($table_priority_capacity);
                             $ParentTable.append($tableTbody);
-
                             $tableTbody.append($tableTR)
 
                             // Col 1
                             $tableTR.append($tableTd1);
                             $tableTd1.append('Starting Postal Code : '+starting);
+
                             // Col 2
                             $tableTR.append($tableTd2);
                             $tableTd2.append($ul_table);
@@ -1264,8 +1265,6 @@ $('#routeBtn').click(function () {
                                      var vehicle_name = vehicle_names[n];
 
                                      truckName_arr.push(vehicle_name);
-
-                                   // $ul_table.append('<li>Delivery Truck Type '+(n+1)+' :  ' +vehicle_name+' </li>');
                                 }
                              }
 
@@ -1274,6 +1273,7 @@ $('#routeBtn').click(function () {
                                 var vehicle = truckName_arr[i];
 
                                 var postal_code_arr = [];
+
                                 // Sum of Total Load per Trucks
                                 var loadsCount = postal_seq_vehicle.reduce(function(sum, current){
                                         return sum + current[2];
@@ -1293,7 +1293,6 @@ $('#routeBtn').click(function () {
 
                                     for (c = 0; c < new_postal_code.length; c++){
                                         var new_counter_num = c + 1;
-
                                     }
 
                                  }
@@ -1305,10 +1304,63 @@ $('#routeBtn').click(function () {
                             // Sum all Delivery Postal Code
                             var sum = counter_num_array.reduce(add, 0);
 
-                            // Breakdown Table of the Generated Results
-                            $p_note2.text('Breakdown of Proposed Delivery Routes');
+                            ////// Layout of breakdown for proposed routes /////
 
-                            // Table Layout
+                            if (time_windows === true ){
+
+                                // Breakdown Table of the Generated Results for Route by Truck
+                                $p_note2.text('Proposed Delivery Routes Breakdown w/ Time Windows');
+
+                               // Table Layout 2
+                                $sorted_sequenceTable_tw.append($proposedTable_tw);
+                                $proposedTable_tw.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>Cargo Unit</th><th>TW From</th><th>TW To</th></tr>");
+
+                                // Loop the Postal Sequence
+                                for(i = 0; i < tw_proposed_seq.length; i++){
+
+                                    var new_postal = tw_proposed_seq[i];
+
+                                    var latlng_value = tw_proposed_map[i];
+
+                                    var truck_num = i + 1;
+                                    var postal_code_tw = [];
+
+                                    // Truck Counter
+                                    $("#map_legend_tw").append("<li><i class='fa fa-arrow-circle-o-right' aria-hidden='true'></i> Delivery Truck " + (i + 1 ) + " <i class='marker_map marker_img"+ (i + 1) +"'></i></li>");
+
+                                    // Summary Table Truck Counter
+                                    $proposedTable_tw.append("<tr><td><i class='fa fa-truck' aria-hidden='true'></i></td><td colspan='6'><b>Delivery Truck ("+ truck_num +" ) :  </b></td></td>" );
+
+                                     for(k = 0; k < new_postal.length; k++){
+                                         var postal_seq_new = new_postal[k]
+
+                                         var postal_code = postal_seq_new[0];
+                                         var order_id = postal_seq_new[1];
+                                         var cargo_unit = postal_seq_new[2];
+                                         var tw_from = postal_seq_new[3];
+                                         var tw_to = postal_seq_new[4];
+
+                                         var counter_num = k + 1;
+
+                                         if (tw_from === undefined && tw_to == undefined){
+
+                                             tw_from = "0";
+                                             tw_to = "0";
+                                         }
+                                        $proposedTable_tw.append("<tr><td class='postal_num'>"+ counter_num +"</td><td>"+postal_code+"</td><td>"+order_id+"</td><td>"+cargo_unit+"</td><td>"+tw_from+"</td><td>"+tw_to+"</td></tr>");
+                                    }
+                                }
+                                $("#floating-panel_tw").show();
+
+                            } // end of if for TW
+
+                            $("#floating-panel_tw").hide();
+
+                            // Breakdown Table of the Generated Results
+                            $p_note1.text('Proposed Delivery Routes Breakdown');
+
+                            // Table Layout 1
+                            $sorted_sequenceTable.append($proposedTable);
                             $proposedTable.append("<tr><th>#</th><th>Postal Code</th> <th>Order ID</th><th>Cargo Unit</th></tr>");
 
                             // Loop the Postal Sequence
@@ -1353,21 +1405,16 @@ $('#routeBtn').click(function () {
 
                         if (time_windows === true){
 
-                            // current routes = order_postal_arr
-                            // proposed routes = result_list
-                            // map_lat_long = latlng_array
-
-
                             // Generate Map with Time Windows Routes
                             generateGMap_tw(starting, proposed_postal_list, order_postal_arr, tw_proposed_map);
 
                             //Table below map - Summary-Value
                             $('#visualization_table_tw').show()
                             $('#currentTotalDist_tw').html(current_route_value.toFixed(2) + ' km');
-                            $('#proposedTotalDist_tw').html(tw_propose_route_value.toFixed(2) + ' km');
+                            $('#proposedTotalDist_tw').html(tw_proposed_distance.toFixed(2) + ' km');
                             $('#totalSavings_tw').html(tw_total_savings.toFixed(2) + '%');
 
-                              //Visual Map Function
+                            //Visual Map Function
                             generateGMap(starting, result_list, order_postal_arr, latlng_array);
 
                             //Table below map - Summary-Value
@@ -1446,7 +1493,6 @@ $('#routeBtn').click(function () {
    } //end of validation
 
 }); //end of function
-
 
 
 // Generate Google Map according to the sorted postal sequence
@@ -1616,8 +1662,6 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
             var postal = veh_postal[j];
             var latlng = ven_latlng[j];
 
-//            console.log("postal", postal);
-//            console.log("latlng", latlng);
 
             // var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
             // Colors to differentiate the polygons
@@ -1647,20 +1691,6 @@ function generateGMap(starting_postal, result_list, order_postal_arr, latlng_arr
                 zIndex:10,
             });
             marker.setOptions({'opacity': 0.8})
-
-            ///get array of markers currently in cluster
-            /*var allMarkers = mc.getMarkers();*/
-            //check to see if any of the existing markers match the latlng of the new marker
-            /*if (allMarkers.length != 0) {
-                for (i=0; i < allMarkers.length; i++) {
-                  var existingMarker = allMarkers[i];
-                  var pos = existingMarker.getPosition();
-
-                  if (latlng.equals(pos)) {
-                    text = text + " & " + content[i];
-                  }
-                }
-              }*/
 
             var content = "";
 
@@ -2071,7 +2101,7 @@ function generateGMap_tw(starting_postal, proposed_postal_list, order_postal_arr
     }
 
     // Create "Visualization" header
-    $("<h3>").attr("id", "header_visualization_tw").append("Visualization for Time Windows".bold()).appendTo("#visualization_tw");
+    $("<h3>").attr("id", "header_visualization").append("Visualization for Time Windows".bold()).appendTo("#visualization_tw");
 
     // Format the postal codes (split by "," and removal of whitespaces) for calling Geocoding API
     var vehicle_postal_list_full = [];
@@ -2192,7 +2222,7 @@ function generateGMap_tw(starting_postal, proposed_postal_list, order_postal_arr
         async: false,
         success: function(result){
 
-//            console.log("result", result);
+        // console.log("result", result);
 
             var lat = result.results[0].geometry.location.lat
             var lng = result.results[0].geometry.location.lng
@@ -2274,11 +2304,8 @@ function generateGMap_tw(starting_postal, proposed_postal_list, order_postal_arr
 
                     //content += " " + (j+1) + " ";
                     content += "[" + postal2 + "]";
-
                 }
-
             }
-
 
             content += "</br>" + postal;
             createAndBindMarker(marker, content, map);

@@ -391,6 +391,7 @@
     </div>
 
     <div class="collapse-1" id="collapseExample">
+
         <div class="well">
             <!-- Sorted Box -->
             <div class="row">
@@ -443,13 +444,6 @@
                     <div id="loading_map" style="display: block; "></div>
                     <div id="visualization"><!-- Elements inside here will be created by JavaScript --></div>
                 </div>
-                <br />
-                <div class="col-md-12">
-                    <div id="loading_map_tw" style="display: block; "></div>
-                    <div id="visualization_tw"><!-- Elements inside here will be created by JavaScript --></div>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-md-12 hidden_field_legend">
                     <div class="main_box_mlegend">
                         <ul class="list-inline up_20" id="map_legend"></ul>
@@ -460,23 +454,11 @@
                     </div>
 
                 </div>
-            </div>
-            <!--  Time windows Visualization -->
-            
-            <!--  Company Visualization -->
-            <div class="row">
                 <div class="col-md-12">
-                      <div class="row" style="display:none;" id="visualization_tab_comp"></div>
-                </div>
-            </div>
-            <!--  Single Visualization -->
-            <div class="row">
-                 <div class="col-md-12">
                     <div id="visualization_table" style="display:none;">
-
+                        <p>Summary Savings</p>
                         <table id="summaryTable" class="tableL table-bordered">
 
-                            <b>Summary Savings</b>
                             <tr>
                                 <th>Current Total Distance</th>
                                 <th>Proposed Total Distance </th>
@@ -491,16 +473,28 @@
                         </table>
                     </div> <!-- // visualization_table -->
                  </div>
-            </div>
-            <!-- for TW-->
-            <div class="row">
-                 <div class="col-md-12">
+                <!-- for TW-->
+                <br />
+                <div class="col-md-12">
+                    <div id="loading_map_tw" style="display: block; "></div>
+                    <div id="visualization_tw"><!-- Elements inside here will be created by JavaScript --></div>
+                </div>
+
+                <div class="col-md-12 hidden_field_legend">
+                    <div class="main_box_mlegend">
+                        <ul class="list-inline up_20" id="map_legend_tw"  style="display: none; "></ul>
+                        <div id="floating-panel_tw" class="text-right">
+                            <input id="addLines_tw" type=button value="Remove line" class="btn btn-success btn-xs">
+                            <input id="backagain_tw" type=button value="Restore line" class="btn btn-success btn-xs ">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
                     <div id="visualization_table_tw" style="display:none;">
-
+                         <p>Summary Savings</p>
                         <table id="summaryTable_tw" class="tableL table-bordered">
-
-                            <b>Summary Savings</b>
-                            <tr>
+                           <tr>
                                 <th>Current Total Distance</th>
                                 <th>Proposed Total Distance </th>
                                 <th>Total Savings</th>
@@ -515,6 +509,16 @@
                     </div> <!-- // visualization_table -->
                  </div>
             </div>
+
+            <!--  Company Visualization -->
+            <div class="row">
+                <div class="col-md-12">
+                      <div class="row" style="display:none;" id="visualization_tab_comp"></div>
+                </div>
+            </div>
+
+
+
         </div><!-- well -->
 
     </div>

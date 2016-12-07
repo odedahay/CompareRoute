@@ -16,6 +16,7 @@ import urllib2
 import logging
 import re
 import time
+from datetime import datetime
 import itertools
 import operator
 
@@ -96,41 +97,32 @@ class SortingPrep(webapp2.RequestHandler):
         # 1st fields for capacity truck
         type_of_truck_cc1 = self.request.get("type_of_truck_cc1")
         type_of_truck_cc2 = self.request.get("type_of_truck_cc2")
-        type_of_truck_cc3 = self.request.get("type_of_truck_cc3")
 
         truck_capacity_cc1 = self.request.get("truck_capacity_cc1")
         truck_capacity_cc2 = self.request.get("truck_capacity_cc2")
-        truck_capacity_cc3 = self.request.get("truck_capacity_cc3")
 
         num_of_truck_cc1 = self.request.get("num_of_truck_cc1")
         num_of_truck_cc2 = self.request.get("num_of_truck_cc2")
-        num_of_truck_cc3 = self.request.get("num_of_truck_cc3")
 
         # 2nd fields for Capacity Truck
         type_of_truck_cc21 = self.request.get("type_of_truck_cc21")
         type_of_truck_cc22 = self.request.get("type_of_truck_cc22")
-        type_of_truck_cc23 = self.request.get("type_of_truck_cc23")
 
         truck_capacity_cc21 = self.request.get("truck_capacity_cc21")
         truck_capacity_cc22 = self.request.get("truck_capacity_cc22")
-        truck_capacity_cc23 = self.request.get("truck_capacity_cc23")
 
         num_of_truck_cc21 = self.request.get("num_of_truck_cc21")
         num_of_truck_cc22 = self.request.get("num_of_truck_cc22")
-        num_of_truck_cc23 = self.request.get("num_of_truck_cc23")
 
         # 3rd field for Capacity Truck
         type_of_truck_cc31 = self.request.get("type_of_truck_cc21")
         type_of_truck_cc32 = self.request.get("type_of_truck_cc22")
-        type_of_truck_cc33 = self.request.get("type_of_truck_cc23")
 
         truck_capacity_cc31 = self.request.get("truck_capacity_cc21")
         truck_capacity_cc32 = self.request.get("truck_capacity_cc22")
-        truck_capacity_cc33 = self.request.get("truck_capacity_cc23")
 
         num_of_truck_cc31 = self.request.get("num_of_truck_cc21")
         num_of_truck_cc32 = self.request.get("num_of_truck_cc22")
-        num_of_truck_cc33 = self.request.get("num_of_truck_cc23")
 
         # Field truck counter
         add_truck_cc1_1 = self.request.get("add_truck_cc1_1")
@@ -169,7 +161,7 @@ class SortingPrep(webapp2.RequestHandler):
 
         if credits_account == None:
 
-            print "Error in Credits Account"
+            logging.info(credits_account)
             errors.extend(["Error in Credits Access <br />"])
 
         # Remove trailing whitespaces
@@ -221,7 +213,6 @@ class SortingPrep(webapp2.RequestHandler):
         vehicle_quantity_list = []
 
         # For empty order id and capacity
-        temp_comp = ['0', '0', '0']
         temp_order_id = ['0']
 
         # For Route by Truck Capacity validation
@@ -431,7 +422,6 @@ class SortingPrep(webapp2.RequestHandler):
         num_post_code = 0
 
         # Extract the postal pair and validate the postal code while ignoring first line of headers
-        # Note: Order ID is untouched as we do not know their format
         for index in range(1, len(postal_sequence_split)):
 
             # Retrieve each postal pair
@@ -454,11 +444,16 @@ class SortingPrep(webapp2.RequestHandler):
                     if len(postal_pair_split) == 1:
                         postal_pair_split.extend(temp_order_id)
 
+                    if len(postal_pair_split) == 2 or len(postal_pair_split) == 3:
+                        errors.extend(["  Please Check your Delivery Location Details for Time Windows Format <br />"])
+                        break
+
                     postal_code = str(postal_pair_split[0])
                     order_id = str(postal_pair_split[1])
                     tw_from = str(postal_pair_split[2])
                     tw_to = str(postal_pair_split[3])
 
+                    # Checking Postal Code
                     # Add "0" in front of five digit postal codes
                     if len(postal_code) == 5:
                         postal_code = "0" + postal_code
@@ -471,8 +466,19 @@ class SortingPrep(webapp2.RequestHandler):
                     if not str.isdigit(postal_code) or int(postal_code) >= 830000:
                         errors.extend([postal_code, ' Invalid postal codes <br />'])
 
+                    # Checking TW Format
+                    tw_format = is_time_format(tw_from)
+
+                    if not tw_format:
+                        # send error if invalid
+                        errors.extend([tw_from, ' - ',  tw_to, ' - invalid Time Windows format <br />'])
+                        break
+
+                    # convert time only, add zero for those have 1 decimal
+                    new_tw_from = datetime.strptime(tw_from, '%H:%M:%S').time()
+
                     # save to an empty array
-                    postal_sequence_list.append([postal_code, str(order_id), tw_from, tw_to])
+                    postal_sequence_list.append([postal_code, str(order_id), new_tw_from, tw_to])
 
                 else:
 
@@ -502,32 +508,83 @@ class SortingPrep(webapp2.RequestHandler):
             # Route by Capacity:
             if priority_capacity == "true":
 
-                if len(postal_pair_split) == 1:
-                    errors.extend(["Please check your format for  Maximizing Truck Capacity<br />"])
-                    break
+                if time_windows == "true":
 
-                if len(postal_pair_split) == 2:
-                    errors.extend(["Please check your format for  Maximizing Truck Capacity <br />"])
-                    break
+                    # show error if not 4 column
+                    if len(postal_pair_split) == 1:
+                        postal_pair_split.extend(temp_order_id)
 
-                # if len(postal_pair_split) != 3:
-                #     postal_pair_split.extend(forEmp_OrderID_Cap)
+                    if len(postal_pair_split) == 2 or len(postal_pair_split) == 3:
+                        errors.extend(["  Please Check your Delivery Location Details for Time Windows Format <br />"])
+                        break
 
-                # If Postal Code reverse in textbox
-                postal_code = str(postal_pair_split[0])
-                order_id = str(postal_pair_split[1])
-                cargo_unit = int(postal_pair_split[2])
+                    postal_code = str(postal_pair_split[0])
+                    order_id = str(postal_pair_split[1])
+                    cargo_unit = int(postal_pair_split[2])
+                    tw_from = str(postal_pair_split[3])
+                    tw_to = str(postal_pair_split[4])
 
-                # Add "0" in front of five digit postal codes
-                if len(postal_code) == 5:
-                    postal_code = "0" + postal_code
+                    # Checking Postal Code
+                    # Add "0" in front of five digit postal codes
+                    if len(postal_code) == 5:
+                        postal_code = "0" + postal_code
 
-                # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
-                if truck_volume > int(truck_capacity):
-                    errors.extend([postal_code, " exceeding to the minimum Truck Capacity <br />"])
+                    # Any Postal Code below 4 will throw error
+                    if len(postal_code) < 4:
+                        errors.extend(["  Please Check ", postal_code, ", it should 6 digits <br />"])
 
-                # save in empty array
-                postal_sequence_list.append([postal_code, str(order_id), int(truck_volume), cargo_unit])
+                    # The value 830000 is for invalid postal codes (Currently we have up to 82xxxx only)
+                    if not str.isdigit(postal_code) or int(postal_code) >= 830000:
+                        errors.extend([postal_code, ' Invalid postal codes <br />'])
+
+                    # Checking cargo_unit
+                    # checking_cargo = isinstance(cargo_unit, int)
+
+                    # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
+                    if cargo_unit > int(truck_capacity):
+                        errors.extend([postal_code, " exceeding to the minimum Truck Capacity <br />"])
+                        break
+
+                    # Checking TW Format
+                    tw_format = is_time_format(tw_from)
+
+                    if not tw_format:
+                        # send error if invalid
+                        errors.extend([tw_from, ' - ', tw_to, ' - invalid Time Windows format <br />'])
+                        break
+
+                    # convert time only, add zero for those have 1 decimal
+                    new_tw_from = datetime.strptime(tw_from, '%H:%M:%S').time()
+
+                    # save in empty array
+                    postal_sequence_list.append([postal_code, str(order_id), int(cargo_unit), str(new_tw_from), str(tw_to)])
+
+                else:
+
+                    if len(postal_pair_split) == 1:
+                        errors.extend(["Please check your format for  Maximizing Truck Capacity<br />"])
+                        break
+
+                    if len(postal_pair_split) == 2:
+                        errors.extend(["Please check your format for  Maximizing Truck Capacity <br />"])
+                        break
+
+                    # If Postal Code reverse in textbox
+                    postal_code = str(postal_pair_split[0])
+                    order_id = str(postal_pair_split[1])
+                    cargo_unit = int(postal_pair_split[2])
+
+                    # Add "0" in front of five digit postal codes
+                    if len(postal_code) == 5:
+                        postal_code = "0" + postal_code
+
+                    # Check each postal vol. is not above to "truck_capacity" e.g. 11 > 10
+                    if cargo_unit > int(truck_capacity):
+                        errors.extend([postal_code, " exceeding to the minimum Truck Capacity <br />"])
+                        break
+
+                    # save in empty array
+                    postal_sequence_list.append([postal_code, str(order_id), int(cargo_unit), cargo_unit])
 
             if sort_company == "true":
 
@@ -834,6 +891,7 @@ class SortingPrep(webapp2.RequestHandler):
                 # Validate if the capacity truck is according to available "num_of_truck"
                 # result_num_truck = is number of truck is used through capacity
                 result_num_truck = len(propose_result)
+
                 if priority_capacity == "true":
 
                     # Vehicle Result base of the priority:
@@ -873,8 +931,6 @@ class SortingPrep(webapp2.RequestHandler):
 
                     # Get the distance
                     tw_propose_route_value = result_distance_latlng(tw_postal_list, origin_destination, num_post_code)
-
-                    print "ode", tw_propose_route_value
 
                     # Converting the total percentage saving of distance
                     difference_total = current_route_value - tw_propose_route_value
@@ -2210,6 +2266,18 @@ def latlong_summary_starting(list, origin_destination):
 
     return distance_val
 
+# time_re = re.compile(r'^(([01]\d|2[0-3]):([0-5]\d)|24:00)$')
+#
+# def is_time_format(s):
+#     return bool(time_re.match(s))
+
+def is_time_format(input):
+
+    try:
+        time.strptime(input, '%H:%M:%S')
+        return True
+    except ValueError:
+        return False
 
 # - - - - - validation for company number - - - - - #
 
