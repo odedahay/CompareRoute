@@ -26,9 +26,14 @@ import time
 # sorting function for company
 import sorting_company
 
-def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quantity, email, has_return,
-                           priority_capacity, priority_capacity_comp, api_user,
-                           sort_company, truck_capacity_grp, options_truck, time_windows):
+def sort_by_postals_chunck(
+                           starting_address,
+                           postal_sequence_list,
+                           vehicle_quantity, email, has_return,
+                           priority_capacity, priority_capacity_comp,
+                           api_user, sort_company, truck_capacity_grp,
+                           options_truck, time_windows
+                          ):
 
     # Containing Array for Truck Details
     grp_truck = []
@@ -40,6 +45,8 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
     # time windows array
     proposed_tw_seq = []
     tw_proposed_list = []
+    # proposed_tw_comp = []
+    # tw_proposed_comp = []
 
     # Postal_dictionary to store same postal codes into 10
     # Postal_list refers to the unique list of postals codes
@@ -67,13 +74,11 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         starting_address_seq = [starting_address, "0"]
         postal_dictionary, postal_list, order_dict = setLists_multi_truck(postal_sequence_list)
 
-    print "postal_list_qqq", postal_list
-
+    # Sorting here:
     # Sorted Postal Code
     postal_sorted = sort_by_postals(starting_address, postal_list)
 
-    print "postal_sorted", postal_sorted
-
+    # Optimisation type: Route by Maximizing Truck Capacity
     if priority_capacity == "true":
 
         # Find Postal code that match to the Current cargo unit
@@ -200,111 +205,202 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         num_of_vehicles = len(vehicle_postal_list_new)
         vehicle_quantity = num_of_vehicles
 
-    elif sort_company == "true" and priority_capacity_comp == "true":
+    # elif sort_company == "true" and priority_capacity_comp == "true":
+    #
+    #     result_postal = []
+    #     result_postal_seq = []
+    #
+    #     for i in range(len(postal_sorted)):
+    #         postal = postal_sorted[i]
+    #
+    #         for x in range(len(postal_sequence_list)):
+    #             order_postal = postal_sequence_list[x]
+    #
+    #             postal2 = order_postal[0]
+    #             orderId = order_postal[1]
+    #             capacity = order_postal[2]
+    #             campany_id = order_postal[3]
+    #
+    #             # If postal codes has length of 5
+    #             if len(postal2) == 5:
+    #                 postal2 = "0" + postal2
+    #
+    #             # If postal codes match, display the relevant Capacity loads
+    #             if postal == postal2:
+    #                 result_postal_seq.append([postal, orderId, capacity, campany_id])
+    #                 result_postal.append([postal, capacity])
+    #
+    #     # Define and assign variables for truck
+    #     truck_dictionary_comp = truck_details(truck_capacity_grp)
+    #
+    #     # Chunk according to Capacity / No of truck
+    #     vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
+    #
+    #     # Current Route
+    #     vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
+    #
+    #     # For proposed Postal Sequence
+    #     vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
+    #
+    #     # For Current Postal Sequence  # vehicle_postal_list_orig_seq
+    #     vehicle_postal_list_orig_seq = list(chunk_to_sum_no_truck_seq_comp(postal_sequence_list, *truck_capacity_grp, **truck_dictionary_comp))
 
-        result_postal = []
-        result_postal_seq = []
-
-        for i in range(len(postal_sorted)):
-            postal = postal_sorted[i]
-
-            for x in range(len(postal_sequence_list)):
-                order_postal = postal_sequence_list[x]
-
-                postal2 = order_postal[0]
-                orderId = order_postal[1]
-                capacity = order_postal[2]
-                campany_id = order_postal[3]
-
-                # If postal codes has length of 5
-                if len(postal2) == 5:
-                    postal2 = "0" + postal2
-
-                # If postal codes match, display the relevant Capacity loads
-                if postal == postal2:
-                    result_postal_seq.append([postal, orderId, capacity, campany_id])
-                    result_postal.append([postal, capacity])
-
-        # Define and assign variables for truck
-        truck_dictionary_comp = truck_details(truck_capacity_grp)
-
-        # Chunk according to Capacity / No of truck
-        vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
-
-        # Current Route
-        vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
-
-        # For proposed Postal Sequence
-        vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
-
-        # For Current Postal Sequence  # vehicle_postal_list_orig_seq
-        vehicle_postal_list_orig_seq = list(chunk_to_sum_no_truck_seq_comp(postal_sequence_list, *truck_capacity_grp, **truck_dictionary_comp))
-
+    # Optimisation type: Consolidated Delivery for Multiple Companies
     elif sort_company == "true":
 
-        # Route for Multiple Trucks's optimisation
-        # 1. Chunk the list
-        # 2. Find the postal codes match, display to the relevant Order ID
+        if priority_capacity_comp == "true":
 
-        # Consolidate Delivery for Multiple Companies using Multiple Truck's optimisation
-        # 1. Chunk the list
-        # 2. Find postal code match to the current relevant order ID
+            result_postal = []
+            result_postal_seq = []
 
-        # Proposed Route
-        vehicle_postal_list_new = chunkIt(postal_sorted, vehicle_quantity)
-
-        # Current Route
-        vehicle_current_postal_list = chunkIt(postal_list, vehicle_quantity)
-
-        # Proposed Postal code sequence display in UI:
-        for new_list in vehicle_postal_list_new:
-            new_list_chuncked = new_list
-
-            result_postal_orders1 = []
-
-            for chunked in new_list_chuncked:
-                new_postal_code = chunked
+            for i in range(len(postal_sorted)):
+                postal = postal_sorted[i]
 
                 for x in range(len(postal_sequence_list)):
-                    old_postal_sequence = postal_sequence_list[x]
+                    order_postal = postal_sequence_list[x]
 
-                    postal_old = old_postal_sequence[0]
-                    order_id = old_postal_sequence[1]
-                    capacity_load = old_postal_sequence[2]
-                    campany_id = old_postal_sequence[3]
+                    postal2 = order_postal[0]
+                    orderId = order_postal[1]
+                    capacity = order_postal[2]
+                    campany_id = order_postal[3]
 
-                    if new_postal_code == postal_old:
-                        result_postal_orders1.append([new_postal_code, order_id, capacity_load, campany_id])
+                    # If postal codes has length of 5
+                    if len(postal2) == 5:
+                        postal2 = "0" + postal2
 
-            result_postal_orders2.append(result_postal_orders1)
+                    # If postal codes match, display the relevant Capacity loads
+                    if postal == postal2:
+                        result_postal_seq.append([postal, orderId, capacity, campany_id])
+                        result_postal.append([postal, capacity])
 
-        # Current Postal code sequence display in UI:
-        for current_list in vehicle_current_postal_list:
-            current_list_chuncked = current_list
+            # Define and assign variables for truck
+            truck_dictionary_comp = truck_details(truck_capacity_grp)
 
-            current_postal = []
+            # Chunk according to Capacity / No of truck
+            vehicle_postal_list_new = list(chunk_to_sum_no_truck_comp(result_postal, *truck_capacity_grp, **truck_dictionary_comp))
 
-            for current_chunck in current_list_chuncked:
-                current_chuncked = current_chunck
+            # Current Route
+            vehicle_current_postal_list = list(chunk_to_sum_no_truck_comp(capacity_list, *truck_capacity_grp, **truck_dictionary_comp))
 
-                for x in range(len(postal_sequence_list)):
-                    old_postal_sequence = postal_sequence_list[x]
+            # For proposed Postal Sequence
+            vehicle_postal_list_new_seq = list(chunk_to_sum_no_truck_seq_comp(result_postal_seq, *truck_capacity_grp, **truck_dictionary_comp))
 
-                    postal_old = old_postal_sequence[0]
-                    order_id = old_postal_sequence[1]
-                    capacity_load = old_postal_sequence[2]
-                    campany_id = old_postal_sequence[3]
+            # For Current Postal Sequence  # vehicle_postal_list_orig_seq
+            vehicle_postal_list_orig_seq = list(chunk_to_sum_no_truck_seq_comp(postal_sequence_list, *truck_capacity_grp, **truck_dictionary_comp))
 
-                    if current_chuncked == postal_old:
-                        current_postal.append([current_chuncked, order_id, capacity_load, campany_id])
+        else:
 
-            current_postal_orders.append(current_postal)
+            # Route for Multiple Trucks's optimisation
+            # 1. Chunk the list
+            # 2. Find the postal codes match, display to the relevant Order ID
 
-        vehicle_postal_list_new_seq = result_postal_orders2
-        vehicle_postal_list_orig_seq = current_postal_orders
+            # Consolidate Delivery for Multiple Companies using Multiple Truck's optimisation
+            # 1. Chunk the list
+            # 2. Find postal code match to the current relevant order ID
+
+            # Proposed Route
+            vehicle_postal_list_new = chunkIt(postal_sorted, vehicle_quantity)
+
+            # Current Route
+            vehicle_current_postal_list = chunkIt(postal_list, vehicle_quantity)
+
+            # if checked the time windows option
+            if time_windows == "true":
+
+                for truck_count in vehicle_postal_list_new:
+                    result_postal_orders1 = []
+                    # result_postal_company = []
+
+                    for new_postal in truck_count:
+                        for postal, value in order_dict.iteritems():
+
+                            if new_postal == value[0]:
+                                result_postal_orders1.append([new_postal, value[1], value[2], value[3], value[4], value[5]])
+                                # result_postal_company.append([new_postal, value[4], value[5]])
+
+                    proposed_tw_seq.append(result_postal_orders1)
+                    # proposed_tw_comp.append(result_postal_company)
+
+                # sort the list according to Time Windows
+                for x in range(0, len(proposed_tw_seq)):
+                    truck_count = proposed_tw_seq[x]
+
+                    # sort for each time windows
+                    sorted_tw = sorted(truck_count, key=lambda x: x[4])
+                    tw_proposed_list.append(sorted_tw)
+
+                # # sort the list according to Time Windows
+                # for x in range(0, len(proposed_tw_comp)):
+                #     truck_count = proposed_tw_comp[x]
+                #
+                #     # sort for each time windows
+                #     sorted_tw = sorted(truck_count, key=lambda x: x[2])
+                #     tw_proposed_comp.append(sorted_tw)
+
+                # back to warehouse
+                if has_return == "true":
+
+                    for vehicle_postal_list_tw_seq in tw_proposed_list:
+                        vehicle_postal_list_tw_seq.append(starting_address_seq)
+
+                #     for vehicle_postal_list_tw_seq in tw_proposed_comp:
+                #         vehicle_postal_list_tw_seq.append(starting_address)
+                #
+                # for key in tw_proposed_list:
+                #     print "key", key
+
+            # combine all related order to postal code
+            # Proposed Postal code sequence display in UI:
+            for new_list in vehicle_postal_list_new:
+                new_list_chuncked = new_list
+
+                result_postal_orders1 = []
+
+                for chunked in new_list_chuncked:
+                    new_postal_code = chunked
+
+                    for x in range(len(postal_sequence_list)):
+                        old_postal_sequence = postal_sequence_list[x]
+
+                        postal_old = old_postal_sequence[0]
+                        order_id = old_postal_sequence[1]
+                        capacity_load = old_postal_sequence[2]
+                        campany_id = old_postal_sequence[3]
+
+                        if new_postal_code == postal_old:
+                            result_postal_orders1.append([new_postal_code, order_id, capacity_load, campany_id])
+
+                result_postal_orders2.append(result_postal_orders1)
+
+            # Current Postal code sequence display in UI:
+            for current_list in vehicle_current_postal_list:
+                current_list_chuncked = current_list
+
+                current_postal = []
+
+                for current_chunck in current_list_chuncked:
+                    current_chuncked = current_chunck
+
+                    for x in range(len(postal_sequence_list)):
+                        old_postal_sequence = postal_sequence_list[x]
+
+                        postal_old = old_postal_sequence[0]
+                        order_id = old_postal_sequence[1]
+                        capacity_load = old_postal_sequence[2]
+                        campany_id = old_postal_sequence[3]
+
+                        if current_chuncked == postal_old:
+                            current_postal.append([current_chuncked, order_id, capacity_load, campany_id])
+
+                current_postal_orders.append(current_postal)
+
+            vehicle_postal_list_new_seq = result_postal_orders2
+            vehicle_postal_list_orig_seq = current_postal_orders
 
     else:
 
+        # Optimisation type: Route for Multiple Trucks
+
         # Route for Multiple Trucks's optimisation
         # 1. Chunk the list
         # 2. Find the postal codes match, display to the relevant Order ID
@@ -319,10 +415,7 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
         # Current Route
         vehicle_current_postal_list = chunkIt(postal_list, vehicle_quantity)
 
-        # Create Order dictionary to store all the values that relate to the specific order
-        postal_tw_dict = {}
-        tw_proposed_geocode = []
-
+        # if checked the time windows option
         if time_windows == "true":
 
             for truck_count in vehicle_postal_list_new:
@@ -343,31 +436,6 @@ def sort_by_postals_chunck(starting_address, postal_sequence_list, vehicle_quant
                 # sort for each time windows
                 sorted_tw = sorted(truck_count, key=lambda x: x[2])
                 tw_proposed_list.append(sorted_tw)
-
-            # # for isolating the postal_oly
-            # for truck_count in tw_proposed_list:
-            #
-            #     for list in range(0, len(truck_count)):
-            #         order = truck_count[list]
-            #
-            #         if order[1] not in postal_tw_dict.keys():
-            #             postal_tw_dict[order[0]] = []
-            #
-            #         postal_tw_dict[order[0]].append(order[1])
-            #
-            # for truck_count in tw_proposed_list:
-            #     result_postal_1 = []
-            #
-            #     for postal_tw in truck_count:
-            #         postal_code = postal_tw[0]
-            #         order_id = postal_tw[1]
-            #
-            #         for postal, value in postal_tw_dict.iteritems():
-            #
-            #             if order_id == value[0]:
-            #                 result_postal_1.append(postal_code)
-            #     # for geo_code map
-            #     tw_proposed_geocode.append(result_postal_1)
 
             # back to warehouse
             if has_return == "true":

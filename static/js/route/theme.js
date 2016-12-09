@@ -443,9 +443,11 @@ $( '#refresh_btn' ).on( 'click', function() {
 $(function() {
 
     var $sortCompanies = $("#sort_company");
+    var time_windows = $("#time_windows")[0].checked;
     //var $priority_capacity_comp = $("#priority_capacity_comp")[0].checked;
 
     $sortCompanies.change(function() {
+
          $("#vehicle_qty_div_info").hide();
 
         // checked the checkbox field
@@ -459,42 +461,68 @@ $(function() {
                 url: "/sorting_comp",
                 data: {
                     postal_sequence: postal_sequence,
+                    time_windows: time_windows
                    // priority_capacity_comp: priority_capacity_comp,
                 },
                 beforeSend:function(){
 
                      $('#progressbar').html('<div class="loading">Loading...<br /><img src="/img/ajax-loader.gif" alt="Loading..." /></div>');
+                     $('#message-errors').hide();
                 },
                 success: function (response) {
 
-                    var num_comp_val = response.data_valid_company[0].required_fields.num_comp_val;
-                    var name_of_company = response.data_valid_company[0].required_fields.name_of_companies;
+                    // Error ID
+                    var errorBox = $('#message-errors');
 
-                    //console.log('Name of the companies', name_of_company);
-
-                    $('#progressbar').empty();
-                    $('#ajax_errors').empty();
-                    $('#ajax_errors').hide();
-
+                    // Error in JSON Response
                     var status = response.status;
 
                     if (status == "ok"){
+
+                        if (time_windows === true ){
+                            alert("hellooo");
+
+                        }
+
+                        var num_comp_val = response.data_valid_company[0].required_fields.num_comp_val;
+                        var name_of_company = response.data_valid_company[0].required_fields.name_of_companies;
+
+                        //console.log('Name of the companies', name_of_company);
+                        $('#progressbar').empty();
+
+
                          // Print the number of companies
                         $('#num_comp_val').val(num_comp_val);
 
                         // Generate the fields
                         generateFields(name_of_company);
+
                         //additional Truck Btn
                         //generateFields_add_truck(name_of_company);
 
                         // show the input field
                         $(".hidden_1").fadeIn();
 
-                    }
+                    } // end of status
                     else{
+
+                        $('#progressbar').empty();
                         var errors = response.errors;
-                        $('#ajax_errors').show();
-                        $('#ajax_errors').html(errors);
+
+                        // if there is an error in process, validation error will show
+                        if(errors){
+
+                           errorBox.fadeIn();
+                           errorBox.find('p').html(errors);
+
+                        }
+                        else{
+                           errorBox.hide();
+                           errorBox.empty();
+
+                        }
+
+
                     }
                 },
                 error: function (response) {
@@ -554,10 +582,10 @@ function generateFields(name_of_company){
         var $fields_column6 = $('<div class ="hidden_field1"></div>'); // btn Add
 
         var $fields_label01 = $('<label class="control-label font_11" for="starting_postal_'+(i+1)+'"> <span class="name_companies"> Starting Postal: '+company_name +' * </span></label>')
-        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="" ><p class="js_error startingPostal_'+(i+1)+'"></p>')
+        var $fields_input01 = $('<input type="text" class="form-control input down_15" id="starting_postal_'+(i+1)+'" name="starting_postal_'+(i+1)+'" placeholder="461051" value="461051" ><p class="js_error startingPostal_'+(i+1)+'"></p>')
 
         var $fields_label02 = $('<label class="control-label font_11" for="vehicle_quantity_'+(i+1)+'">Enter No. of Truck * </label>')
-        var $fields_input02 = $('<input type="text" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="" ><p class="js_error vehicleQuantity_'+(i+1)+'"></p>')
+        var $fields_input02 = $('<input type="text" class="form-control input down_15" id="vehicle_quantity_'+(i+1)+'" name="vehicle_quantity_'+(i+1)+'" placeholder="1" value="1" ><p class="js_error vehicleQuantity_'+(i+1)+'"></p>')
 
         var $fields_label03 = $('<label class="control-label font_11" for="type_of_truck_c'+(i+1)+'"> Enter Types of Truck</label>');
         var $fields_input03 = $('<input type="text" class="form-control input down_15" id="type_of_truck_c'+(i+1)+'" name="type_of_truck_c'+(i+1)+'" placeholder="e.g. M3 Truck" value="" ><p class="js_error typeTruck_c'+(i+1)+'"></p>');
